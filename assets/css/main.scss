@@ -1,0 +1,37 @@
+.ck-table {
+    @media (max-width: 768px) {
+        width: 100% !important;
+    }
+    & tr {
+        border: solid 3px #fff;
+        &:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        &:nth-child(odd) {
+            background-color: #dedede;
+        }
+        & td {
+            padding: 5px 15px;
+            vertical-align: middle;
+            &:first-child {
+                width: 30%;
+                font-weight: bold;
+                text-align: center;
+                border-right: solid 5px #fff;
+            }
+        }
+    }
+}
+.ck-icon-table {
+    @media (max-width: 768px) {
+        width: 100% !important;
+    }
+    & img {
+        display: inline;
+    }
+    & tr {
+        & td {
+            width: 33%;
+        }
+    }
+}
