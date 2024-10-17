@@ -1,12 +1,12 @@
 <template>
   <section class="overflow-hidden">
     <div class="hidden img_box banner md:flex justify-center items-center">
-      <div class="text-white text-2xl font-semibold flex">
-        <div class="hover:text-yellow-400 transition-all duration-300">
+      <div class="text-white text-2xl">
+        <span class="hover:text-yellow-400 transition-all duration-300">
           <NuxtLink to="/">首頁</NuxtLink>
-        </div>
-        <div> / </div>
-        <h1 class="text-white text-2xl font-semibold">車用配件</h1>
+        </span>
+        <span> / </span>
+        <span>車用配件</span>
       </div>
     </div>
     <div class="container mx-auto px-5 py-20">

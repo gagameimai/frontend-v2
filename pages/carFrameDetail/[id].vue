@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="hidden img_box banner md:flex justify-center items-center">
-      <p class="text-white text-2xl font-semibold">
+      <p class="text-white text-2xl">
         <span class="hover:text-yellow-400 transition-all duration-300">
           <NuxtLink to="/">首頁</NuxtLink>
         </span>
@@ -148,10 +148,6 @@ const { data: carFrameInfo } = await useAsyncData(
   'carFrameInfo',
    () => $fetch(`https://admin.meimai.com.tw/api/carframe/${id}`))
 
-// useSeoMeta({
-//   ogImage: carFrameInfo._rawValue.result.img ? carFrameInfo._rawValue.result.img : '/new_panel.png'
-// })
-
 useHead({
   meta: [
     {
@@ -159,9 +155,6 @@ useHead({
     }
   ]
 })
-
-console.log(carFrameInfo)
-
 </script>
 
 <style lang="scss" src="@/assets/css/main.scss" scoped />

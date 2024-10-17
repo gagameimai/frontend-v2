@@ -1,7 +1,7 @@
 <template>
   <section class="overflow-hidden">
     <!-- vue agile -->
-    <div id="vue_agile" :class="[ window.width < 1024 ? 'mt-12' : '']">
+    <div id="vue_agile" :class="[ windowWidth < 1024 ? 'mt-12' : '']">
       <carousel
         :wrap-around="true"
         :autoplay="2000">
@@ -288,9 +288,7 @@ export default {
       partners: [],
       counties: [],
       county: '',
-      window: {
-          width: 1200,
-      }
+      windowWidth: window.innerWidth,
     };
   },
   mounted() {
@@ -298,8 +296,17 @@ export default {
     this.$nextTick(() => this.getbanner());
     this.getListData();
     this.getPartner();
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize);
+    })
+  },
+  beforeDestroy() { 
+    window.removeEventListener('resize', this.onResize); 
   },
   methods: {
+    onResize() {
+      this.windowWidth = window.innerWidth
+    },
     getbanner() {
       this.$axios.get('https://admin.meimai.com.tw/api/banner').then((response) => {
         let result = response.data.result;
@@ -307,9 +314,6 @@ export default {
             this.bannerList = result;
         }
       })
-    },
-    onResize() {
-      this.window.width = window.innerWidth;
     },
     getListData() {
       this.$axios.get('https://admin.meimai.com.tw/api/car').then((response) => {

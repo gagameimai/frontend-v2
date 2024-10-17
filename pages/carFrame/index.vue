@@ -2,7 +2,7 @@
   <section>
     <div class="img_box banner">
       <div class="text-center pt-28 pb-20 md:py-14 lg:pt-44">
-        <p class="hidden lg:block text-white text-2xl font-semibold mb-10">
+        <p class="hidden lg:block text-white text-2xl mb-10">
           <span class="hover:text-yellow-400 transition-all duration-300">
             <NuxtLink to="/">首頁</NuxtLink>
           </span>

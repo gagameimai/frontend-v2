@@ -1,10 +1,10 @@
 <template>
   <section class="overflow-hidden">
     <div class="hidden md:flex img_box banner justify-center items-center">
-      <p class="text-white text-2xl font-semibold">
-        <span class="hover:text-yellow-400 transition-all duration-300"
-          ><NuxtLink to="/">首頁</NuxtLink></span
-        >
+      <p class="text-white text-2xl">
+        <span class="hover:text-yellow-400 transition-all duration-300">
+          <NuxtLink to="/">首頁</NuxtLink>
+        </span>
         <span> / </span>
         <span>安卓多媒體機</span>
       </p>

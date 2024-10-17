@@ -10,6 +10,13 @@
 useSeoMeta({
   ogImage: '/new_panel.png'
 })
+// useHead({
+//   meta: [
+//     {
+//       property: 'og:image', content: `https://www.meimai.com.tw/new_panel.png`
+//     }
+//   ]
+// })
 </script>
 
 <style>

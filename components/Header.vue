@@ -11,28 +11,28 @@
         </div>
         <!-- link -->
         <ul @click="removeLocalStorage()" class="flex items-center space-x-10">
-          <li class="font-semibold hover:text-yellow-400 transition-all">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/">首頁</NuxtLink>
           </li>
-          <li class="relative font-semibold hover:text-yellow-400 transition-all">
+          <li class="relative hover:text-yellow-400 transition-all">
             <NuxtLink to="/multimedia">多媒體機</NuxtLink>
           </li>
-          <li class="font-semibold hover:text-yellow-400 transition-all">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/carFrame">安卓車框</NuxtLink>
           </li>
-          <li class="font-semibold hover:text-yellow-400 transition-all">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/blindSpot">盲點偵測</NuxtLink>
           </li>
-          <li class="font-semibold hover:text-yellow-400 transition-all">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/fitting">車用配件</NuxtLink>
           </li>
-          <li class="font-semibold hover:text-yellow-400 transition-all">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/partner">經銷據點</NuxtLink>
           </li>
-          <li class="font-semibold">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/qa">常見問題</NuxtLink>
           </li>
-          <li class="font-semibold">
+          <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/download">資源下載</NuxtLink>
           </li>
         </ul>

@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         { property: 'og:locale', content: 'zh_TW' },
       ],
       link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.png" },
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         {rel: 'stylesheet', href: 'https://static.fontawesome.com/css/fontawesome-app.css'},
       ],
       script:[{

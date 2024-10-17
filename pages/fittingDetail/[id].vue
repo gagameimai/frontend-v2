@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="hidden img_box banner md:flex justify-center items-center">
-      <p class="text-white text-2xl font-semibold">
+      <p class="text-white text-2xl">
         <span class="hover:text-yellow-400 transition-all duration-300"
           ></span
         >
