@@ -28,30 +28,30 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "[id]",
-  data() {
-    return {
-      fittingInfo: {}
-    };
-  },
-  mounted() {
-    this.getFitting();
-  },
-  methods: {
-    getFitting() {
-      this.$axios.get('https://admin.meimai.com.tw/api/fitting/' + this.$route.params.id).then((response) => {
-        let result = response.data.result;
-        if (result) {
-            this.fittingInfo = result;
-            // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
-            this.fittingInfo.content = this.fittingInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
-        }
-      })
+<script setup>
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const id = route.params.id
+
+const fittingInfo = reactive({});
+await useAsyncData(
+    'fittingInfo',
+    () => $fetch(`https://admin.meimai.com.tw/api/fitting/${id}`))
+    .then((response)=> {
+      if (response) {
+        Object.assign(fittingInfo, response.data._rawValue.result);
+        // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
+        fittingInfo.content = fittingInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
+      }
+    });
+
+useHead({
+  meta: [
+    {
+      property: 'og:image', content: fittingInfo.img ? fittingInfo.img : '/new_panel.png'
     }
-  }
-};
+  ]
+})
 </script>
 
 <style lang="scss" src="@/assets/css/main.scss" scoped />

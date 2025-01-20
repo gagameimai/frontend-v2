@@ -15,7 +15,7 @@
             <NuxtLink to="/">首頁</NuxtLink>
           </li>
           <li class="relative hover:text-yellow-400 transition-all">
-            <NuxtLink to="/multimedia">多媒體機</NuxtLink>
+            <NuxtLink to="/multimedia">車載顯示器</NuxtLink>
           </li>
           <li class="hover:text-yellow-400 transition-all">
             <NuxtLink to="/carFrame">安卓車框</NuxtLink>
@@ -100,7 +100,7 @@
           @click="closeHamburger()"
         >
           <NuxtLink to="/multimedia" class="block w-full py-1"
-            >多媒體機</NuxtLink
+            >車載顯示器</NuxtLink
           >
         </li>
         <li

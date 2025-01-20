@@ -32,19 +32,19 @@
       </h2>
       <div class="flex justify-center items-center">
         <select
-          v-model="selectBrandValue"
+          v-model="selectBrandId"
           @change="brandChange"
           class="block w-56 border rounded px-3 py-1 mx-auto mb-10">
           <option
             v-for="(brand, index) in brandList"
             :key="index"
-            :value="brand">
+            :value="brand.id">
             {{ brand.name }}
           </option>
         </select>
       </div>
       <!---->
-      <h3 class="text-2xl font-semibold mb-5">{{ selectBrandValue.name }}</h3>
+      <h3 class="text-2xl font-semibold mb-5">{{ selectBrandName }}</h3>
       <div v-if="blindSpotList.length > 0"
         class="md:grid md:grid-cols-3 lg:grid-cols-4 gap-5 mb-14">
         <div
@@ -64,49 +64,58 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "[id]",
-  data() {
-    return {
-      blindSpotInfo: {},
-      selectBrandValue: { "id": 1, "name": "AUDI" },
-      brandList: [],
-      blindSpotList: []
-    };
-  },
-  mounted() {
-    this.getBlindSpot();
-  },
-  methods: {
-    getBlindSpot() {
-      this.$axios.get('https://admin.meimai.com.tw/api/blindspot/' + this.$route.params.id).then((response) => {
-        let result = response.data.result;
-        if (result) {
-          this.blindSpotInfo = result;
-          // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
-          this.blindSpotInfo.content = this.blindSpotInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
-          this.blindSpotInfo.content = this.blindSpotInfo.content.replaceAll('<table', '<table class="mx-auto"');
-          this.brandList = result.car_brand;
-          if (this.selectBrandValue) {
-            this.brandChange();
-          }
-        }
-      })
-    },
-    brandChange() {
-      if (!this.selectBrandValue) {
-        return;
-      }
-      this.blindSpotList = [];
-      this.blindSpotInfo.depend.forEach(el => {
-        if (this.selectBrandValue.id == el.car_brand_id) {
-          this.blindSpotList.push(el);
-        }
-      });
-    }
+<script setup>
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const id = route.params.id
+
+const selectBrandId = ref(1);
+const selectBrandName = ref('AUDI');
+const brandList = ref([]);
+const blindSpotList = ref([]);
+
+const brandChange = () => {
+  if (!selectBrandId.value) {
+    return;
   }
-};
+  blindSpotList.value = [];
+  blindSpotInfo.depend.forEach(el => {
+    if (selectBrandId.value == el.car_brand_id) {
+      blindSpotList.value.push(el);
+    }
+  });
+  
+  blindSpotInfo.car_brand.forEach(el => {
+    if (selectBrandId.value === el.id) {
+      selectBrandName.value = el.name;
+    }
+  });
+}
+
+const blindSpotInfo = reactive({});
+await useAsyncData(
+    'blindSpotInfo',
+    () => $fetch(`https://admin.meimai.com.tw/api/blindspot/${id}`))
+    .then((response)=> {
+      if (response) {
+        Object.assign(blindSpotInfo, response.data._rawValue.result);
+        // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
+        blindSpotInfo.content = blindSpotInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
+        blindSpotInfo.content = blindSpotInfo.content.replaceAll('<table', '<table class="mx-auto"');
+        brandList.value = blindSpotInfo.car_brand;
+        if (selectBrandId) {
+          brandChange();
+        }
+      }
+    });
+
+useHead({
+  meta: [
+    {
+      property: 'og:image', content: blindSpotInfo.img ? blindSpotInfo.img : '/new_panel.png'
+    }
+  ]
+})
 </script>
 
 <style lang="scss" src="@/assets/css/main.scss" scoped />

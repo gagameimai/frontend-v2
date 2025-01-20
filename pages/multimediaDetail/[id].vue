@@ -27,30 +27,30 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: "[id]",
-  data() {
-    return {
-      multiMediasInfo: {}
-    };
-  },
-  mounted() {
-    this.getMultiMedias();
-  },
-  methods: {
-    getMultiMedias() {
-      this.$axios.get('https://admin.meimai.com.tw/api/multimedia/' + this.$route.params.id).then((response) => {
-        let result = response.data.result;
-        if (result) {
-          this.multiMediasInfo = result
-          // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
-          this.multiMediasInfo.content = this.multiMediasInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
-        }
-      })
+<script setup>
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const id = route.params.id
+
+const multiMediasInfo = reactive({});
+await useAsyncData(
+    'multiMediasInfo',
+    () => $fetch(`https://admin.meimai.com.tw/api/multimedia/${id}`))
+    .then((response)=> {
+      if (response) {
+        Object.assign(multiMediasInfo, response.data._rawValue.result);
+        // 後端傳來的圖片置中效果無效，所以透過前端補上Tailwind 置中 css
+        multiMediasInfo.content = multiMediasInfo.content.replaceAll('<img', '<img class="mx-auto" style="hight: auto"');
+      }
+    });
+
+useHead({
+  meta: [
+    {
+      property: 'og:image', content: multiMediasInfo.img ? multiMediasInfo.img : '/new_panel.png'
     }
-  }
-};
+  ]
+})
 </script>
 
 <style lang="scss" src="@/assets/css/main.scss" scoped />
