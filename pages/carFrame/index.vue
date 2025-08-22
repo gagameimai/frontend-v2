@@ -3,7 +3,7 @@
     <div class="img_box banner">
       <div class="text-center pt-28 pb-20 md:py-14 lg:pt-44">
         <p class="hidden lg:block text-white text-2xl mb-10">
-          <span class="hover:text-yellow-400 transition-all duration-300">
+          <span class="hover:text-[#F28729] transition-all duration-300">
             <NuxtLink to="/">首頁</NuxtLink>
           </span>
           <span> / </span>
@@ -16,7 +16,7 @@
               <select
                 v-model="brandInputValue"
                 @change="brandChange(true)"
-                class="w-full h-12 p-3 text-black"
+                class="w-full h-12 p-3 text-black rounded-md"
               >
                 <option selected value="">選擇汽車品牌</option>
                 <option
@@ -32,7 +32,7 @@
               <select
                 v-model="modelInputValue"
                 @change="modelChange"
-                class="w-full h-12 p-3 text-black"
+                class="w-full h-12 p-3 text-black rounded-md"
               >
                 <option selected value="">選擇車款</option>
                 <option
@@ -47,7 +47,7 @@
             <div class="col-span-3 mb-3 lg:mb-0">
               <select
                 v-model="yearInputValue"
-                class="w-full h-12 p-3 text-black"
+                class="w-full h-12 p-3 text-black rounded-md"
               >
                 <option selected value="">選擇年份</option>
                 <option
@@ -61,7 +61,7 @@
             <div class="col-span-1">
               <button
                 @click="getCarFrame"
-                class="w-full h-full text-white font-medium bg-yellow-300 hover:bg-yellow-400 transition-all duration-300 py-2">
+                class="w-full h-full text-white font-medium bg-[#F28729] hover:bg-[#023059] transition-all duration-300 py-2 rounded-md">
                 <font-awesome-icon class="text-sm mr-2" :icon="['fas', 'search']" />搜尋
               </button>
             </div>
@@ -85,14 +85,14 @@
             <hr class="mb-2" />
             <h3 class="text-xl font-semibold">
               <font-awesome-icon
-                class="text-yellow-400 mr-3"
+                class="text-[#F28729] mr-3"
                 :icon="['fas', 'arrow-alt-circle-right']" />
                 <i>{{ carFrame.brand_name }} {{ carFrame.car_name }} {{ carFrame.name }}</i>
             </h3>
             <p class="text-xl flex items-center">
               <span class="mr-2">{{ carFrame.year_start }}~{{ carFrame.year_end }}</span>
               <span
-                class="text-md font-medium border rounded-sm border-yellow-400 px-1"
+                class="text-md font-medium border rounded-sm border-[#F28729] px-1"
                 >{{ carFrame.size }}吋</span
               >
             </p>

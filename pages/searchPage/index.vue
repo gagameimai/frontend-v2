@@ -3,7 +3,7 @@
     <div class="img_box banner">
       <div class="text-center pt-28 pb-20 md:py-14 lg:pt-44">
         <p class="hidden lg:block text-white text-2xl font-semibold mb-10">
-          <span class="hover:text-yellow-400 transition-all duration-300">
+          <span class="hover:text-[#F28729] transition-all duration-300">
             <NuxtLink to="/">首頁</NuxtLink>
           </span>
           <span> / </span>
@@ -90,7 +90,7 @@
               <hr class="mb-2" />
               <h3 class="text-xl font-semibold">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'arrow-alt-circle-right']"/>
                   <i>{{ carFrame.brand_name }} {{ carFrame.car_name }} {{ carFrame.name }}</i>
               </h3>
@@ -123,7 +123,7 @@
               <hr class="mb-2" />
               <h3 class="text-xl font-semibold">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'arrow-alt-circle-right']" />
                   <i>{{ carMedia.name }}</i>
               </h3>
@@ -145,7 +145,7 @@
               <hr class="mb-2" />
               <h3 class="text-xl font-semibold">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'arrow-alt-circle-right']"
                 /><i>{{ carBlindSpot.name }}</i>
               </h3>
@@ -167,7 +167,7 @@
               <hr class="mb-2" />
               <h3 class="text-xl font-semibold">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'arrow-alt-circle-right']"
                 /><i>{{ carFitting.name }}</i>
               </h3>
@@ -183,7 +183,7 @@
           <li
             v-show="currentPage > 1"
             @click="decreasePage"
-            class="bg-gray-50 hover:bg-yellow-400 text-2xl text-yellow-400 hover:text-white transition-all duration-300 cursor-pointer border px-5 py-2 mr-4"
+            class="bg-gray-50 hover:bg-yellow-400 text-2xl text-[#F28729] hover:text-white transition-all duration-300 cursor-pointer border px-5 py-2 mr-4"
           >
             <font-awesome-icon :icon="['fas', 'caret-left']" />
           </li>
@@ -203,7 +203,7 @@
           <li
             v-show="currentPage < 5"
             @click="increasePage"
-            class="bg-gray-50 hover:bg-yellow-400 text-2xl text-yellow-400 hover:text-white transition-all duration-300 cursor-pointer border px-5 py-2"
+            class="bg-gray-50 hover:bg-yellow-400 text-2xl text-[#F28729] hover:text-white transition-all duration-300 cursor-pointer border px-5 py-2"
           >
             <font-awesome-icon :icon="['fas', 'caret-right']" />
           </li>

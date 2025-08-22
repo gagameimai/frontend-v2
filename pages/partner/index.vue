@@ -24,7 +24,7 @@
               <h4 class="text-lg font-semibold mb-3">{{ partner.name }}</h4>
               <p class="mb-2">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'phone-alt']"/>{{ partner.tel }}
               </p>
               <a
@@ -32,7 +32,7 @@
                 target="_blank">
                 <p>
                   <font-awesome-icon
-                    class="text-yellow-400 mr-3"
+                    class="text-[#F28729] mr-3"
                     :icon="['fas', 'map-marker-alt']"/>
                     {{ partner.address }}
                 </p>

@@ -2,7 +2,7 @@
   <section>
     <div class="hidden img_box banner md:flex justify-center items-center">
       <p class="text-white text-2xl">
-        <span class="hover:text-yellow-400 transition-all duration-300"
+        <span class="hover:text-[#F28729] transition-all duration-300"
           ></span
         >
         <span>首頁 / </span>

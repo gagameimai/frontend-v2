@@ -12,11 +12,11 @@
             class="font-medium text-xl cursor-pointer mb-5">
             <font-awesome-icon
               v-if="version.isShow"
-              class="text-sm text-yellow-400 mr-2"
+              class="text-sm text-[#F28729] mr-2"
               :icon="['fas', 'minus']"/>
             <font-awesome-icon
               v-else
-              class="text-sm text-yellow-400 mr-2"
+              class="text-sm text-[#F28729] mr-2"
               :icon="['fas', 'plus']"/>
             <span>{{ version.name }}</span>
           </h6>
@@ -31,9 +31,9 @@
                   <p>
                     <span class="mr-5">{{ resource.name }}</span>
                     <a :href="resource.url" target="_blank"><font-awesome-icon
-                        class="text-sm text-yellow-400 mr-2"
+                        class="text-sm text-[#F28729] mr-2"
                         :icon="['fas', 'download']"/>
-                        <span class="text-yellow-400">下載</span>
+                        <span class="text-[#F28729]">下載</span>
                     </a>
                   </p>
                 </li>

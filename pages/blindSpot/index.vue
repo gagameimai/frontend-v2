@@ -2,7 +2,7 @@
   <section>
     <div class="img_box banner flex justify-center items-center">
       <div class="text-white text-2xl">
-        <span class="hover:text-yellow-400 transition-all duration-300">
+        <span class="hover:text-[#F28729] transition-all duration-300">
           <NuxtLink to="/">首頁</NuxtLink>
         </span>
         <span> / </span>
@@ -25,7 +25,7 @@
             <hr class="mb-5" />
             <h2 class="text-lg font-medium mb-5">
               <font-awesome-icon
-                class="text-yellow-400 mr-3"
+                class="text-[#F28729] mr-3"
                 :icon="['fas', 'arrow-alt-circle-right']"
               />{{ blindSpot.name }}
             </h2>

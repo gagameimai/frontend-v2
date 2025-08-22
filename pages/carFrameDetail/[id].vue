@@ -2,11 +2,11 @@
   <section>
     <div class="hidden img_box banner md:flex justify-center items-center">
       <p class="text-white text-2xl">
-        <span class="hover:text-yellow-400 transition-all duration-300">
+        <span class="hover:text-[#F28729] transition-all duration-300">
           <NuxtLink to="/">首頁</NuxtLink>
         </span>
         <span> / </span>
-        <span class="hover:text-yellow-400 transition-all duration-300">
+        <span class="hover:text-[#F28729] transition-all duration-300">
           <NuxtLink to="/carFrame">安卓車框</NuxtLink>
         </span>
         <span> / </span>
@@ -83,14 +83,7 @@
       <h2 class="text-center text-3xl font-semibold mb-8">推廌搭配安卓機</h2>
       <div class="lg:grid lg:grid-cols-2 xl:grid-cols-4 gap-8">
         <div v-for="(multiMedias, index) in multiMediasInfo" :key="index" class="col-span-1 py-5">
-          <nuxt-link
-            :to="{
-              name: 'multimediaDetail-id',
-              query: {
-                id: multiMedias.id
-              }
-            }"
-          >
+          <nuxt-link :to="'/multimediaDetail/' + multiMedias.id">
             <img
               :src="multiMedias.img"
               :alt="multiMedias.name"
@@ -99,32 +92,32 @@
           </nuxt-link>
           <h2 class="text-lg font-medium mb-5">
             <font-awesome-icon
-              class="text-yellow-400 mr-3"
+              class="text-[#F28729] mr-3"
               :icon="['fas', 'arrow-alt-circle-right']"
             />{{ multiMedias.name }}
           </h2>
           <hr class="mb-5" />
           <p class="px-2 py-1">
             <font-awesome-icon
-              class="text-xs text-yellow-400 mr-3"
+              class="text-xs text-[#F28729] mr-3"
               :icon="['fas', 'dot-circle']"
             />硬體：{{ multiMedias.hard_drive }}
           </p>
           <p class="px-2 py-1">
             <font-awesome-icon
-              class="text-xs text-yellow-400 mr-3"
+              class="text-xs text-[#F28729] mr-3"
               :icon="['fas', 'dot-circle']"
             />記憶體：{{ multiMedias.ram }}
           </p>
           <p class="px-2 py-1">
             <font-awesome-icon
-              class="text-xs text-yellow-400 mr-3"
+              class="text-xs text-[#F28729] mr-3"
               :icon="['fas', 'dot-circle']"
             />解析度：{{ multiMedias.resolution }}
           </p>
           <p class="px-2 py-1">
             <font-awesome-icon
-              class="text-xs text-yellow-400 mr-3"
+              class="text-xs text-[#F28729] mr-3"
               :icon="['fas', 'dot-circle']"
             />建議售價：{{ multiMedias.price }}
           </p>

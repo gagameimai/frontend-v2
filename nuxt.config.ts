@@ -23,13 +23,14 @@ export default defineNuxtConfig({
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         {rel: 'stylesheet', href: 'https://static.fontawesome.com/css/fontawesome-app.css'},
       ],
-      script:[{
-        crossorigin: "anonymous",
-        src: "https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v13.0&appId=541580076291513&autoLogAppEvents=1",
-        nonce: "2PC0Scii",
-        async: "true",
-        defer: "true"
-      },
+      script:[
+      // {
+      //   crossorigin: "anonymous",
+      //   src: "https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v13.0&appId=541580076291513&autoLogAppEvents=1",
+      //   nonce: "2PC0Scii",
+      //   async: "true",
+      //   defer: "true"
+      // },
       {
         src: "https://www.googletagmanager.com/gtag/js?id=G-1QLZNF29EP%22",
         async: "true",
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
         "@/assets/css/main.scss",
         '@fortawesome/fontawesome-svg-core/styles.css'
       ],
-      
+
   plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -1,7 +1,7 @@
 <template>
   <section class="overflow-hidden">
     <!-- vue agile -->
-    <div id="vue_agile" :class="[ windowWidth < 1024 ? 'mt-12' : '']">
+    <div id="vue_agile" :class="[ windowWidth < 1024 ? 'mt-12' : 'carousel-area']">
       <carousel
         :wrap-around="true"
         :autoplay="2000">
@@ -73,7 +73,7 @@
         <div class="col-span-2">
           <button
             @click="searchData"
-            class="w-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 p-3 rounded-md"
+            class="w-full text-white bg-[#F28729] hover:bg-[#023059] transition-all duration-300 p-3 rounded-md"
           >
             搜尋
           </button>
@@ -104,7 +104,7 @@
               </p>
               <nuxt-link
                 to="/multimedia"
-                class="block w-full md:w-40 text-center text-white bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 p-3"
+                class="block w-full md:w-40 text-center text-white bg-[#F28729] hover:bg-[#023059] transition-all duration-300 p-3 rounded-md"
                 >了解更多</nuxt-link
               >
             </div>
@@ -132,7 +132,7 @@
               </p>
               <nuxt-link
                 to="/carFrame"
-                class="block w-full md:w-40 text-center text-white bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 p-3"
+                class="block w-full md:w-40 text-center text-white bg-[#F28729] hover:bg-[#023059] transition-all duration-300 p-3 rounded-md"
                 >了解更多</nuxt-link
               >
             </div>
@@ -160,7 +160,7 @@
               </p>
               <nuxt-link
                 to="/blindSpot"
-                class="block w-full md:w-40 text-center text-white bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 p-3"
+                class="block w-full md:w-40 text-center text-white bg-[#F28729] hover:bg-[#023059] transition-all duration-300 p-3 rounded-md"
                 >了解更多</nuxt-link
               >
             </div>
@@ -188,7 +188,7 @@
               </p>
               <nuxt-link
                 to="/fitting"
-                class="block w-full md:w-40 text-center text-white bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 p-3"
+                class="block w-full md:w-40 text-center text-white bg-[#F28729] hover:bg-[#023059] transition-all duration-300 p-3 rounded-md"
                 >了解更多</nuxt-link
               >
             </div>
@@ -245,13 +245,13 @@
               <h4 class="text-lg font-semibold mb-3">{{ partner.name }}</h4>
               <p class="mb-2">
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'phone-alt']"
                 />{{ partner.tel }}
               </p>
               <p>
                 <font-awesome-icon
-                  class="text-yellow-400 mr-3"
+                  class="text-[#F28729] mr-3"
                   :icon="['fas', 'map-marker-alt']"
                 />{{ partner.address }}
               </p>
@@ -300,8 +300,8 @@ export default {
       window.addEventListener('resize', this.onResize);
     })
   },
-  beforeDestroy() { 
-    window.removeEventListener('resize', this.onResize); 
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
   },
   methods: {
     onResize() {
@@ -436,6 +436,16 @@ export default {
 </script>
 
 <style scoped>
+.carousel-area {
+  margin-top: 40px;
+}
+.carousel {
+  --vc-pgn-background-color: rgba(2, 48, 89, 0.5);
+  --vc-pgn-active-color: rgba(2, 48, 89);
+  --vc-pgn-border-radius: 8px;
+  --vc-pgn-height: 10px;
+  --vc-pgn-width: 10px;
+}
 .carousel__item {
   min-height: 200px;
   width: 100%;
