@@ -2,23 +2,20 @@
   <section>
     <footer class="py-10 text-white flex justify-center">
       <div class="container mx-auto p-5">
-        <div class="hidden lg:grid grid-cols-12 gap-5 mb-[45px]">
-          <div class="col-span-4">
-            <div>
+        <div class="hidden lg:grid place-items-center gap-5">
+          <div class="col-span-5">
+            <div class="mt-[-30px]">
               <img
+                width="280"
                 src="~/assets/img/Header/meimai_footer.png"
                 alt="meimai"
               />
-              <!-- <p class="text-xl font-medium mb-2">
-                Mei-Mai Vechicle electronic LTD.
-              </p> -->
             </div>
-          </div>
-          <div class="col-span-4 mt-[15px]">
-            <p class="mb-3">{{ websiteInfo.tel }}</p>
-            <p class="mb-3">{{ websiteInfo.address }}</p>
-            <p class="mb-3">{{ websiteInfo.email }}</p>
-            <div>
+            <div class="lg:grid place-items-center">
+              <p class="mb-4">{{ websiteInfo.tel }}</p>
+              <div class="w-[230px] mb-4 inline-block text-justify">{{ websiteInfo.address }}</div>
+              <p class="mb-4">{{ websiteInfo.email }}</p>
+              <div class="mb-4">
                 <a
                   class="text-[#F28729] text-xl icons"
                   :href="websiteInfo.facebook"
@@ -35,15 +32,17 @@
                   class="text-[#F28729] text-xl icons"
                   :href="websiteInfo.youtube"
                   target="_bland"
-                  ><font-awesome-icon class="mr-4 fa-2x" :icon="['fab', 'square-youtube']"
+                  ><font-awesome-icon class="fa-2x" :icon="['fab', 'square-youtube']"
                 /></a>
               </div>
+            </div>
           </div>
-          <div class="col-span-4 mt-[-10px]">
+
+          <!-- <div class="col-span-4 mt-[-10px]">
             <div>
               <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FMM.MEIMAI&tabs=timeline&width=400&height=200&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="400" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
             </div>
-          </div>
+          </div> -->
         </div>
         <hr class="hidden lg:block mb-5 border-gray-500" />
         <div>

@@ -154,10 +154,11 @@ await useAsyncData(
     });
 
 useHead({
+  title: carFrameInfo.brand_name + ' ' + carFrameInfo.car_name,
   meta: [
-    {
-      property: 'og:image', content: carFrameInfo.img ? carFrameInfo.img : '/new_panel.png'
-    }
+    { name: 'description', content: `${carFrameInfo.brand_name} ${carFrameInfo.car_name} ${ carFrameInfo.year_start }-${ carFrameInfo.year_end } ${carFrameInfo.size}吋` },
+    { property: 'og:description', content: `${carFrameInfo.brand_name} ${carFrameInfo.car_name} ${ carFrameInfo.year_start }-${ carFrameInfo.year_end } ${carFrameInfo.size}吋` },
+    { property: 'og:image', content: carFrameInfo.img ? carFrameInfo.img : '/new_panel.png' }
   ]
 })
 </script>

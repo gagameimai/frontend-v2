@@ -447,7 +447,7 @@ export default {
   --vc-pgn-width: 10px;
 }
 .carousel__item {
-  min-height: 200px;
+  height: 100%;
   width: 100%;
   background-color: var(--vc-clr-primary);
   color: var(--vc-clr-white);
@@ -456,9 +456,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  & img {
-    width: 100%;
-  }
 }
 .carousel__prev,
 .carousel__next {

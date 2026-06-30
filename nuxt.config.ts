@@ -20,8 +20,11 @@ export default defineNuxtConfig({
         { property: 'og:locale', content: 'zh_TW' },
       ],
       link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-        {rel: 'stylesheet', href: 'https://static.fontawesome.com/css/fontawesome-app.css'},
+        { rel: "icon", type: "image/x-icon", sizes: "any",href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon_192.png" },
+        { rel: "apple-touch-icon", type: "image/png", sizes: "152x152", href: "/favicon_152.png" }, // ipad
+        { rel: "apple-touch-icon", type: "image/png", sizes: "180x180", href: "/favicon_180.png" }, // iphone retina
+        { rel: 'stylesheet', href: 'https://static.fontawesome.com/css/fontawesome-app.css' },
       ],
       script:[
       // {
@@ -56,10 +59,13 @@ export default defineNuxtConfig({
     'nuxt-aos',
     'nuxt-gtag',
     'vue3-carousel-nuxt',
-    'nuxt-gtag'
   ],
 
   gtag: {
-    id: 'G-1QLZNF29EP'
+    id: 'G-6Q9W9ZX3FC'
+  },
+  devServer: {
+    host: '0.0.0.0', // Exposes to the local network
+    port: 3000,      // Optional: specify a port
   },
 })

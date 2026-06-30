@@ -45,10 +45,11 @@ await useAsyncData(
     });
 
 useHead({
+  title: multiMediasInfo.name,
   meta: [
-    {
-      property: 'og:image', content: multiMediasInfo.img ? multiMediasInfo.img : '/new_panel.png'
-    }
+    { name: 'description', content: multiMediasInfo.memo_in },
+    { property: 'og:description', content: multiMediasInfo.memo_in },
+    { property: 'og:image', content: multiMediasInfo.img ? multiMediasInfo.img : '/new_panel.png' }
   ]
 })
 </script>

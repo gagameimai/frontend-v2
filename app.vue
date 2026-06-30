@@ -22,7 +22,7 @@ useSeoMeta({
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;900&display=swap");
 
-html {
+body {
   font-family: "Noto Sans JP", "Source Sans Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
