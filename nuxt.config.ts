@@ -64,7 +64,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // API base URL。可用環境變數 NUXT_PUBLIC_API_BASE 覆蓋（本機/測試/正式切換）
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://admin.meimai.com.tw/api'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://admin.meimai.com.tw/api',
+      // 前台網站網址（sitemap / robots 用），可用 NUXT_PUBLIC_SITE_URL 覆蓋
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.meimai.com.tw'
     }
   },
 
