@@ -28,6 +28,7 @@
 </template>
 
 <script setup>
+const runtimeConfig = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const id = route.params.id
@@ -35,7 +36,7 @@ const id = route.params.id
 const multiMediasInfo = reactive({});
 await useAsyncData(
     'multiMediasInfo',
-    () => $fetch(`https://admin.meimai.com.tw/api/multimedia/${id}`))
+    () => $fetch(`${runtimeConfig.public.apiBase}/multimedia/${id}`))
     .then((response)=> {
       if (response) {
         Object.assign(multiMediasInfo, response.data._rawValue.result);

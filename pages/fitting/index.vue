@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     getFitting() {
-      this.$axios.get('https://admin.meimai.com.tw/api/fitting').then((response) => {
+      this.$axios.get('/fitting').then((response) => {
         let result = response.data.result;
         if (result) {
             this.fittingList = result;

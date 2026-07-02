@@ -65,6 +65,7 @@
 </template>
 
 <script setup>
+const runtimeConfig = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const id = route.params.id
@@ -95,7 +96,7 @@ const brandChange = () => {
 const blindSpotInfo = reactive({});
 await useAsyncData(
     'blindSpotInfo',
-    () => $fetch(`https://admin.meimai.com.tw/api/blindspot/${id}`))
+    () => $fetch(`${runtimeConfig.public.apiBase}/blindspot/${id}`))
     .then((response)=> {
       if (response) {
         Object.assign(blindSpotInfo, response.data._rawValue.result);

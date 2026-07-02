@@ -64,7 +64,7 @@ export default {
         county: this.county
       };
 
-      this.$axios.get('https://admin.meimai.com.tw/api/partner', {params}).then((response) => {
+      this.$axios.get('/partner', {params}).then((response) => {
         let result = response.data.result;
         if (result) {
           if (this.counties.length == 0) { // 沒有值才需要重新assign

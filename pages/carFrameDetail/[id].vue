@@ -129,6 +129,7 @@
 </template>
 
 <script setup>
+const runtimeConfig = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const id = route.params.id
@@ -136,7 +137,7 @@ const id = route.params.id
 const multiMediasInfo = reactive({});
 await useAsyncData(
     'multiMediasList',
-    () => $fetch('https://admin.meimai.com.tw/api/multimedia'))
+    () => $fetch(`${runtimeConfig.public.apiBase}/multimedia`))
     .then((response)=> {
       if (response) {
         Object.assign(multiMediasInfo, response.data._rawValue.result);
@@ -146,7 +147,7 @@ await useAsyncData(
 const carFrameInfo = reactive({});
 await useAsyncData(
   'carFrameInfo',
-   () => $fetch(`https://admin.meimai.com.tw/api/carframe/${id}`))
+   () => $fetch(`${runtimeConfig.public.apiBase}/carframe/${id}`))
    .then((response)=> {
       if (response) {
         Object.assign(carFrameInfo, response.data._rawValue.result);

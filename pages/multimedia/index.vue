@@ -150,7 +150,7 @@ export default {
   },
   methods: {
     getMultiMedias() {
-      this.$axios.get('https://admin.meimai.com.tw/api/multimedia').then((response) => {
+      this.$axios.get('/multimedia').then((response) => {
         let result = response.data.result;
         if (result) {
           this.multiMediasList = result

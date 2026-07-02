@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     getQuestion(){
-      this.$axios.get('https://admin.meimai.com.tw/api/question').then((response) => {
+      this.$axios.get('/question').then((response) => {
         let result = response.data.result;
         this.question = result.content;
       })

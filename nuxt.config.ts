@@ -61,6 +61,13 @@ export default defineNuxtConfig({
     'vue3-carousel-nuxt',
   ],
 
+  runtimeConfig: {
+    public: {
+      // API base URL。可用環境變數 NUXT_PUBLIC_API_BASE 覆蓋（本機/測試/正式切換）
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://admin.meimai.com.tw/api'
+    }
+  },
+
   gtag: {
     id: 'G-6Q9W9ZX3FC'
   },

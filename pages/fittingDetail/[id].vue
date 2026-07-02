@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+const runtimeConfig = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const id = route.params.id
@@ -36,7 +37,7 @@ const id = route.params.id
 const fittingInfo = reactive({});
 await useAsyncData(
     'fittingInfo',
-    () => $fetch(`https://admin.meimai.com.tw/api/fitting/${id}`))
+    () => $fetch(`${runtimeConfig.public.apiBase}/fitting/${id}`))
     .then((response)=> {
       if (response) {
         Object.assign(fittingInfo, response.data._rawValue.result);

@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     getBlindSpot() {
-      this.$axios.get('https://admin.meimai.com.tw/api/blindspot').then((response) => {
+      this.$axios.get('/blindspot').then((response) => {
         let result = response.data.result;
         if (result) {
           this.blindSpotList = result

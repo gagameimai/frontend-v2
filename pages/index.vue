@@ -308,7 +308,7 @@ export default {
       this.windowWidth = window.innerWidth
     },
     getbanner() {
-      this.$axios.get('https://admin.meimai.com.tw/api/banner').then((response) => {
+      this.$axios.get('/banner').then((response) => {
         let result = response.data.result;
         if (result) {
             this.bannerList = result;
@@ -316,7 +316,7 @@ export default {
       })
     },
     getListData() {
-      this.$axios.get('https://admin.meimai.com.tw/api/car').then((response) => {
+      this.$axios.get('/car').then((response) => {
         let carBrand = response.data.car_brand,
             car = response.data.car;
         if (carBrand) {
@@ -332,7 +332,7 @@ export default {
         county: this.county
       };
 
-      this.$axios.get('https://admin.meimai.com.tw/api/partner', {params}).then((response) => {
+      this.$axios.get('/partner', {params}).then((response) => {
         let result = response.data.result;
         if (result) {
           if (this.counties.length == 0) { // 沒有值才需要重新assign

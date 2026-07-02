@@ -268,7 +268,7 @@ export default {
   methods: {
     getListData() {
       return new Promise(resolve => {
-        this.$axios.get('https://admin.meimai.com.tw/api/car').then((response) => {
+        this.$axios.get('/car').then((response) => {
           let carBrand = response.data.car_brand,
               car = response.data.car;
           if (carBrand) {
@@ -397,7 +397,7 @@ export default {
         year: !this.yearInputValue ? '' : this.yearInputValue,
       }
 
-      this.$axios.get('https://admin.meimai.com.tw/api/search', {params}).then((response) => {
+      this.$axios.get('/search', {params}).then((response) => {
           let result = response.data.result;
           if (result) {
             if (result.car_frame.length > 0) {

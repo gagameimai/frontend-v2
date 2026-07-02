@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     getListData() {
-      this.$axios.get('https://admin.meimai.com.tw/api/car').then(async(response) => {
+      this.$axios.get('/car').then(async(response) => {
         let carBrand = response.data.car_brand,
             car = response.data.car;
         if (carBrand) {
@@ -166,7 +166,7 @@ export default {
           year: this.yearInputValue == 'all' ? '' : this.yearInputValue
         }
 
-        this.$axios.get('https://admin.meimai.com.tw/api/carframe', {params}).then((response) => {
+        this.$axios.get('/carframe', {params}).then((response) => {
           let result = response.data.result;
           if (result) {
 

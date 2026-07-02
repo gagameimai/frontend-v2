@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     getResource() {
-      this.$axios.get('https://admin.meimai.com.tw/api/resource').then((response) => {
+      this.$axios.get('/resource').then((response) => {
         let result = response.data.result;
         if (result) {
             this.versionList = result;
