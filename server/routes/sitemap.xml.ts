@@ -9,22 +9,40 @@ export default defineEventHandler(async (event) => {
   const today = new Date().toISOString().split('T')[0]
 
   // 靜態頁面
+  // 注意：這裡的路徑必須對應 pages/ 底下實際存在的路由，寫錯會產生 404 的 sitemap 項目
   const staticRoutes = [
     { loc: '/', changefreq: 'daily', priority: '1.0' },
+    { loc: '/clarion/overview', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/mm/overview', changefreq: 'weekly', priority: '0.8' },
+    // 跨品牌需求詞著陸頁（承接「安卓機推薦」「行車記錄器推薦」這類搜尋）
+    { loc: '/products/android-headunit', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/products/dash-cam', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/products/car-audio', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/clarion/gl', changefreq: 'weekly', priority: '0.9' },
+    { loc: '/clarion/oem', changefreq: 'weekly', priority: '0.9' },
     { loc: '/multimedia', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/headUnit', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/audioAccessories', changefreq: 'weekly', priority: '0.8' },
     { loc: '/carFrame', changefreq: 'weekly', priority: '0.8' },
-    { loc: '/blindSpot', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/safety', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/mm/dashcam', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/clarion/dashcam', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/mm/camera', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/clarion/camera', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/headrest', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/portable', changefreq: 'weekly', priority: '0.8' },
     { loc: '/fitting', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/about', changefreq: 'monthly', priority: '0.7' },
     { loc: '/partner', changefreq: 'monthly', priority: '0.6' },
     { loc: '/qa', changefreq: 'monthly', priority: '0.5' },
-    { loc: '/download', changefreq: 'monthly', priority: '0.5' },
-    { loc: '/searchPage', changefreq: 'monthly', priority: '0.4' }
+    { loc: '/download', changefreq: 'monthly', priority: '0.5' }
+    // /searchPage 為站內搜尋結果頁，不列入 sitemap
   ]
 
   // 產品詳情頁：從後端 API 抓取 id
   const dynamicSources = [
     { endpoint: '/fitting', path: '/fittingDetail' },
-    { endpoint: '/blindspot', path: '/blindSpotDetail' },
+    { endpoint: '/blindspot', path: '/safetyDetail' },
     { endpoint: '/carframe', path: '/carFrameDetail' },
     { endpoint: '/multimedia', path: '/multimediaDetail' }
   ]

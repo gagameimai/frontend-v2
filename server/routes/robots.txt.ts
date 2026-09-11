@@ -7,6 +7,7 @@ export default defineEventHandler((event) => {
   const body =
     `User-agent: *\n` +
     `Allow: /\n` +
+    `Disallow: /searchPage\n` +
     `\n` +
     `Sitemap: ${site}/sitemap.xml\n`
 

@@ -7,16 +7,16 @@
     >
       <!-- 錯誤代碼 -->
       <p
-        class="text-[80px] sm:text-[120px] leading-none font-black text-[#023059] select-none"
+        class="text-[80px] sm:text-[120px] leading-none font-black text-[#007ABE] select-none"
       >
         {{ error.statusCode }}
       </p>
 
       <!-- 橘色分隔線 -->
-      <span class="block w-16 h-1 bg-[#F28729] rounded-full my-6"></span>
+      <span class="block w-16 h-1 bg-[#007ABE] rounded-full my-6"></span>
 
       <!-- 標題 -->
-      <h1 class="text-xl sm:text-2xl font-bold text-[#023059] mb-3">
+      <h1 class="text-xl sm:text-2xl font-bold text-[#007ABE] mb-3">
         {{ title }}
       </h1>
 
@@ -28,13 +28,13 @@
       <!-- 按鈕 -->
       <div class="flex flex-col sm:flex-row items-center gap-4">
         <button
-          class="px-8 py-3 rounded-full bg-[#F28729] text-white font-medium hover:opacity-90 transition-all"
+          class="px-8 py-3 rounded-full bg-[#007ABE] text-white font-medium hover:opacity-90 transition-all"
           @click="handleHome"
         >
           回到首頁
         </button>
         <button
-          class="px-8 py-3 rounded-full border border-[#023059] text-[#023059] font-medium hover:bg-[#023059] hover:text-white transition-all"
+          class="px-8 py-3 rounded-full border border-[#007ABE] text-[#007ABE] font-medium hover:bg-[#007ABE] hover:text-white transition-all"
           @click="handleReload"
         >
           重新整理

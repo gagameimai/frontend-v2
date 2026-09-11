@@ -1,0 +1,3 @@
+<template>
+  <HeadUnitDetail />
+</template>
