@@ -104,56 +104,51 @@
       </div>
     </section>
 
-    <!-- clarion 滿版背景圖：public/home/section-clarion.webp（手機 -m.webp） -->
+    <!-- clarion 滿版背景圖：後台「首頁滿版區塊管理」有填內容(zone1)就整段換成後台排版，
+         沒填就維持這裡寫死的預設版面；背景圖同理，後台有上傳圖才蓋掉 public/home/section-clarion.webp -->
     <section class="feature fullbleed" id="feature">
-      <div class="bg" :style="bgStyle(BG.clarion)"></div>
+      <div class="bg" :style="bgStyle(zoneBg('zone1', 'clarion'))"></div>
       <div class="scrim"></div>
       <div class="wrap">
-        <div class="kicker light"><span class="en">{{ $t('home.featuredKicker') }}</span><span class="jp">{{ $t('home.featuredLabel') }}</span></div>
-        <span class="pill">{{ $t('home.featPill') }}</span>
-        <h2 class="fbtitle">{{ $t('home.featTitle') }}</h2>
-        <p class="fbdesc">{{ $t('home.featDesc') }}</p>
-        <div class="fspecs">
-          <div><b>{{ $t('home.featSpec1') }}</b><small>{{ $t('home.featSpec1Sub') }}</small></div>
-          <div><b>{{ $t('home.featSpec2') }}</b><small>{{ $t('home.featSpec2Sub') }}</small></div>
-          <div><b>{{ $t('home.featSpec3') }}</b><small>{{ $t('home.featSpec3Sub') }}</small></div>
-        </div>
-        <div class="fbtns">
-          <span class="clarion">clarion</span>
-          <NuxtLink to="/clarion/gl" class="btn o">{{ $t('home.viewSeries') }}</NuxtLink>
-        </div>
+        <div v-if="homeSections.zone1 && homeSections.zone1.content" class="cms-content" v-html="homeSections.zone1.content"></div>
+        <template v-else>
+          <div class="kicker light"><span class="en">{{ $t('home.featuredKicker') }}</span><span class="jp">{{ $t('home.featuredLabel') }}</span></div>
+          <span class="pill">{{ $t('home.featPill') }}</span>
+          <h2 class="fbtitle">{{ $t('home.featTitle') }}</h2>
+          <p class="fbdesc">{{ $t('home.featDesc') }}</p>
+          <div class="fspecs">
+            <div><b>{{ $t('home.featSpec1') }}</b><small>{{ $t('home.featSpec1Sub') }}</small></div>
+            <div><b>{{ $t('home.featSpec2') }}</b><small>{{ $t('home.featSpec2Sub') }}</small></div>
+            <div><b>{{ $t('home.featSpec3') }}</b><small>{{ $t('home.featSpec3Sub') }}</small></div>
+          </div>
+          <div class="fbtns">
+            <span class="clarion">clarion</span>
+            <NuxtLink to="/clarion/gl" class="btn o">{{ $t('home.viewSeries') }}</NuxtLink>
+          </div>
+        </template>
       </div>
     </section>
 
-    <!-- MM 美邁滿版背景圖：public/home/section-mm.webp（手機 -m.webp） -->
+    <!-- MM 美邁滿版背景圖：同上，後台 zone2 有填內容才整段換成後台排版 -->
     <section class="mm fullbleed" id="mm">
-      <div class="bg" :style="bgStyle(BG.mm)"></div>
+      <div class="bg" :style="bgStyle(zoneBg('zone2', 'mm'))"></div>
       <div class="scrim right"></div>
       <div class="wrap">
         <div class="mmbox">
-          <div class="kicker light"><span class="en">{{ $t('home.mmKicker') }}</span><span class="jp">{{ $t('home.mmLabel') }}</span></div>
-          <h2>{{ $t('home.mmTitle') }}</h2>
-          <p>{{ $t('home.mmDesc') }}</p>
-          <div class="chips">
-            <NuxtLink class="chip" to="/mm/me">{{ $t('home.chipMultimedia') }}</NuxtLink>
-            <NuxtLink class="chip" to="/mm/oem">{{ $t('home.chipOem') }}</NuxtLink>
-            <NuxtLink class="chip" to="/carFrame">{{ $t('home.chipFrame') }}</NuxtLink>
-            <NuxtLink class="chip" to="/safety">{{ $t('home.chipSafety') }}</NuxtLink>
-            <NuxtLink class="chip" to="/mm/dashcam">{{ $t('home.chipDvr') }}</NuxtLink>
-          </div>
-          <NuxtLink to="/mm/overview" class="btn ghost">{{ $t('home.enterMM') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <!-- 數字 -->
-    <section class="trust">
-      <div class="wrap">
-        <div class="row">
-          <div><b>2020</b><small>{{ $t('home.trust1Sub') }}</small></div>
-          <div><b>200<span style="color: var(--navy)">+</span></b><small>{{ $t('home.trust2Sub') }}</small></div>
-          <div><b>40<span style="color: var(--navy)">+</span></b><small>{{ $t('home.trust3Sub') }}</small></div>
-          <div><b>{{ $t('home.trust4Num') }}</b><small>{{ $t('home.trust4Sub') }}</small></div>
+          <div v-if="homeSections.zone2 && homeSections.zone2.content" class="cms-content" v-html="homeSections.zone2.content"></div>
+          <template v-else>
+            <div class="kicker light"><span class="en">{{ $t('home.mmKicker') }}</span><span class="jp">{{ $t('home.mmLabel') }}</span></div>
+            <h2>{{ $t('home.mmTitle') }}</h2>
+            <p>{{ $t('home.mmDesc') }}</p>
+            <div class="chips">
+              <NuxtLink class="chip" to="/mm/me">{{ $t('home.chipMultimedia') }}</NuxtLink>
+              <NuxtLink class="chip" to="/mm/oem">{{ $t('home.chipOem') }}</NuxtLink>
+              <NuxtLink class="chip" to="/carFrame">{{ $t('home.chipFrame') }}</NuxtLink>
+              <NuxtLink class="chip" to="/safety">{{ $t('home.chipSafety') }}</NuxtLink>
+              <NuxtLink class="chip" to="/mm/dashcam">{{ $t('home.chipDvr') }}</NuxtLink>
+            </div>
+            <NuxtLink to="/mm/overview" class="btn ghost">{{ $t('home.enterMM') }}</NuxtLink>
+          </template>
         </div>
       </div>
     </section>
@@ -184,18 +179,21 @@
       </div>
     </section>
 
-    <!-- 尾端 CTA 滿版背景圖：public/home/section-cta.webp（手機 -m.webp） -->
+    <!-- 尾端 CTA 滿版背景圖：同上，後台 zone3 有填內容才整段換成後台排版 -->
     <section class="final fullbleed">
-      <div class="bg" :style="bgStyle(BG.cta)"></div>
+      <div class="bg" :style="bgStyle(zoneBg('zone3', 'cta'))"></div>
       <div class="scrim center"></div>
       <div class="wrap">
-        <div class="kicker" style="justify-content: center"><span class="en">{{ $t('home.finalKicker') }}</span><span class="jp">{{ $t('home.finalLabel') }}</span></div>
-        <h2>{{ $t('home.finalTitle') }}</h2>
-        <p style="max-width: 480px; margin: 10px auto 0">{{ $t('home.finalDesc') }}</p>
-        <div style="margin-top: 24px">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost" style="margin-left: 10px">{{ $t('home.faq') }}</NuxtLink>
-        </div>
+        <div v-if="homeSections.zone3 && homeSections.zone3.content" class="cms-content" v-html="homeSections.zone3.content"></div>
+        <template v-else>
+          <div class="kicker" style="justify-content: center"><span class="en">{{ $t('home.finalKicker') }}</span><span class="jp">{{ $t('home.finalLabel') }}</span></div>
+          <h2>{{ $t('home.finalTitle') }}</h2>
+          <p style="max-width: 480px; margin: 10px auto 0">{{ $t('home.finalDesc') }}</p>
+          <div style="margin-top: 24px">
+            <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
+            <NuxtLink to="/qa" class="btn ghost" style="margin-left: 10px">{{ $t('home.faq') }}</NuxtLink>
+          </div>
+        </template>
       </div>
     </section>
   </div>
@@ -221,6 +219,30 @@ const BG = {
 }
 // 用 CSS 變數把兩張圖都交給 .bg，桌機／手機由樣式表的 media query 決定吃哪一張
 const bgStyle = (s) => ({ '--bg': `url(${s.img})`, '--bg-m': `url(${s.imgM || s.img})` })
+
+// ---- 首頁「滿版區塊管理」（後台 home_section 管理：zone1/zone2/zone3）----
+// 後台每個區塊可以填：內容（CKEditor，整段蓋掉下面寫死的預設排版）、背景圖（電腦版/手機版）。
+// 還沒編輯過的區塊，API 回傳 content/img 都是 null，前台就照舊顯示預設文字與 BG 裡的預設圖，不會空白。
+const homeSections = ref({})
+function getHomeSections() {
+  $axios
+    .get('/home_section')
+    .then((response) => {
+      homeSections.value = response.data?.result || {}
+    })
+    .catch(() => {
+      homeSections.value = {}
+    })
+}
+// 背景圖：後台這個區塊有上傳電腦版圖才改用後台的圖（手機版留空就沿用後台電腦版圖），
+// 沒上傳就維持原本寫死在 BG 裡的預設圖
+function zoneBg(sectionKey, fallbackKey) {
+  const sec = homeSections.value[sectionKey]
+  if (sec && sec.img) {
+    return { img: sec.img, imgM: sec.img_mobile || sec.img }
+  }
+  return BG[fallbackKey]
+}
 
 // Hero 的向下指示：捲到下一段（車型查詢）
 function scrollToNext() {
@@ -479,6 +501,7 @@ onMounted(() => {
   getListData()
   getRecommendProducts()
   getInstallCases()
+  getHomeSections()
   heroTimer = setInterval(() => {
     activeSlide.value = (activeSlide.value + 1) % heroSlides.value.length
   }, 4500)
@@ -990,6 +1013,19 @@ onUnmounted(() => {
   color: var(--dim);
   font-size: 12px;
 }
+/* 後台「首頁滿版區塊管理」CKEditor 內容：管理者自己排版，這裡只給最基本的相容樣式
+   （圖片不溢出、連結顏色跟著段落走），不覆蓋管理者自訂的字級/顏色 */
+.cms-content {
+  font-family: inherit;
+}
+.cms-content :deep(img) {
+  max-width: 100%;
+  height: auto;
+}
+.cms-content :deep(a) {
+  color: inherit;
+}
+
 /* ── 主打（滿版情境段）── */
 .feature {
   background: var(--dark);

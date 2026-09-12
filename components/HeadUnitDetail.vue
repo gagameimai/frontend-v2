@@ -31,8 +31,12 @@
           <ul v-if="specList.length" class="speclist">
             <li v-for="(spec, i) in specList" :key="i">{{ spec }}</li>
           </ul>
+          <div v-if="info.price" class="price-tag">
+            <span class="pt-label">{{ $t('headUnitDetail.specPrice') }}</span>
+            <span class="pt-value">{{ info.price }}</span>
+          </div>
           <div class="warranty">{{ $t('multimediaDetail.warranty') }}</div>
-          <div class="price">
+          <div v-if="!info.price" class="price">
             {{ $t('multimediaDetail.priceNote') }}　<span>{{ $t('multimediaDetail.priceSub') }}</span>
           </div>
           <ShareButtons :title="info.name" />
@@ -83,7 +87,6 @@ const specList = computed(() => {
   if (info.value.hard_drive) list.push(`${t('headUnitDetail.specHardDrive')}：${info.value.hard_drive}`)
   if (info.value.ram) list.push(`${t('headUnitDetail.specRam')}：${info.value.ram}`)
   if (info.value.resolution) list.push(`${t('headUnitDetail.specResolution')}：${info.value.resolution}`)
-  if (info.value.price) list.push(`${t('headUnitDetail.specPrice')}：${info.value.price}`)
   return list
 })
 
@@ -166,6 +169,9 @@ useHead({
 .speclist { list-style: none; margin: 16px 0; padding: 0; }
 .speclist li { font-size: 14px; color: var(--text); padding: 7px 0; border-bottom: 1px solid var(--line); display: flex; gap: 8px; }
 .speclist li::before { content: '■'; color: var(--navy); font-size: 10px; margin-top: 4px; }
+.price-tag { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 10px; }
+.price-tag .pt-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+.price-tag .pt-value { font-size: 24px; font-weight: 900; color: var(--navy); }
 .warranty { display: inline-flex; align-items: center; gap: 8px; background: var(--bg2); border: 1px solid var(--line); border-radius: 20px; padding: 7px 14px; font-size: 12px; color: var(--navy); font-weight: 500; margin: 10px 0; }
 .price { margin: 14px 0; font-size: 14px; color: var(--muted); }
 .price span { font-size: 12px; }
