@@ -1,7 +1,11 @@
 <template>
   <div class="dl-page">
     <!-- 標題帶 -->
-    <div class="hd">
+    <div class="hd" :class="{ 'has-bn': banner.img }">
+      <!-- 後台「列表頁 Banner 管理 → 資源下載」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
+           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
+      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov"></div>
       <div class="wrap">
         <div class="en">{{ $t('download.eyebrow') }}</div>
         <h1>{{ $t('download.title') }}</h1>
@@ -79,6 +83,9 @@
 </template>
 
 <script setup>
+// 後台「列表頁 Banner 管理」：沒設定時 banner.img 為 null，維持原本的標題帶
+import { useListBanner } from '~/composables/useListBanner'
+const banner = useListBanner('download')
 const { t } = useI18n()
 const config = useRuntimeConfig()
 
@@ -135,7 +142,7 @@ useHead({
   --line: #e6ebf1;
   --navy: #007ABE;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   letter-spacing: 0.02em;
   background: var(--bg);
   color: var(--text);
@@ -145,19 +152,17 @@ useHead({
 .wrap { max-width: 920px; margin: 0 auto; padding: 0 26px; }
 .dl-page section { padding: 44px 0 70px; }
 
-/* 標題帶 */
-.hd { background: linear-gradient(115deg, #eef2f7, #dde5ef 60%, #cfdae8); padding: 46px 0; }
+.hd { position: relative; overflow: hidden; background: linear-gradient(115deg, #eef2f7, #dde5ef 60%, #cfdae8); padding: 46px 0; }
+.hd > .wrap { position: relative; z-index: 2; }
 .hd .en { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hd h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; margin-top: 8px; color: var(--ink); }
 .hd p { color: #41506b; margin-top: 8px; font-weight: 400; }
 
-/* 技師提醒 */
 .warn {
   background: #fff7ed; border: 1px solid #f3d9bb; border-radius: 12px;
   padding: 14px 16px; font-size: 13px; color: #8a5a1e; margin-bottom: 18px; line-height: 1.6;
 }
 
-/* 搜尋 */
 .tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 26px 0 22px; }
 .search { flex: 1; min-width: 220px; position: relative; }
 .search input {
@@ -168,7 +173,6 @@ useHead({
 .search .ic { position: absolute; left: 15px; top: 12px; color: var(--dim); }
 .cnt { align-self: center; font-size: 13px; color: var(--dim); }
 
-/* 品牌分頁 */
 .brandtabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
 .bt {
   border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 10px;
@@ -183,7 +187,6 @@ useHead({
   padding: 40px 26px; text-align: center; color: var(--muted); font-size: 14px;
 }
 
-/* 分類手風琴 */
 .grp { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; overflow: hidden; background: #fff; }
 .summary {
   width: 100%; cursor: pointer; display: flex; align-items: center; gap: 10px;
@@ -214,5 +217,15 @@ useHead({
 
 @media (max-width: 720px) {
   .grp li { flex-direction: column; align-items: flex-start; }
+}
+
+.hd.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hd.has-bn .in, .hd.has-bn > .wrap { width: 100%; }
+.hd .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hd .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
+@media (max-width: 640px) {
+  .hd.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
+  .hd.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
+  .hd.has-bn .bn-ov { display: none; }
 }
 </style>

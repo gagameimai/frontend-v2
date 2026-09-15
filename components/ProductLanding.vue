@@ -1,7 +1,11 @@
 <template>
   <div class="lp-page">
     <!-- HERO -->
-    <div class="hero">
+    <div class="hero" :class="{ 'has-bn': banner.img }">
+      <!-- 後台「列表頁 Banner 管理 → 產品分類頁」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
+           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
+      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov"></div>
       <div class="ov"></div>
       <div class="wrap in">
         <div class="ey">{{ t(`${ns}.eyebrow`) }}</div>
@@ -78,6 +82,9 @@ const props = defineProps({
 })
 
 const { t } = useI18n()
+// 後台「列表頁 Banner 管理」：沒設定時 banner.img 為 null，維持原本的標題帶
+import { useListBanner } from '~/composables/useListBanner'
+const banner = useListBanner('productLanding', computed(() => props.ns))
 const config = useRuntimeConfig()
 
 const { data } = await useAsyncData(`landing-${props.ns}`, async () => {
@@ -109,7 +116,7 @@ usePageSeo({
 .lp-page {
   --ink: #0d1b2e; --text: #1b2431; --muted: #5b6675; --dim: #93a0b0;
   --bg: #fff; --bg2: #f5f7fa; --line: #e6ebf1; --navy: #007abe; --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.85; letter-spacing: 0.02em;
 }
 .lp-page a { color: inherit; text-decoration: none; }
@@ -119,7 +126,7 @@ usePageSeo({
 
 .hero { position: relative; background: var(--dark); color: #fff; padding: 100px 0 68px; }
 .hero .ov { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,122,190,.2), transparent 62%); }
-.hero .in { position: relative; }
+.hero .in { position: relative; z-index: 2; }
 .hero .ey { font-size: 12px; letter-spacing: 2px; color: #7fc4ea; margin-bottom: 10px; }
 .hero h1 { font-size: 36px; font-weight: 900; margin: 0 0 14px; letter-spacing: .02em; }
 .hero p { max-width: 660px; color: #c6ced8; font-size: 15px; margin: 0; }
@@ -160,5 +167,15 @@ usePageSeo({
   .hero { padding: 80px 0 52px; }
   .hero h1 { font-size: 27px; }
   .ghead { flex-direction: column; align-items: flex-start; }
+}
+
+.hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
+.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(13, 16, 22, 0.93) 0%, rgba(13, 16, 22, 0.86) 36%, rgba(13, 16, 22, 0.55) 56%, rgba(13, 16, 22, 0.12) 80%); }
+@media (max-width: 640px) {
+  .hero.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
+  .hero.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
+  .hero.has-bn .bn-ov { display: none; }
 }
 </style>

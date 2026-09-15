@@ -189,9 +189,6 @@ function backToTop() {
   font-size: 12px;
   color: #6b7684;
 }
-/* ── 回到頂部：音旋按鈕 ──────────────────────────────
-   預設＝深色旋鈕、細外環；滑過＝外環亮 Clarion Azzurro 藍光暈；
-   點擊＝旋鈕微縮＋藍光擴散。捲動一段才淡入。 */
 .to-top {
   position: fixed;
   right: 22px;

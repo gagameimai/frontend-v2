@@ -80,7 +80,7 @@ usePageSeo({
 .cd-page {
   --ink: #0d1b2e; --text: #1b2431; --muted: #5b6675; --dim: #93a0b0;
   --bg: #fff; --bg2: #f5f7fa; --line: #e6ebf1; --navy: #007abe;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.75; letter-spacing: 0.02em;
 }
 .cd-page a { color: inherit; text-decoration: none; }

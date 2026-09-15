@@ -53,10 +53,8 @@ useHead({
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;900&display=swap");
-
 body {
-  font-family: "Noto Sans JP", "Source Sans Pro", -apple-system,
+  font-family: "Noto Sans TC", system-ui, "Microsoft JhengHei", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;

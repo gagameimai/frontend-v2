@@ -1,7 +1,11 @@
 <template>
   <div class="pt-page">
     <!-- 標題帶 -->
-    <div class="hd">
+    <div class="hd" :class="{ 'has-bn': banner.img }">
+      <!-- 後台「列表頁 Banner 管理 → 經銷據點」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
+           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
+      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov"></div>
       <div class="wrap">
         <div class="en">{{ $t('partner.eyebrow') }}</div>
         <h1>{{ $t('partner.title') }}</h1>
@@ -47,6 +51,9 @@
 </template>
 
 <script setup>
+// 後台「列表頁 Banner 管理」：沒設定時 banner.img 為 null，維持原本的標題帶
+import { useListBanner } from '~/composables/useListBanner'
+const banner = useListBanner('partner')
 import { usePageSeo } from '~/composables/usePageSeo'
 const { t } = useI18n()
 const config = useRuntimeConfig()
@@ -104,7 +111,7 @@ usePageSeo({
   --line: #e6ebf1;
   --navy: #007ABE;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   letter-spacing: 0.02em;
   background: var(--bg);
   color: var(--text);
@@ -114,13 +121,12 @@ usePageSeo({
 .wrap { max-width: 1000px; margin: 0 auto; padding: 0 26px; }
 .pt-page section { padding: 44px 0 70px; }
 
-/* 標題帶 */
-.hd { background: linear-gradient(115deg, #eef2f7, #dde5ef 60%, #cfdae8); padding: 52px 0; }
+.hd { position: relative; overflow: hidden; background: linear-gradient(115deg, #eef2f7, #dde5ef 60%, #cfdae8); padding: 52px 0; }
+.hd > .wrap { position: relative; z-index: 2; }
 .hd .en { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hd h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; margin-top: 8px; color: var(--ink); }
 .hd p { color: #41506b; margin-top: 8px; font-weight: 400; }
 
-/* 篩選列 */
 .bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
 .bar select {
   height: 46px; border: 1px solid var(--line); border-radius: 12px; padding: 0 16px;
@@ -129,7 +135,6 @@ usePageSeo({
 }
 .bar .cnt { color: var(--dim); font-size: 14px; }
 
-/* 據點卡片 */
 .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .card { border: 1px solid var(--line); border-radius: 14px; padding: 20px; transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
 .card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(13, 27, 46, 0.1); border-color: #cdd6e0; }
@@ -144,5 +149,15 @@ usePageSeo({
 
 @media (max-width: 760px) {
   .grid { grid-template-columns: 1fr; }
+}
+
+.hd.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hd.has-bn .in, .hd.has-bn > .wrap { width: 100%; }
+.hd .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hd .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
+@media (max-width: 640px) {
+  .hd.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
+  .hd.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
+  .hd.has-bn .bn-ov { display: none; }
 }
 </style>

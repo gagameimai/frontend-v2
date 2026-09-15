@@ -18,8 +18,8 @@
             <div class="drop">
               <small>{{ $t('header.clarionMenuTitle') }}</small>
               <div class="drop-grid">
-                <NuxtLink to="/clarion/oem">{{ $t('header.clarionItems.oem') }}</NuxtLink>
                 <NuxtLink to="/clarion/gl">{{ $t('header.clarionItems.gl') }}</NuxtLink>
+                <NuxtLink to="/clarion/oem">{{ $t('header.clarionItems.oem') }}</NuxtLink>
                 <NuxtLink to="/audioAccessories">{{ $t('header.clarionItems.audio') }}</NuxtLink>
                 <NuxtLink to="/clarion/camera">{{ $t('header.clarionItems.camera') }}</NuxtLink>
                 <NuxtLink to="/headUnit">{{ $t('header.clarionItems.din') }}</NuxtLink>
@@ -194,7 +194,6 @@ a {
   color: inherit;
   text-decoration: none;
 }
-/* 語言切換（原本上方灰色橫條移除，改放表頭選單右側，比照草稿樣式） */
 .lang {
   display: inline-flex;
   align-items: center;
@@ -434,8 +433,6 @@ header {
   }
 }
 
-/* ── floating 表頭（目前只有首頁在用）：透明浮在 Banner 上，
-   捲動 / 選單展開（isSolid）/ 滑到下拉選單（:has 判斷）時才轉白底 ── */
 .c-header.floating header {
   position: relative;
   z-index: 1;
@@ -469,7 +466,6 @@ header {
 .c-header.floating header:has(.has-drop:hover)::before {
   opacity: 0;
 }
-/* 頂端（透明狀態）：第一層選單文字、語言、漢堡轉白字，才看得清楚 */
 .c-header.floating header:not(.solid):not(:has(.has-drop:hover)) .menu > a,
 .c-header.floating header:not(.solid):not(:has(.has-drop:hover)) .menu .has-drop > a {
   color: #fff;
@@ -506,12 +502,10 @@ header {
 .c-header.floating header:not(.solid):not(:has(.has-drop:hover)) .lang .sep {
   color: rgba(255, 255, 255, 0.6);
 }
-/* 下拉面板永遠白底深字，不受上面白字規則影響 */
 .c-header.floating .drop,
 .c-header.floating .drop * {
   text-shadow: none;
 }
-/* logo：透明時顯示白色版，轉白底後淡出換回深色版 */
 .c-header.floating .logo-badge {
   position: relative;
 }

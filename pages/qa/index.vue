@@ -1,8 +1,12 @@
 <template>
   <div class="qa-page">
     <!-- HERO -->
-    <div class="hero">
-      <div class="glow"></div>
+    <div class="hero" :class="{ 'has-bn': banner.img }">
+      <!-- 後台「列表頁 Banner 管理 → 常見問題」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
+           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
+      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov"></div>
+      <div v-if="!banner.img" class="glow"></div>
       <div class="wrap in">
         <div class="ey">{{ $t('qa.eyebrow') }}</div>
         <h1>{{ $t('qa.title') }}</h1>
@@ -49,6 +53,9 @@
 </template>
 
 <script setup>
+// 後台「列表頁 Banner 管理」：沒設定時 banner.img 為 null，維持原本的標題帶
+import { useListBanner } from '~/composables/useListBanner'
+const banner = useListBanner('qa')
 const { t } = useI18n()
 const config = useRuntimeConfig()
 
@@ -75,7 +82,7 @@ useHead({
   --line: #e6ebf1;
   --navy: #007ABE;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.75;
@@ -106,7 +113,6 @@ useHead({
 .quick a { font-size: 13px; color: var(--navy); background: #fff; border: 1px solid #d7e0ea; border-radius: 22px; padding: 8px 16px; transition: 0.16s; }
 .quick a:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-/* 保固重點帶 */
 .perf { background: var(--navy); }
 .perf .row { max-width: 1080px; margin: 0 auto; padding: 20px 26px; display: grid; grid-template-columns: repeat(3, 1fr); }
 .perf .c { text-align: center; padding: 0 16px; border-right: 1px solid rgba(255, 255, 255, 0.14); }
@@ -114,8 +120,7 @@ useHead({
 .perf b { display: block; font-size: 16px; font-weight: 800; color: var(--navy); }
 .perf small { font-size: 11px; color: rgba(255, 255, 255, 0.55); }
 
-/* 後台內容（統一成新站字體與排版） */
-.rich :deep(*) { font-family: 'Noto Sans JP', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
+.rich :deep(*) { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
 .rich :deep(h1), .rich :deep(h2) { font-size: clamp(20px, 2.6vw, 26px); font-weight: 900; color: var(--ink); margin: 30px 0 12px; }
 .rich :deep(h3), .rich :deep(h4) { font-size: 16px; font-weight: 800; color: var(--navy); margin: 22px 0 8px; }
 .rich :deep(p) { color: var(--muted); font-weight: 300; margin: 8px 0; }
@@ -143,5 +148,15 @@ useHead({
 @media (max-width: 820px) {
   .perf .row { grid-template-columns: 1fr; gap: 12px; }
   .perf .c { border-right: none; }
+}
+
+.hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
+.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
+@media (max-width: 640px) {
+  .hero.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
+  .hero.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
+  .hero.has-bn .bn-ov { display: none; }
 }
 </style>

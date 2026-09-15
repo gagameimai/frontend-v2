@@ -13,7 +13,7 @@ export default {
     clarionMenuTitle: 'CLARION ／ 產品分類',
     clarionViewAll: '查看 Clarion 全系列 →',
     clarionItems: {
-      oem: '車型專用機 OEM',
+      oem: '車型專用機',
       gl: '多媒體安卓機 GL',
       audio: '汽車音響',
       safety: '鏡頭 · 頭枕螢幕',

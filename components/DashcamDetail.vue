@@ -164,7 +164,7 @@ useHead({
   --navy: #007ABE;
   --blue-soft: #6fa0ff;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -182,10 +182,8 @@ useHead({
 .btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
 .btn.o { background: var(--navy); color: #ffffff; font-weight: 700; }
 
-/* 麵包屑（白底，DVR 草稿樣式） */
 .crumb { font-size: 12px; color: var(--dim); padding: 16px 0; }
 .crumb a:hover { color: var(--navy); }
-/* 產品主視覺（左圖右資訊，DVR 草稿樣式） */
 .phero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 44px; padding: 10px 0 40px; }
 .gal-main { aspect-ratio: 4/3; border: 1px solid var(--line); border-radius: 16px; background: #fff; position: relative; overflow: hidden; cursor: zoom-in; }
 .gal-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px; mix-blend-mode: multiply; }
@@ -203,13 +201,11 @@ useHead({
   .phero { grid-template-columns: 1fr; gap: 24px; padding: 16px 0 30px; }
 }
 
-/* 內文 */
 .rich { margin-top: 20px; padding-bottom: 8px; }
-.rich :deep(*) { font-family: 'Noto Sans JP', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
+.rich :deep(*) { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
 .rich :deep(img) { max-width: 100%; height: auto; margin: 14px auto; background: #fff; mix-blend-mode: multiply; }
 .rich :deep(table) { max-width: 100%; margin: 0 auto; }
 
-/* 適用車款 */
 .sec { padding: 44px 0; border-top: 1px solid var(--line); margin-top: 20px; }
 .sec h2 { text-align: center; margin-bottom: 22px; font-size: clamp(22px, 3vw, 30px); font-weight: 900; color: var(--ink); }
 .finder2 { display: flex; justify-content: center; margin-bottom: 22px; }
@@ -220,8 +216,6 @@ useHead({
 .fitcard p { font-size: 13px; color: var(--muted); margin: 2px 0; }
 .nodata { color: var(--dim); text-align: center; }
 
-
-/* 燈箱 */
 .lb-modal { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(1, 27, 51, 0.88); backdrop-filter: blur(6px); cursor: zoom-out; }
 .lb-modal.open { display: flex; }
 .lb-modal img { max-width: min(94vw, 1180px); max-height: 88vh; object-fit: contain; border-radius: 14px; background: #fff; box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4); }

@@ -281,9 +281,7 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://clarion.meimai.com.tw/' },
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap' },
+    // 字型由 nuxt.config.ts 全站載一次（Noto Sans TC），這裡不再重複載
   ],
 })
 
@@ -525,7 +523,7 @@ onUnmounted(() => {
   --blue: #3d7bff;
   --blue-soft: #6fa0ff;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
   font-weight: 400;
@@ -619,13 +617,9 @@ onUnmounted(() => {
   border: 1px solid var(--line);
   color: var(--ink);
 }
-/* hero（草稿版：全幅圖片交叉淡出＋ken burns，表頭浮在上面） */
 .hero {
   position: relative;
   width: 100%;
-  /* 整頁式：Hero 吃滿一屏。svh 是「小視窗高度」，手機捲動時網址列縮放不會讓版面跳動；
-     不支援 svh 的舊瀏覽器會落回上一行的 vh。表頭是透明浮貼（margin-bottom:-64px），
-     所以滿版高度剛好不會多出一截捲動。 */
   min-height: 100vh;
   min-height: 100svh;
   overflow: hidden;
@@ -658,9 +652,6 @@ onUnmounted(() => {
   object-position: center center;
   display: block;
 }
-/* Hero 底部漸層：滿版後底圖可能是淺色（目前的示意圖就是白底），
-   白色的向下指示與輪播圓點會整個消失。這條中性暗漸層讓底部一律有對比，
-   也和表頭那條頂部漸層對稱。用中性黑不用藍，維持 VIS「不整塊染藍」。 */
 .hero::after {
   content: "";
   position: absolute;
@@ -692,7 +683,6 @@ onUnmounted(() => {
     animation: none;
   }
 }
-/* 頂部暗漸層：讓浮動表頭上的白字在任何 Banner 圖上都看得清楚 */
 .hero::before {
   content: '';
   position: absolute;
@@ -742,8 +732,6 @@ onUnmounted(() => {
   gap: 10px;
   flex-wrap: wrap;
 }
-/* 整頁式：finder 卡會往上疊 46px 蓋住 hero 底部，
-   所以輪播圓點改放右下角，向下指示留在正中央，兩者不再互相打架。 */
 .dots {
   position: absolute;
   bottom: 100px;
@@ -771,10 +759,6 @@ onUnmounted(() => {
   border-radius: 5px;
 }
 /* finder */
-/* ── 整頁式：滿版情境段 ─────────────────────────────
-   VIS 原則：底色用中性深 #0d1016，遮罩用中性黑不染藍，
-   Azzurro #007ABE 只點在小標、細線、按鈕、圓點這些細節上。
-   .bg 背景圖不存在時載不到，直接顯示 section 自己的深色底，版面不會壞。 */
 .fullbleed {
   position: relative;
   min-height: 100vh;
@@ -793,9 +777,8 @@ onUnmounted(() => {
   background-position: center center;
   background-repeat: no-repeat;
 }
-/* 手機改吃直式那張（--bg-m 沒給時 bgStyle 會回填桌機圖，所以不會空） */
 @media (max-width: 640px) {
-  .fullbleed .bg { background-image: var(--bg-m, var(--bg)); }
+  .fullbleed .bg { background-image: var(--bg-m, var(--bg)); background-size: cover; background-position: center center; }
 }
 .fullbleed .scrim {
   position: absolute;
@@ -808,17 +791,12 @@ onUnmounted(() => {
 .fullbleed .scrim.center {
   background: radial-gradient(120% 92% at 50% 50%, rgba(13, 16, 22, 0.28) 0%, rgba(13, 16, 22, 0.72) 76%);
 }
-/* 注意：.fullbleed 是 grid，而 .wrap 本身帶 margin:0 auto。
-   grid item 加 margin:auto 會 shrink-to-fit（實測只剩 572px），
-   所以這裡必須明確給 width:100%，版面才會照 max-width 展開。 */
 .fullbleed .wrap {
   position: relative;
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
 }
-/* 深色底元件覆寫：.btn.ghost 與 .chip 原本是為淺色底設計的（深字＋淺灰框），
-   移到深色情境圖上會幾乎看不見。 */
 .fullbleed .btn.ghost { border-color: rgba(255, 255, 255, 0.32); color: #fff; background: transparent; }
 .fullbleed .btn.ghost:hover { border-color: var(--navy); color: #fff; }
 .fullbleed .chip { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.18); color: #dbe3ec; }
@@ -828,7 +806,6 @@ onUnmounted(() => {
 .fullbleed h2 { color: #fff; }
 @media (max-width: 820px) {
   .fullbleed { min-height: auto; padding: 76px 0; }
-  /* 手機是直式，橫向遮罩沒意義，改成上淺下深 */
   .fullbleed .scrim,
   .fullbleed .scrim.right,
   .fullbleed .scrim.center {
@@ -836,7 +813,6 @@ onUnmounted(() => {
   }
 }
 
-/* ── Hero 向下捲動指示 ── */
 .scrolldown {
   position: absolute;
   left: 50%;
@@ -863,7 +839,6 @@ onUnmounted(() => {
 @media (max-width: 640px) { .scrolldown { bottom: 70px; font-size: 9px; } }
 @media (prefers-reduced-motion: reduce) { .scrolldown svg { animation: none; } }
 
-/* ── 車型查詢：浮貼在 Hero 底部 ── */
 .finderwrap {
   display: flex;
   justify-content: center;
@@ -940,7 +915,6 @@ onUnmounted(() => {
 .kicker.light .en {
   color: #fff;
 }
-/* 視覺上隱藏、但搜尋引擎與螢幕閱讀器讀得到（不可用 display:none，那樣會被忽略） */
 .byneed {
   display: flex;
   flex-wrap: wrap;
@@ -980,7 +954,6 @@ onUnmounted(() => {
 .pcard {
   cursor: pointer;
 }
-/* 整張卡片都是連結範圍 */
 .pcard .plink {
   display: block;
   color: inherit;
@@ -1013,8 +986,6 @@ onUnmounted(() => {
   color: var(--dim);
   font-size: 12px;
 }
-/* 後台「首頁滿版區塊管理」CKEditor 內容：管理者自己排版，這裡只給最基本的相容樣式
-   （圖片不溢出、連結顏色跟著段落走），不覆蓋管理者自訂的字級/顏色 */
 .cms-content {
   font-family: inherit;
 }
@@ -1026,7 +997,6 @@ onUnmounted(() => {
   color: inherit;
 }
 
-/* ── 主打（滿版情境段）── */
 .feature {
   background: var(--dark);
   color: #fff;
@@ -1042,7 +1012,6 @@ onUnmounted(() => {
   font-weight: 700;
   letter-spacing: 1px;
 }
-/* 權重要蓋過全域的 .c-page h2，否則標題會變成深藍色、壓在深色照片上看不見 */
 .c-page .feature .fbtitle {
   font-size: clamp(30px, 5vw, 52px);
   font-weight: 900;
@@ -1051,7 +1020,6 @@ onUnmounted(() => {
   line-height: 1.2;
   letter-spacing: 0.01em;
 }
-/* 權重要蓋過全域的 .c-page p（--muted 深灰），否則內文在深色底圖上會看不清楚 */
 .c-page .feature .fbdesc {
   color: #c3ccd8;
   max-width: 540px;
@@ -1075,7 +1043,6 @@ onUnmounted(() => {
   font-size: 20px;
 }
 
-/* ── MM 美邁（滿版情境段）── */
 .mm { background: var(--dark); color: #fff; }
 .mm .wrap { max-width: 1080px; display: flex; justify-content: flex-end; }
 .mmbox { max-width: 520px; }
@@ -1122,7 +1089,6 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 18px;
 }
-/* 手機上四個數字換行要平衡改成 2×2 */
 @media (max-width: 640px) {
   .trust .row { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 12px; }
 }
@@ -1178,7 +1144,6 @@ onUnmounted(() => {
   color: var(--dim);
   font-size: 12px;
 }
-/* ── 尾端 CTA 滿版 ── */
 .final { background: var(--dark); text-align: center; color: #fff; }
 .final h2 { color: #fff; font-size: clamp(26px, 4.2vw, 42px); font-weight: 900; margin: 14px 0 0; }
 .final p { color: #c3ccd8; font-size: 15px; }

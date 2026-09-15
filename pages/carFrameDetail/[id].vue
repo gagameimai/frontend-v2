@@ -190,7 +190,7 @@ useHead({
   --line: #e6ebf1;
   --navy: #007ABE;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.75;
@@ -209,7 +209,6 @@ useHead({
 .btn.o { background: var(--navy); color: #ffffff; font-weight: 700; }
 .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
 
-/* 麵包屑 */
 .crumbwrap { background: linear-gradient(115deg, #f3f6fa, #e9eff7 60%, #dfe8f2); border-bottom: 1px solid var(--line); }
 .crumb { font-size: 13px; color: var(--muted); padding: 16px 0; }
 .crumb a:hover { color: var(--navy); }
@@ -230,13 +229,11 @@ useHead({
 .price { margin: 6px 0 14px; font-size: 14px; color: var(--muted); }
 .price span { font-size: 12px; }
 
-/* 內文 */
 .rich { margin-top: 6px; padding-bottom: 8px; }
-.rich :deep(*) { font-family: 'Noto Sans JP', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
+.rich :deep(*) { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important; }
 .rich :deep(img) { max-width: 100%; height: auto; margin: 12px auto; }
 .rich :deep(table) { max-width: 100%; margin: 0 auto; }
 
-/* 圖庫區塊 */
 .gsec { padding: 48px 0; border-top: 1px solid var(--line); text-align: center; }
 .gsec.alt { background: var(--bg2); }
 .gsec h2 { margin-bottom: 24px; font-size: clamp(20px, 2.6vw, 26px); font-weight: 900; color: var(--ink); }
@@ -245,7 +242,6 @@ useHead({
 .gtile { aspect-ratio: 4/3; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; position: relative; background: var(--bg2); cursor: zoom-in; }
 .gtile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
-/* 推薦安卓機 */
 .recgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 980px; margin: 0 auto; text-align: left; }
 .reccard { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; transition: transform 0.2s, box-shadow 0.2s; display: block; }
 .reccard:hover { transform: translateY(-5px); box-shadow: 0 16px 36px rgba(13, 27, 46, 0.12); }
@@ -255,8 +251,6 @@ useHead({
 .reccard h4 { font-size: 15px; font-weight: 700; color: var(--ink); }
 .reccard .sp { font-size: 12px; color: var(--dim); margin-top: 4px; line-height: 1.6; }
 
-
-/* 燈箱 */
 .lb-modal { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(1, 27, 51, 0.88); backdrop-filter: blur(6px); cursor: zoom-out; }
 .lb-modal.open { display: flex; }
 .lb-modal img { max-width: min(94vw, 1180px); max-height: 88vh; object-fit: contain; border-radius: 14px; background: #fff; box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4); }

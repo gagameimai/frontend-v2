@@ -30,6 +30,11 @@ export default defineNuxtConfig({
         // 透過 composables/useBrandZone.js 統一、即時切換，見 app.vue 的 useHead(faviconLinks)。
         { key: 'fav-ico', rel: "icon", type: "image/x-icon", sizes: "any", href: "/favicon.ico" },
         { key: 'fav-apple', rel: "apple-touch-icon", type: "image/png", sizes: "180x180", href: "/favicon_180.png" },
+        // 全站字型：只用 Noto Sans TC，只在這裡載入一次。
+        // 舊code在 app.vue 用 @import 載 Noto Sans JP、首頁又再載一次 JP+TC，會擋首屏且日文字型顯示繁中會有日式字形。
+        { key: 'font-pre1', rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { key: 'font-pre2', rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { key: 'font-tc', rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap' },
       ],
       script:[]
     }

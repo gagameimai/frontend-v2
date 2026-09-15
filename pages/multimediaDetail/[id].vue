@@ -132,7 +132,7 @@ useHead({
   --navy: #007ABE;
   --blue-soft: #6fa0ff;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -175,10 +175,9 @@ useHead({
 .price { margin: 14px 0; font-size: 14px; color: var(--muted); }
 .price span { font-size: 12px; }
 
-/* 內文（ckeditor content） */
 .detail { padding: 20px 0 50px; }
 .content { max-width: 1080px; margin: 0 auto; }
-.content :deep(*) { font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif !important; }
+.content :deep(*) { font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif !important; }
 .content :deep(table) { max-width: 100%; }
 
 @media (max-width: 820px) {

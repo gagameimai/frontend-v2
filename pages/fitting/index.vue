@@ -4,9 +4,13 @@
     <div class="hero">
       <!-- 後台「列表頁 Banner 管理」：桌機 1920×480（4:1）、手機 1080×608（16:9）。
            兩張都交給 CSS 變數，≤640px 由樣式表切到手機那張；手機沒設定就沿用桌機。 -->
-      <div v-if="banner.img" class="bg" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-else class="glow"></div>
-      <div v-if="banner.img" class="ov"></div>
+      <!-- 手機版：有上傳手機圖就用手機圖，沒上傳就自動用電腦版圖片；電腦版跟手機版都沒圖才顯示預設底色 -->
+      <div v-if="banner.img" class="bg bg-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bg bg-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="!banner.img" class="glow glow-desktop"></div>
+      <div v-if="!banner.imgMobile && !banner.img" class="glow glow-mobile"></div>
+      <div v-if="banner.img" class="ov ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
         <div class="ey">{{ eyebrow }}</div>
         <h1>{{ $t('fitting.title') }}</h1>
@@ -116,7 +120,7 @@ usePageSeo({
   --line: #e6ebf1;
   --navy: #007ABE;
   --dark: #0d1016;
-  font-family: 'Noto Sans JP', 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
+  font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -140,21 +144,17 @@ usePageSeo({
 .btn.ghost-light { background: transparent; border: 1px solid var(--line); color: var(--ink); margin-left: 10px; }
 
 /* hero */
-/* 列表頁 Banner：桌機固定 4:1 長條（1920×480）→ min-height 用 25vw，之後上傳橫幅照片才不會被壓扁；
-   文字改貼齊上方、置左（不再垂直置中）。 */
-.hero { position: relative; overflow: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); min-height: clamp(260px, 25vw, 480px); }
+.hero { position: relative; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
-/* 有上傳圖就以圖為主：不降透明度。白色漸層只蓋左邊文字區，右邊 1/3 完整露出。 */
-.hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-image: var(--bg); background-size: cover; background-position: center; }
-/* 內容欄置中（max-width 1080），文字最右可到視窗 ~50%，所以白色漸層要蓋到 64% 才收；右邊 1/3 完整露出。 */
+.hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
 .hero .ov { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
-/* 手機：改成「圖在上（16:9 完整露出，不蓋白霧）、文字在下」 */
+.hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: none; }
 @media (max-width: 640px) {
-  .hero { display: block; min-height: 0; }
-  .hero .bg { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
-  .hero .ov { display: none; }
+  .hero .bg-desktop, .hero .glow-desktop, .hero .ov-desktop { display: none; }
+  .hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: block; }
+  .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
 }
-.hero .in { position: relative; z-index: 2; padding: 52px 8px 46px; }
+.hero .in { position: relative; z-index: 2; width: 100%; padding: 52px 8px 46px; }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
 .hero p { color: #41506b; max-width: 560px; font-weight: 300; }
