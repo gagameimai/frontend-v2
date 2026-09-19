@@ -99,6 +99,19 @@ onBeforeUnmount(() => {
   padding: 0;
   transition: border-color 0.16s, color 0.16s, transform 0.16s;
 }
+/* ── 手機觸控目標 ≥44×44（2026-09-18）──────────────────────────
+   視覺大小不變，用 ::after 把「可以點到的範圍」撐到 44×44。
+   直接把圖示改大會動到版面，所以用這個做法。 */
+.share-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
 .share-btn:hover {
   border-color: var(--navy, #007abe);
   color: var(--navy, #007abe);

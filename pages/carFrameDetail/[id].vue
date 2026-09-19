@@ -123,6 +123,7 @@
 </template>
 
 <script setup>
+import { usePageSeo } from '~/composables/usePageSeo'
 const runtimeConfig = useRuntimeConfig()
 const route = useRoute()
 const { t } = useI18n()
@@ -169,13 +170,14 @@ const descText = () => {
   return `${c.brand_name} ${c.car_name || ''} ${c.year_start || ''}-${c.year_end || ''} ${c.size || ''}吋`
 }
 
-useHead({
-  title: () => heading.value || t('carFrameDetail.title'),
-  meta: [
-    { name: 'description', content: () => descText() },
-    { property: 'og:description', content: () => descText() },
-    { property: 'og:image', content: () => info.value.img || '/new_panel.png' }
-  ]
+// SEO：標題／描述／og／canonical 一次設定（標題補上類別）
+usePageSeo({
+  title: () => {
+    const cat = t('carFrameDetail.title')
+    return heading.value ? `${heading.value} ${cat}` : cat
+  },
+  description: () => descText(),
+  image: () => info.value.img || '/new_panel.png'
 })
 </script>
 

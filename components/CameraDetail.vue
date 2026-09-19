@@ -51,6 +51,7 @@
 </template>
 
 <script setup>
+import { usePageSeo } from '~/composables/usePageSeo'
 import { useProductJsonLd } from '~/composables/useJsonLd'
 // brand：'mm' 或 'clarion'，由各品牌薄頁面傳入
 const props = defineProps({
@@ -108,13 +109,16 @@ useProductJsonLd(() => ({
   price: info.value.price
 }))
 
-useHead({
-  title: () => info.value.name || t('cameraDetail.title'),
-  meta: [
-    { name: 'description', content: () => info.value.memo_in || '' },
-    { property: 'og:description', content: () => info.value.memo_in || '' },
-    { property: 'og:image', content: () => info.value.img || '/new_panel.png' }
-  ]
+// SEO：標題／描述／og／canonical 一次設定。
+// 標題補上類別（例如「ME-82+ 多媒體安卓機」），只放型號在搜尋結果上沒有任何關鍵字。
+usePageSeo({
+  title: () => {
+    const name = info.value.name
+    const cat = t('cameraDetail.title')
+    return name ? `${name} ${cat}` : cat
+  },
+  description: () => info.value.memo_in || '',
+  image: () => info.value.img || '/new_panel.png'
 })
 </script>
 

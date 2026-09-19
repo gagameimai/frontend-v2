@@ -4,8 +4,10 @@
     <div class="hero" :class="{ 'has-bn': banner.img }">
       <!-- 後台「列表頁 Banner 管理 → 關於我們」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
            沒上傳就維持原本的標題帶樣式。 -->
-      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-if="banner.img" class="bn-ov"></div>
+      <div v-if="banner.img" class="bn bn-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn bn-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov bn-ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
       <div v-if="!banner.img" class="glow"></div>
       <div class="wrap in">
         <div class="ey">{{ $t('about.eyebrow') }}</div>
@@ -18,18 +20,6 @@
       <div class="wrap-sm">
         <div v-if="aboutContent" class="rich" v-html="aboutContent"></div>
         <p v-else class="empty">{{ $t('about.empty') }}</p>
-      </div>
-    </section>
-
-    <!-- 常見問題 -->
-    <section class="faq">
-      <div class="wrap-sm">
-        <div class="lbl">{{ $t('about.faqLabel') }}</div>
-        <h2>{{ $t('about.faqTitle') }}</h2>
-        <div class="fq" v-for="(item, i) in faqItems" :key="i">
-          <h3>{{ item.q }}</h3>
-          <p>{{ item.a }}</p>
-        </div>
       </div>
     </section>
 
@@ -117,8 +107,7 @@ useFaqJsonLd(() => faqItems.value)
 .hero .in { position: relative; z-index: 2; padding: 56px 8px 46px; }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(26px, 4.5vw, 42px); font-weight: 900; color: var(--ink); line-height: 1.2; margin: 10px 0; max-width: 640px; }
-.hero p { color: #41506b; max-width: 560px; font-weight: 300; margin-top: 6px; }
-
+.hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; margin-top: 6px; }
 .stats { background: var(--navy); }
 .stats .row { max-width: 1080px; margin: 0 auto; padding: 22px 26px; display: grid; grid-template-columns: repeat(4, 1fr); }
 .stats .c { text-align: center; padding: 0 16px; border-right: 1px solid rgba(255, 255, 255, 0.14); }
@@ -189,11 +178,11 @@ useFaqJsonLd(() => faqItems.value)
 
 .hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
-.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-size: cover; background-position: center; }
 .hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
+.hero .bn-mobile, .hero .bn-ov-mobile { display: none; }
 @media (max-width: 640px) {
-  .hero.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
-  .hero.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
-  .hero.has-bn .bn-ov { display: none; }
+  .hero .bn-desktop, .hero .bn-ov-desktop { display: none; }
+  .hero .bn-mobile, .hero .bn-ov-mobile { display: block; }
 }
 </style>

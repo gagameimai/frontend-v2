@@ -53,7 +53,14 @@ useHead({
 </script>
 
 <style>
+/* 全站防護：不管哪個頁面的哪個元素不小心撐寬都不會讓整個網頁出現水平捲軸，這是業界標準做法*/
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
 body {
+  overflow-x: hidden;
+  width: 100%;
   font-family: "Noto Sans TC", system-ui, "Microsoft JhengHei", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;

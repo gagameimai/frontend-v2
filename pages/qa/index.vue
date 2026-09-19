@@ -4,8 +4,10 @@
     <div class="hero" :class="{ 'has-bn': banner.img }">
       <!-- 後台「列表頁 Banner 管理 → 常見問題」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
            沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
-      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-if="banner.img" class="bn-ov"></div>
+      <div v-if="banner.img" class="bn bn-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn bn-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov bn-ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
       <div v-if="!banner.img" class="glow"></div>
       <div class="wrap in">
         <div class="ey">{{ $t('qa.eyebrow') }}</div>
@@ -34,25 +36,11 @@
         <p v-else class="empty">{{ $t('qa.empty') }}</p>
       </div>
     </section>
-
-    <!-- CTA -->
-    <section class="cta">
-      <div class="wrap">
-        <div class="lbl">{{ $t('qa.ctaLabel') }}</div>
-        <h2>{{ $t('qa.ctaTitle') }}</h2>
-        <p>{{ $t('qa.ctaDesc') }}</p>
-        <div class="cta-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/download" class="btn ghost">{{ $t('qa.quickDownload') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <div class="updated">{{ $t('qa.updated') }}</div>
   </div>
 </template>
 
 <script setup>
+import { usePageSeo } from '~/composables/usePageSeo'
 // 後台「列表頁 Banner 管理」：沒設定時 banner.img 為 null，維持原本的標題帶
 import { useListBanner } from '~/composables/useListBanner'
 const banner = useListBanner('qa')
@@ -66,8 +54,10 @@ const { data } = await useAsyncData('qa-question', () =>
 
 const question = computed(() => data.value?.result?.content ?? '')
 
-useHead({
-  title: () => t('qa.title')
+// SEO：標題／描述／og／canonical 一次設定（usePageSeo 會自動補站名後綴與 canonical）
+usePageSeo({
+  title: () => t('qa.title'),
+  description: () => t('qa.intro')
 })
 </script>
 
@@ -108,8 +98,7 @@ useHead({
 .hero .in { position: relative; z-index: 2; padding: 52px 8px 46px; }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
-.hero p { color: #41506b; max-width: 560px; font-weight: 300; }
-.quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }.quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
 .quick a { font-size: 13px; color: var(--navy); background: #fff; border: 1px solid #d7e0ea; border-radius: 22px; padding: 8px 16px; transition: 0.16s; }
 .quick a:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
 
@@ -152,11 +141,11 @@ useHead({
 
 .hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
-.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-size: cover; background-position: center; }
 .hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
+.hero .bn-mobile, .hero .bn-ov-mobile { display: none; }
 @media (max-width: 640px) {
-  .hero.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
-  .hero.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
-  .hero.has-bn .bn-ov { display: none; }
+  .hero .bn-desktop, .hero .bn-ov-desktop { display: none; }
+  .hero .bn-mobile, .hero .bn-ov-mobile { display: block; }
 }
 </style>

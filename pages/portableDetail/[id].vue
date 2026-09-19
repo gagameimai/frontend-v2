@@ -51,6 +51,7 @@
 </template>
 
 <script setup>
+import { usePageSeo } from '~/composables/usePageSeo'
 const route = useRoute()
 const config = useRuntimeConfig()
 const { t } = useI18n()
@@ -84,13 +85,16 @@ const onImgError = (e) => {
   e.target.style.display = 'none'
 }
 
-useHead({
-  title: () => info.value.name || t('portableDetail.title'),
-  meta: [
-    { name: 'description', content: () => info.value.memo_in || '' },
-    { property: 'og:description', content: () => info.value.memo_in || '' },
-    { property: 'og:image', content: () => info.value.img || '/new_panel.png' }
-  ]
+// SEO：標題／描述／og／canonical 一次設定。
+// 標題補上類別（例如「ME-82+ 多媒體安卓機」），只放型號在搜尋結果上沒有任何關鍵字。
+usePageSeo({
+  title: () => {
+    const name = info.value.name
+    const cat = t('portableDetail.title')
+    return name ? `${name} ${cat}` : cat
+  },
+  description: () => info.value.memo_in || '',
+  image: () => info.value.img || '/new_panel.png'
 })
 </script>
 

@@ -106,6 +106,7 @@
 </template>
 
 <script setup>
+import { usePageSeo } from '~/composables/usePageSeo'
 import { resolveComponent, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useListBanner } from '~/composables/useListBanner'
 
@@ -185,8 +186,10 @@ onBeforeUnmount(() => {
   if (observer) observer.disconnect()
 })
 
-useHead({
-  title: () => t('headUnit.title')
+// SEO：標題／描述／og／canonical 一次設定（usePageSeo 會自動補站名後綴與 canonical）
+usePageSeo({
+  title: () => t('headUnit.title'),
+  description: () => t('headUnit.intro')
 })
 </script>
 
@@ -227,7 +230,7 @@ useHead({
 .btn.ghost-light { background: transparent; border: 1px solid var(--line); color: var(--ink); margin-left: 10px; }
 
 /* hero */
-.hero { position: relative; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hero { position: relative; width: 100%; overflow-x: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
 .hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
 .hero .ov { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
@@ -237,13 +240,12 @@ useHead({
   .hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: block; }
   .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
 }
-.hero .in { position: relative; z-index: 2; width: 100%; padding: 40px 8px 46px; }
+.hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 40px 8px 46px; }
 .hero .crumb { font-size: 12px; color: var(--dim); margin-bottom: 14px; }
 .hero .crumb a:hover { color: var(--navy); }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
-.hero p { color: #41506b; max-width: 560px; font-weight: 300; }
-
+.hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }
 .subnav { position: sticky; top: 64px; z-index: 30; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .subnav-in { display: flex; gap: 6px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; }
 .subnav a { flex: none; font-size: 13px; color: var(--muted); padding: 8px 14px; border-radius: 20px; white-space: nowrap; transition: 0.16s; }

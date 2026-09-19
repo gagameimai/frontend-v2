@@ -4,8 +4,10 @@
     <div class="hero" :class="{ 'has-bn': banner.img }">
       <!-- 後台「列表頁 Banner 管理 → 產品分類頁」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
            沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
-      <div v-if="banner.img" class="bn" :style="{ '--bg': 'url(' + banner.img + ')', '--bg-m': 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-if="banner.img" class="bn-ov"></div>
+      <div v-if="banner.img" class="bn bn-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn bn-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="banner.img" class="bn-ov bn-ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
       <div class="ov"></div>
       <div class="wrap in">
         <div class="ey">{{ t(`${ns}.eyebrow`) }}</div>
@@ -129,8 +131,7 @@ usePageSeo({
 .hero .in { position: relative; z-index: 2; }
 .hero .ey { font-size: 12px; letter-spacing: 2px; color: #7fc4ea; margin-bottom: 10px; }
 .hero h1 { font-size: 36px; font-weight: 900; margin: 0 0 14px; letter-spacing: .02em; }
-.hero p { max-width: 660px; color: #c6ced8; font-size: 15px; margin: 0; }
-
+.hero p { width: 100%; max-width: 660px; color: #c6ced8; font-size: 15px; margin: 0; }
 .kick { font-size: 12px; letter-spacing: 2px; color: var(--navy); margin-bottom: 8px; }
 .lp-page h2 { font-size: 23px; font-weight: 800; color: var(--ink); margin: 0 0 12px; }
 .lead { font-size: 14px; color: var(--muted); margin: 0; max-width: 640px; }
@@ -171,11 +172,11 @@ usePageSeo({
 
 .hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
-.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-image: var(--bg); background-size: cover; background-position: center; }
+.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-size: cover; background-position: center; }
 .hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(13, 16, 22, 0.93) 0%, rgba(13, 16, 22, 0.86) 36%, rgba(13, 16, 22, 0.55) 56%, rgba(13, 16, 22, 0.12) 80%); }
+.hero .bn-mobile, .hero .bn-ov-mobile { display: none; }
 @media (max-width: 640px) {
-  .hero.has-bn { display: block; aspect-ratio: auto; min-height: 0; }
-  .hero.has-bn .bn { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; background-image: var(--bg-m, var(--bg)); }
-  .hero.has-bn .bn-ov { display: none; }
+  .hero .bn-desktop, .hero .bn-ov-desktop { display: none; }
+  .hero .bn-mobile, .hero .bn-ov-mobile { display: block; }
 }
 </style>

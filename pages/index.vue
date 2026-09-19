@@ -41,32 +41,64 @@
                 stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
-    </section>
 
-    <!-- 車型查詢 -->
-    <div class="finderwrap">
-      <div class="finder">
-        <span class="lab">{{ $t('search.finderLabel') }}</span>
-        <select v-model="brandInputValue" @change="brandChange">
-          <option value="">{{ $t('search.selectBrand') }}</option>
-          <option v-for="(brand, index) in brandList" :key="index" :value="brand.id">
-            {{ brand.name }}
-          </option>
-        </select>
-        <select v-model="modelInputValue" @change="modelChange" :disabled="typeSelect">
-          <option value="">{{ $t('search.selectModel') }}</option>
-          <option v-for="(model, index) in modelList" :key="index" :value="model.id">
-            {{ model.name }}
-          </option>
-        </select>
-        <select v-model="yearInputValue" :disabled="yearSelect">
-          <option disabled value="undefined">{{ $t('search.selectYear') }}</option>
-          <option v-for="(year, index) in yearList" :key="index">{{ year }}</option>
-          <option value="">{{ $t('search.allYears') }}</option>
-        </select>
-        <a href="#" class="btn o" @click.prevent="searchData">{{ $t('home.search') }}</a>
+      <!-- 車型查詢：抽屜式，收合時只有一個把手貼在 Hero 底部，點了才往上展開三個下拉。
+           要放在 .hero 裡面（不是外面），這樣下面 CSS 的 position:absolute; bottom:0 才會貼齊 Hero 底緣，而不是貼齊整個網頁底部。
+           欄位資料與查詢邏輯（brandChange／modelChange／searchData）完全沒動，只是外面換一層收合＋自訂下拉外觀。 -->
+      <div class="finderwrap" :class="{ open: finderOpen }">
+      <button
+        class="finder-tab"
+        type="button"
+        :aria-expanded="finderOpen ? 'true' : 'false'"
+        aria-controls="finderPanel"
+        @click="toggleFinder"
+      >
+        <svg class="fr" viewBox="0 0 28 20" width="26" height="19" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="1" y="1" width="26" height="18" rx="3"></rect><rect x="5.5" y="5" width="17" height="10" rx="1.5" opacity=".55"></rect></svg>
+        <span class="t">{{ $t('search.finderTabTitle') }}</span>
+        <span class="n">{{ $t('search.finderTabDesc') }}</span>
+        <span class="ar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </button>
+      <div class="finder-panel" id="finderPanel"><div>
+        <div class="finder" ref="finderEl">
+          <span class="lab">{{ $t('search.finderLabel') }}</span>
+          <FinderSelect
+            :cap="$t('search.brandCap')"
+            v-model="brandInputValue"
+            :options="brandOptions"
+            :open="activeField === 'brand'"
+            @toggle="toggleField('brand')"
+            @close="closeField"
+            @change="brandChange"
+          />
+          <FinderSelect
+            :cap="$t('search.modelCap')"
+            v-model="modelInputValue"
+            :options="modelOptions"
+            :disabled="typeSelect"
+            :open="activeField === 'model'"
+            @toggle="toggleField('model')"
+            @close="closeField"
+            @change="modelChange"
+          />
+          <FinderSelect
+            :cap="$t('search.yearCap')"
+            v-model="yearInputValue"
+            :options="yearOptions"
+            :disabled="yearSelect"
+            :open="activeField === 'year'"
+            @toggle="toggleField('year')"
+            @close="closeField"
+          />
+          <a href="#" class="btn o" @click.prevent="searchData">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+            {{ $t('home.search') }}
+          </a>
+        </div>
+      </div></div>
       </div>
-    </div>
+    </section>
 
     <!-- 產品分類 -->
     <section id="products" style="padding-top: 20px">
@@ -108,47 +140,17 @@
          沒填就維持這裡寫死的預設版面；背景圖同理，後台有上傳圖才蓋掉 public/home/section-clarion.webp -->
     <section class="feature fullbleed" id="feature">
       <div class="bg" :style="bgStyle(zoneBg('zone1', 'clarion'))"></div>
-      <div class="scrim"></div>
       <div class="wrap">
         <div v-if="homeSections.zone1 && homeSections.zone1.content" class="cms-content" v-html="homeSections.zone1.content"></div>
-        <template v-else>
-          <div class="kicker light"><span class="en">{{ $t('home.featuredKicker') }}</span><span class="jp">{{ $t('home.featuredLabel') }}</span></div>
-          <span class="pill">{{ $t('home.featPill') }}</span>
-          <h2 class="fbtitle">{{ $t('home.featTitle') }}</h2>
-          <p class="fbdesc">{{ $t('home.featDesc') }}</p>
-          <div class="fspecs">
-            <div><b>{{ $t('home.featSpec1') }}</b><small>{{ $t('home.featSpec1Sub') }}</small></div>
-            <div><b>{{ $t('home.featSpec2') }}</b><small>{{ $t('home.featSpec2Sub') }}</small></div>
-            <div><b>{{ $t('home.featSpec3') }}</b><small>{{ $t('home.featSpec3Sub') }}</small></div>
-          </div>
-          <div class="fbtns">
-            <span class="clarion">clarion</span>
-            <NuxtLink to="/clarion/gl" class="btn o">{{ $t('home.viewSeries') }}</NuxtLink>
-          </div>
-        </template>
       </div>
     </section>
 
     <!-- MM 美邁滿版背景圖：同上，後台 zone2 有填內容才整段換成後台排版 -->
     <section class="mm fullbleed" id="mm">
       <div class="bg" :style="bgStyle(zoneBg('zone2', 'mm'))"></div>
-      <div class="scrim right"></div>
       <div class="wrap">
         <div class="mmbox">
           <div v-if="homeSections.zone2 && homeSections.zone2.content" class="cms-content" v-html="homeSections.zone2.content"></div>
-          <template v-else>
-            <div class="kicker light"><span class="en">{{ $t('home.mmKicker') }}</span><span class="jp">{{ $t('home.mmLabel') }}</span></div>
-            <h2>{{ $t('home.mmTitle') }}</h2>
-            <p>{{ $t('home.mmDesc') }}</p>
-            <div class="chips">
-              <NuxtLink class="chip" to="/mm/me">{{ $t('home.chipMultimedia') }}</NuxtLink>
-              <NuxtLink class="chip" to="/mm/oem">{{ $t('home.chipOem') }}</NuxtLink>
-              <NuxtLink class="chip" to="/carFrame">{{ $t('home.chipFrame') }}</NuxtLink>
-              <NuxtLink class="chip" to="/safety">{{ $t('home.chipSafety') }}</NuxtLink>
-              <NuxtLink class="chip" to="/mm/dashcam">{{ $t('home.chipDvr') }}</NuxtLink>
-            </div>
-            <NuxtLink to="/mm/overview" class="btn ghost">{{ $t('home.enterMM') }}</NuxtLink>
-          </template>
         </div>
       </div>
     </section>
@@ -182,7 +184,6 @@
     <!-- 尾端 CTA 滿版背景圖：同上，後台 zone3 有填內容才整段換成後台排版 -->
     <section class="final fullbleed">
       <div class="bg" :style="bgStyle(zoneBg('zone3', 'cta'))"></div>
-      <div class="scrim center"></div>
       <div class="wrap">
         <div v-if="homeSections.zone3 && homeSections.zone3.content" class="cms-content" v-html="homeSections.zone3.content"></div>
         <template v-else>
@@ -191,7 +192,6 @@
           <p style="max-width: 480px; margin: 10px auto 0">{{ $t('home.finalDesc') }}</p>
           <div style="margin-top: 24px">
             <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-            <NuxtLink to="/qa" class="btn ghost" style="margin-left: 10px">{{ $t('home.faq') }}</NuxtLink>
           </div>
         </template>
       </div>
@@ -297,23 +297,13 @@ useHead({
 // img_mobile 留空時會自動沿用 img（會被裁，但不會壞）。
 const { $axios } = useNuxtApp()
 const bannerList = ref([])
-
-// 後台還沒建 Banner 時的預設圖（Clarion 主視覺，放在 public/）。
-// 這是為了避免首頁開起來整片空白，後台一有啟用中的 Banner 就會被蓋掉。
-const fallbackSlides = [
-  { img: '/banner-clarion-dark.jpg', imgMobile: '/banner-clarion-dark-m.jpg', url: '' },
-  { img: '/banner-clarion-light.jpg', imgMobile: '/banner-clarion-light-m.jpg', url: '' },
-]
-
 const heroSlides = computed(() =>
-  bannerList.value.length
-    ? bannerList.value.map((b) => ({
-        img: b.img,
-        imgMobile: b.img_mobile || '',
-        url: b.url || '',
-        name: b.name || '',
-      }))
-    : fallbackSlides
+  bannerList.value.map((b) => ({
+    img: b.img,
+    imgMobile: b.img_mobile || '',
+    url: b.url || '',
+    name: b.name || '',
+  }))
 )
 
 function getBanner() {
@@ -418,6 +408,49 @@ function modelChange() {
   }
 }
 
+// 車型查詢的下拉選項：換成自訂下拉元件用的 { value, label } 格式，資料來源跟查詢邏輯不變
+const brandOptions = computed(() => [
+  { value: '', label: t('search.selectBrand') },
+  ...brandList.value.map((b) => ({ value: b.id, label: b.name })),
+])
+const modelOptions = computed(() => [
+  { value: '', label: t('search.selectModel') },
+  ...modelList.value.map((m) => ({ value: m.id, label: m.name })),
+])
+const yearOptions = computed(() => [
+  { value: undefined, label: t('search.selectYear'), disabled: true },
+  ...yearList.value.map((y) => ({ value: y, label: String(y) })),
+  { value: '', label: t('search.allYears') },
+])
+
+// 車型查詢抽屜：收合／展開；只負責外殼開關，不碰欄位與查詢邏輯
+const finderOpen = ref(false)
+function toggleFinder() {
+  finderOpen.value = !finderOpen.value
+}
+
+// 三個自訂下拉同時間只能開一個：開其中一個，另外兩個會自動關閉
+const activeField = ref(null)
+function toggleField(name) {
+  activeField.value = activeField.value === name ? null : name
+}
+function closeField() {
+  activeField.value = null
+}
+// 點擊三個欄位以外的地方，自動收起目前展開的下拉清單
+const finderEl = ref(null)
+function onFinderDocClick(ev) {
+  if (finderEl.value && !finderEl.value.contains(ev.target)) {
+    activeField.value = null
+  }
+}
+onMounted(() => {
+  document.addEventListener('click', onFinderDocClick)
+})
+onUnmounted(() => {
+  document.removeEventListener('click', onFinderDocClick)
+})
+
 const router = useRouter()
 function searchData() {
   router.push({
@@ -501,6 +534,7 @@ onMounted(() => {
   getInstallCases()
   getHomeSections()
   heroTimer = setInterval(() => {
+    if (!heroSlides.value.length) return
     activeSlide.value = (activeSlide.value + 1) % heroSlides.value.length
   }, 4500)
 })
@@ -778,18 +812,10 @@ onUnmounted(() => {
   background-repeat: no-repeat;
 }
 @media (max-width: 640px) {
-  .fullbleed .bg { background-image: var(--bg-m, var(--bg)); background-size: cover; background-position: center center; }
-}
-.fullbleed .scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(13, 16, 22, 0.72) 0%, rgba(13, 16, 22, 0.34) 52%, rgba(13, 16, 22, 0.04) 100%);
-}
-.fullbleed .scrim.right {
-  background: linear-gradient(270deg, rgba(13, 16, 22, 0.72) 0%, rgba(13, 16, 22, 0.34) 52%, rgba(13, 16, 22, 0.04) 100%);
-}
-.fullbleed .scrim.center {
-  background: radial-gradient(120% 92% at 50% 50%, rgba(13, 16, 22, 0.28) 0%, rgba(13, 16, 22, 0.72) 76%);
+  .fullbleed .bg {
+    background-image: var(--bg-m, var(--bg));
+    background-size: cover;
+    background-position: center center; }
 }
 .fullbleed .wrap {
   position: relative;
@@ -806,11 +832,6 @@ onUnmounted(() => {
 .fullbleed h2 { color: #fff; }
 @media (max-width: 820px) {
   .fullbleed { min-height: auto; padding: 76px 0; }
-  .fullbleed .scrim,
-  .fullbleed .scrim.right,
-  .fullbleed .scrim.center {
-    background: linear-gradient(180deg, rgba(13, 16, 22, 0.34) 0%, rgba(13, 16, 22, 0.68) 56%, rgba(13, 16, 22, 0.84) 100%);
-  }
 }
 
 .scrolldown {
@@ -839,59 +860,146 @@ onUnmounted(() => {
 @media (max-width: 640px) { .scrolldown { bottom: 70px; font-size: 9px; } }
 @media (prefers-reduced-motion: reduce) { .scrolldown svg { animation: none; } }
 
+/* 車型查詢：抽屜式（收合把手＋展開面板）。收合時只有一個把手貼在 Hero 底部，主視覺不被白卡切斷；
+   點把手才往下展開三個下拉。把手與面板同一種深色金屬質感，是同一個抽屜的兩種狀態，不是兩張不同卡片。
+   欄位本身（FinderSelect 元件）的樣式在 components/FinderSelect.vue 裡，這裡只管外殼。 */
 .finderwrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
   display: flex;
-  justify-content: center;
-  padding: 0 0 34px;
-  position: relative;
-  z-index: 5;
-  margin-top: -46px;
-}
-@media (max-width: 640px) {
-  .finderwrap { margin-top: -28px; padding-bottom: 24px; }
-}
-.finder {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(13, 27, 46, 0.07);
-  padding: 8px;
-  display: flex;
-  gap: 8px;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 760px;
+  padding: 0;
 }
-.finder .lab {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--navy);
-  white-space: nowrap;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.finder select {
-  background: #fbfcfd;
-  border: 1px solid #e1e7ee;
-  border-radius: 9px;
-  height: 42px;
-  padding: 0 12px;
-  font-size: 13.5px;
-  font-family: inherit;
-  color: var(--text);
-  flex: 1;
-  min-width: 104px;
-  cursor: pointer;
-}
-.finder .btn {
-  height: 42px;
-  padding: 0 24px;
+.finder-tab {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 13px;
+  height: 56px;
+  padding: 0 16px 0 24px;
+  border: 1px solid #2f3a48;
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  cursor: pointer;
+  background: linear-gradient(180deg, #222b37, #181f29);
+  color: #fff;
+  font-family: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 -14px 30px rgba(0, 0, 0, 0.32);
+  transition: background 0.22s ease;
+}
+.finder-tab:hover {
+  background: linear-gradient(180deg, #28323f, #1c242f);
+}
+.finder-tab:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 3px;
+}
+.finder-tab .fr {
+  flex: none;
+  color: #4fb6ea;
+}
+.finder-tab .t {
+  font-size: 15.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.finder-tab .n {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.44);
+  white-space: nowrap;
+}
+.finder-tab .ar {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.09);
+  display: grid;
+  place-items: center;
+  color: #9fdcff;
+  flex: none;
+  transform: rotate(180deg);
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.finderwrap.open .finder-tab .ar {
+  transform: rotate(0deg);
+}
+.finder-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  width: 100%;
+  max-width: 880px;
+  transition: grid-template-rows 0.34s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.finder-panel > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.finderwrap.open .finder-panel {
+  grid-template-rows: 1fr;
+}
+.finder {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 7px 7px 13px;
+  border-radius: 14px 14px 0 0;
+  border: 1px solid #2f3a48;
+  background: linear-gradient(180deg, #222b37, #161d26 45%, #10161d);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), inset 0 -1px 0 rgba(0, 0, 0, 0.5), 0 20px 44px rgba(0, 0, 0, 0.42);
+}
+.finder .lab {
+  display: none;
+}
+.finder .btn {
+  align-self: center;
+  margin-left: 7px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-size: 14.5px;
+  font-weight: 800;
+  background: linear-gradient(180deg, #0b93dd, #0069a6);
+  color: #fff;
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 122, 190, 0.4);
+}
+.finder .btn:hover {
+  background: linear-gradient(180deg, #12a0ec, #0073b4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .finder-panel,
+  .finder-tab .ar {
+    transition: none;
+  }
+}
+@media (max-width: 760px) {
+  .finderwrap { padding: 0; }
+  .finder-tab {
+    height: auto;
+    padding: 11px 16px;
+    flex-wrap: wrap;
+    gap: 3px 11px;
+    width: 100%;
+    max-width: 100%;
+    align-self: stretch;
+    text-align: left;
+    border-left: 0;
+    border-right: 0;
+  }
+  .finder { border-radius: 0; border-left: 0; border-right: 0; }
+  .finder-tab .t { font-size: 14.5px; }
+  .finder-tab .n { flex: 1 1 100%; order: 3; font-size: 12px; text-align: left; }
+  .finder-tab .ar { order: 2; margin-left: auto; }
+  .finder { flex-wrap: wrap; padding: 6px; }
+  .finder .btn { flex: 1 1 100%; justify-content: center; margin: 6px 0 0; }
 }
 .c-page section {
   padding: 80px 0;
@@ -1153,20 +1261,6 @@ onUnmounted(() => {
   .cases { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  .finder .lab {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 2px 4px 6px;
-  }
-  .finder select {
-    flex: 1 1 30%;
-    min-width: 0;
-  }
-  .finder .btn {
-    flex: 1 1 100%;
-    justify-content: center;
-    margin-top: 2px;
-  }
   .dots {
     bottom: 10px;
   }

@@ -131,7 +131,12 @@ function backToTop() {
   gap: 30px;
   flex-wrap: wrap;
 }
+/* 文字連結：頁尾的連結是同一行用「・」隔開、上下還有第二行，
+   如果用 ::after 疊 44px 高的透明區塊，上下兩行的可點範圍會互相蓋住、
+   變成點到上面那條卻跳到下面那頁。所以這裡改用實際的內距把行距撐開。 */
 .foot a {
+  display: inline-block;
+  padding: 13px 0;
   color: #8f9bab;
   text-decoration: none;
 }
@@ -174,6 +179,22 @@ function backToTop() {
   justify-content: center;
   color: #cbd3df;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+/* ── 手機觸控目標 ≥44×44（2026-09-18）──────────────────────────
+   視覺大小不變，用 ::after 把「可以點到的範圍」撐到 44×44。
+   直接把圖示改大會動到版面，所以用這個做法。 */
+.social a {
+  position: relative;
+}
+.social a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
 }
 .social a:hover {
   background: #007abe;

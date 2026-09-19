@@ -297,12 +297,32 @@ header {
 .menu .cta .sub {
   color: #4aa3d6;
 }
+/* ── 手機觸控目標 ≥44×44（2026-09-18）──────────────────────────
+   視覺大小不變，用 ::after 把「可以點到的範圍」撐到 44×44。
+   直接把圖示改大會動到版面，所以用這個做法。 */
 .burger {
   display: none;
+  min-width: 44px;
+  min-height: 44px;
   font-size: 22px;
+  line-height: 1;
   background: none;
   border: 0;
   cursor: pointer;
+  padding: 0;
+}
+.logo {
+  position: relative;
+}
+.logo::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  min-height: 44px;
+  height: 100%;
 }
 .has-drop {
   position: relative;
@@ -405,7 +425,8 @@ header {
     display: flex;
   }
   .burger {
-    display: block;
+    display: grid;
+    place-items: center;
   }
   .menu > a,
   .menu .has-drop > a {
