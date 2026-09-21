@@ -11,14 +11,15 @@
           ☎ {{ websiteInfo.tel }}　·　✉ {{ websiteInfo.email }}<br />
           📍 {{ websiteInfo.address }}
         </div>
+        <!-- 後台沒填的社群就整個不要輸出；沒有 href 的 <a> 不算連結，爬蟲與 AI 代理會讀到空連結 -->
         <div class="social">
-          <a :href="websiteInfo.facebook" target="_blank" rel="noopener" aria-label="Facebook">
+          <a v-if="websiteInfo.facebook" :href="websiteInfo.facebook" target="_blank" rel="noopener" aria-label="Facebook">
             <font-awesome-icon :icon="['fab', 'square-facebook']" />
           </a>
-          <a :href="websiteInfo.instagram" target="_blank" rel="noopener" aria-label="Instagram">
+          <a v-if="websiteInfo.instagram" :href="websiteInfo.instagram" target="_blank" rel="noopener" aria-label="Instagram">
             <font-awesome-icon :icon="['fab', 'instagram']" />
           </a>
-          <a :href="websiteInfo.youtube" target="_blank" rel="noopener" aria-label="YouTube">
+          <a v-if="websiteInfo.youtube" :href="websiteInfo.youtube" target="_blank" rel="noopener" aria-label="YouTube">
             <font-awesome-icon :icon="['fab', 'square-youtube']" />
           </a>
         </div>
@@ -63,13 +64,21 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import logoCobrandWhite from '~/assets/img/Header/logo-cobrand-white.svg'
 import logoClarionWhite from '~/assets/img/Header/logo-clarion-white.svg'
 import logoMMWhite from '~/assets/img/Header/logo-mm-white.svg'
 
-const websiteInfo = reactive({})
-const { $axios } = useNuxtApp()
+// 頁尾的電話／Email／地址／社群連結（NAP：名稱、地址、電話）。
+// 這個站是靜態產生的，原本只在 onMounted 用 axios 抓，所以產出的 HTML 裡這幾欄是空的——
+// 真人等 JS 載完會看到，但搜尋引擎爬蟲與 AI 代理讀到的是空的，三個社群連結連 href 都沒有。
+// 改成：build 當下先抓一次烘進 HTML（爬蟲讀得到）＋ 掛載後再抓一次最新的（後台改了馬上生效）。
+// 寫法比照 composables/useListBanner.js，不用 await，避免這個元件變成 async component。
+const config = useRuntimeConfig()
+const { data: websiteData, refresh: refreshWebsite } = useAsyncData('website-info', () =>
+  $fetch(`${config.public.apiBase}/website`).catch(() => ({ result: null }))
+)
+const websiteInfo = computed(() => websiteData.value?.result || {})
 const route = useRoute()
 
 // 依目前路徑切換頁尾 logo：Clarion 專區 / MM 專區 / 共用頁（雙品牌合併版）
@@ -89,13 +98,9 @@ const logoAlt = computed(() => {
   return 'Clarion × MM 美邁'
 })
 
+// 靜態 HTML 先給畫面，掛載後立刻更新到最新（後台改了公司資料不用重新 generate 也會生效）
 onMounted(() => {
-  $axios.get('/website').then((response) => {
-    const result = response.data.result
-    if (result) {
-      Object.assign(websiteInfo, result)
-    }
-  })
+  refreshWebsite()
 })
 
 // 捲動超過一屏的 60% 才淡入，一進站不要就掛在畫面上

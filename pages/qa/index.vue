@@ -1,14 +1,15 @@
 <template>
   <div class="qa-page">
-    <!-- HERO -->
-    <div class="hero" :class="{ 'has-bn': banner.img }">
+    <!-- HERO：banner 規格與 MultimediaList.vue 完全一致（尺寸/漸層/裝飾圓都同一套） -->
+    <div class="hero">
       <!-- 後台「列表頁 Banner 管理 → 常見問題」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
-           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
-      <div v-if="banner.img" class="bn bn-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
-      <div v-if="banner.imgMobile || banner.img" class="bn bn-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-if="banner.img" class="bn-ov bn-ov-desktop"></div>
-      <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
-      <div v-if="!banner.img" class="glow"></div>
+           手機版：有上傳手機圖就用手機圖，沒上傳就自動用電腦版圖片；電腦版跟手機版都沒圖才顯示預設底色 -->
+      <div v-if="banner.img" class="bg bg-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bg bg-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="!banner.img" class="glow glow-desktop"></div>
+      <div v-if="!banner.imgMobile && !banner.img" class="glow glow-mobile"></div>
+      <div v-if="banner.img" class="ov ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
         <div class="ey">{{ $t('qa.eyebrow') }}</div>
         <h1>{{ $t('qa.title') }}</h1>
@@ -93,12 +94,21 @@ usePageSeo({
 .btn.ghost { background: transparent; border: 1px solid #33405a; color: #fff; }
 
 /* hero */
-.hero { position: relative; overflow: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); }
+.hero { position: relative; width: 100%; overflow-x: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
 .hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
-.hero .in { position: relative; z-index: 2; padding: 52px 8px 46px; }
+.hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
+.hero .ov { position: absolute; inset: 0; }
+.hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: none; }
+@media (max-width: 640px) {
+  .hero .bg-desktop, .hero .glow-desktop, .hero .ov-desktop { display: none; }
+  .hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: block; }
+  .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
+}
+.hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 52px 8px 46px; }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
-.hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }.quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }
+.quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
 .quick a { font-size: 13px; color: var(--navy); background: #fff; border: 1px solid #d7e0ea; border-radius: 22px; padding: 8px 16px; transition: 0.16s; }
 .quick a:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
 
@@ -139,13 +149,4 @@ usePageSeo({
   .perf .c { border-right: none; }
 }
 
-.hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
-.hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
-.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-size: cover; background-position: center; }
-.hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
-.hero .bn-mobile, .hero .bn-ov-mobile { display: none; }
-@media (max-width: 640px) {
-  .hero .bn-desktop, .hero .bn-ov-desktop { display: none; }
-  .hero .bn-mobile, .hero .bn-ov-mobile { display: block; }
-}
 </style>

@@ -1,19 +1,20 @@
 <template>
   <div class="c-page sp-page">
-    <!-- Hero（首頁混搭樣式：淺底大圖 + 遮罩） -->
-    <section class="hero" :class="{ 'has-bn': banner.img }">
+    <!-- Hero：banner 規格與 MultimediaList.vue 完全一致（尺寸/漸層/裝飾圓都同一套） -->
+    <section class="hero">
       <!-- 後台「列表頁 Banner 管理 → 車型查詢結果頁」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
-           沒上傳就維持原本的標題帶樣式，不會變高變空。 -->
-      <div v-if="banner.img" class="bn bn-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
-      <div v-if="banner.imgMobile || banner.img" class="bn bn-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
-      <div v-if="banner.img" class="bn-ov bn-ov-desktop"></div>
-      <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
-      <div class="hero-ov"></div>
-      <div class="wrap">
+           手機版：有上傳手機圖就用手機圖，沒上傳就自動用電腦版圖片；電腦版跟手機版都沒圖才顯示預設底色 -->
+      <div v-if="banner.img" class="bg bg-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
+      <div v-if="banner.imgMobile || banner.img" class="bg bg-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
+      <div v-if="!banner.img" class="glow glow-desktop"></div>
+      <div v-if="!banner.imgMobile && !banner.img" class="glow glow-mobile"></div>
+      <div v-if="banner.img" class="ov ov-desktop"></div>
+      <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
+      <div class="wrap in">
         <div class="crumb">
           <NuxtLink to="/">{{ $t('search.home') }}</NuxtLink> ／ {{ breadcrumb }}
         </div>
-        <div class="eyebrow">{{ $t('search.eyebrow') }}</div>
+        <div class="ey">{{ $t('search.eyebrow') }}</div>
         <h1>{{ $t('search.title') }}</h1>
         <p class="lead">{{ $t('search.intro') }}</p>
       </div>
@@ -370,15 +371,22 @@ useHead({ meta: [{ name: 'robots', content: 'noindex, follow' }] })
 .btn.o { background: var(--navy); color: #ffffff; font-weight: 700; }
 
 /* hero */
-.hero { position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center; background: linear-gradient(115deg, #eef2f7, #dde5ef 55%, #cfdae8); }
-.hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0.5; }
-.hero-ov { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94), rgba(243, 246, 250, 0.55) 45%, rgba(243, 246, 250, 0.12) 78%); }
-.hero .wrap { position: relative; z-index: 2; padding-top: 46px; padding-bottom: 46px; }
+.hero { position: relative; width: 100%; overflow-x: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
+.hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
+.hero .ov { position: absolute; inset: 0; }
+.hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: none; }
+@media (max-width: 640px) {
+  .hero .bg-desktop, .hero .glow-desktop, .hero .ov-desktop { display: none; }
+  .hero .bg-mobile, .hero .glow-mobile, .hero .ov-mobile { display: block; }
+  .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
+}
+.hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 52px 8px 46px; }
 .hero .crumb { font-size: 12px; color: var(--dim); margin-bottom: 14px; }
 .hero .crumb a:hover { color: var(--navy); }
-.eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
-.hero h1 { margin: 10px 0; }
-.hero .lead { max-width: 500px; color: #41506b; font-weight: 400; font-size: 16px; }
+.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
+.hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
+.hero .lead { width: 100%; max-width: 560px; color: #41506b; font-weight: 300; font-size: 16px; }
 
 .finderwrap { display: flex; justify-content: center; padding: 28px 0; }
 .finder {
@@ -424,13 +432,4 @@ useHead({ meta: [{ name: 'robots', content: 'noindex, follow' }] })
   .grid { grid-template-columns: 1fr; }
 }
 
-.hero.has-bn { aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
-.hero.has-bn .in, .hero.has-bn > .wrap { width: 100%; }
-.hero .bn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; background-size: cover; background-position: center; }
-.hero .bn-ov { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.9) 34%, rgba(243, 246, 250, 0.66) 50%, rgba(243, 246, 250, 0) 64%); }
-.hero .bn-mobile, .hero .bn-ov-mobile { display: none; }
-@media (max-width: 640px) {
-  .hero .bn-desktop, .hero .bn-ov-desktop { display: none; }
-  .hero .bn-mobile, .hero .bn-ov-mobile { display: block; }
-}
 </style>

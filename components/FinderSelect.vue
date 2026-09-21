@@ -5,6 +5,8 @@
     tabindex="0"
     role="combobox"
     aria-haspopup="listbox"
+    :aria-label="cap"
+    :aria-controls="listboxId"
     :aria-expanded="open ? 'true' : 'false'"
     :aria-disabled="disabled ? 'true' : 'false'"
     :class="{ open, chosen, dis: disabled, up: isUp }"
@@ -15,7 +17,7 @@
     <span class="cap">{{ cap }}</span>
     <span class="val">{{ displayLabel }}</span>
     <i class="cv"></i>
-    <div ref="optsEl" class="opts" role="listbox">
+    <div :id="listboxId" ref="optsEl" class="opts" role="listbox" :aria-label="cap">
       <div
         v-for="(opt, i) in options"
         :key="i"
@@ -42,6 +44,13 @@ const props = defineProps({
   open: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue', 'change', 'toggle', 'close'])
+
+// 無障礙／AI 代理可存取性：
+// role="combobox" 不是「名稱取自內容」的角色，裡面的 <span class="cap">汽車品牌</span>
+// 只會被當成內容、不會變成這個欄位的名稱，所以稽核會報
+// 「ARIA input fields must have an accessible name」。用 aria-label 把可見標籤綁上去。
+// aria-controls 需要一個 id，用 Nuxt 的 useId() 產生，伺服器端與瀏覽器端才會一致、不會 hydration 不符。
+const listboxId = `finder-listbox-${useId()}`
 
 const fieldEl = ref(null)
 const optsEl = ref(null)

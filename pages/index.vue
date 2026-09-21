@@ -186,14 +186,6 @@
       <div class="bg" :style="bgStyle(zoneBg('zone3', 'cta'))"></div>
       <div class="wrap">
         <div v-if="homeSections.zone3 && homeSections.zone3.content" class="cms-content" v-html="homeSections.zone3.content"></div>
-        <template v-else>
-          <div class="kicker" style="justify-content: center"><span class="en">{{ $t('home.finalKicker') }}</span><span class="jp">{{ $t('home.finalLabel') }}</span></div>
-          <h2>{{ $t('home.finalTitle') }}</h2>
-          <p style="max-width: 480px; margin: 10px auto 0">{{ $t('home.finalDesc') }}</p>
-          <div style="margin-top: 24px">
-            <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          </div>
-        </template>
       </div>
     </section>
   </div>
