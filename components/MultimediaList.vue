@@ -12,23 +12,23 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ isClarionType ? $t('multimedia.eyebrowClarion') : $t('multimedia.eyebrow') }}</div>
-        <h1>{{ $t('multimedia.title') }}</h1>
-        <p>{{ isClarionType ? $t('multimedia.introClarion') : $t('multimedia.intro') }}</p>
+        <div class="ey">{{ heroEyebrow }}</div>
+        <h1>{{ heroTitle }}</h1>
+        <p>{{ heroIntro }}</p>
       </div>
     </div>
 
     <section>
       <div class="wrap">
         <div class="crumb">
-          <NuxtLink to="/">{{ $t('multimedia.home') }}</NuxtLink> ／ {{ $t('multimedia.title') }}
+          <NuxtLink to="/">{{ $t('multimedia.home') }}</NuxtLink> ／ {{ heroTitle }}
         </div>
 
         <div class="shead">
           <div>
             <div class="sub">{{ $t('multimedia.sectionKicker') }}</div>
             <div class="cn">{{ sectionTitleText }}</div>
-            <div class="desc">{{ isClarionType ? $t('multimedia.sectionDescClarion') : $t('multimedia.sectionDesc') }}</div>
+            <div class="desc">{{ sectionDescText }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('multimedia.findInstaller') }}</NuxtLink>
         </div>
@@ -93,10 +93,10 @@
       </div>
     </section>
 
-    <!-- 為什麼選：type=2（Clarion）用 OEM 版文案，其餘（MM）用原本文案 -->
+    <!-- 為什麼選：車型專用機（type=1 MM、type=3 Clarion）用 OEM 版文案，多媒體安卓機（type=0 ME、type=2 GL）用安卓機文案 -->
     <section class="feat">
       <div class="wrap">
-        <template v-if="isClarionType">
+        <template v-if="isOemType">
           <div class="kick"><div class="lbl">{{ $t('multimedia.whyOemKicker') }}</div></div>
           <h2>{{ $t('multimedia.whyOemTitle') }}</h2>
           <div class="row">
@@ -115,8 +115,8 @@
           </div>
         </template>
         <template v-else>
-          <div class="kick"><div class="lbl">{{ $t('multimedia.whyKicker') }}</div></div>
-          <h2>{{ $t('multimedia.whyTitle') }}</h2>
+          <div class="kick"><div class="lbl">{{ isClarionType ? $t('multimedia.whyKickerClarion') : $t('multimedia.whyKicker') }}</div></div>
+          <h2>{{ isClarionType ? $t('multimedia.whyTitleClarion') : $t('multimedia.whyTitle') }}</h2>
           <div class="row">
             <div class="fb">
               <b>{{ $t('multimedia.why1Title') }}</b>
@@ -127,8 +127,8 @@
               <p>{{ $t('multimedia.why2Desc') }}</p>
             </div>
             <div class="fb">
-              <b>{{ $t('multimedia.why3Title') }}</b>
-              <p>{{ $t('multimedia.why3Desc') }}</p>
+              <b>{{ isClarionType ? $t('multimedia.why3TitleClarion') : $t('multimedia.why3Title') }}</b>
+              <p>{{ isClarionType ? $t('multimedia.why3DescClarion') : $t('multimedia.why3Desc') }}</p>
             </div>
           </div>
         </template>
@@ -194,6 +194,26 @@ const typeLabel = (tp) => t(TYPE_LABELS[tp] ?? 'multimedia.typeMM')
 // 底部「為什麼選」區塊：type=2（Clarion）用車型專用機版文案，其餘（MM，type < 2 或未帶）用原本文案
 // type 2, type 3 都屬於 Clarion
 const isClarionType = computed(() => [2, 3].includes(Number(pageType.value)))
+// type 1（MM）、type 3（Clarion）都是車型專用機
+const isOemType = computed(() => [1, 3].includes(Number(pageType.value)))
+
+// HERO：小標、大標、說明都依分類切換（車型專用機不可沿用多媒體安卓機的文案）
+const heroEyebrow = computed(() =>
+  isOemType.value
+    ? (isClarionType.value ? t('multimedia.eyebrowClarionOem') : t('multimedia.eyebrowOem'))
+    : (isClarionType.value ? t('multimedia.eyebrowClarion') : t('multimedia.eyebrow'))
+)
+const heroTitle = computed(() => (isOemType.value ? t('multimedia.titleOem') : t('multimedia.title')))
+const heroIntro = computed(() =>
+  isOemType.value
+    ? (isClarionType.value ? t('multimedia.introClarionOem') : t('multimedia.introOem'))
+    : (isClarionType.value ? t('multimedia.introClarion') : t('multimedia.intro'))
+)
+const sectionDescText = computed(() =>
+  isOemType.value
+    ? t('multimedia.sectionDescOem')
+    : (isClarionType.value ? t('multimedia.sectionDescClarion') : t('multimedia.sectionDesc'))
+)
 
 // 分類標題：帶 GL（type=2）＝GL 系列、type=0＝ME 系列、帶 OEM 或 type=1（type=1 或 3）＝車型專用機
 const SECTION_TITLE_KEY = {
@@ -220,7 +240,7 @@ usePageSeo({
         : isMmOem.value
           ? `${t('header.mmItems.oem')}｜MM 美邁`
           : t('multimedia.title'),
-  description: () => (isClarionType.value ? t('multimedia.introClarion') : t('multimedia.intro')),
+  description: () => heroIntro.value,
   brand: isClarionType.value ? 'clarion' : 'mm',
   // /multimedia?type= 的 canonical 一律指向語意化網址：/clarion/gl、/clarion/oem、/mm/me、/mm/oem
   canonicalPath:

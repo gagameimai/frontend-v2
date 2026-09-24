@@ -1,8 +1,8 @@
 <template>
   <div class="about-page">
-    <!-- HERO：banner 規格與 MultimediaList.vue 完全一致（尺寸/漸層/裝飾圓都同一套） -->
+    <div class="bs-top">
     <div class="hero">
-      <!-- 後台「列表頁 Banner 管理 → 關於我們」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
+      <!-- 後台「列表頁 Banner 管理 → 品牌故事」：電腦版 1920×480（4:1）、手機版 1080×608（16:9）。
            手機版：有上傳手機圖就用手機圖，沒上傳就自動用電腦版圖片；電腦版跟手機版都沒圖才顯示預設底色 -->
       <div v-if="banner.img" class="bg bg-desktop" :style="{ backgroundImage: 'url(' + banner.img + ')' }"></div>
       <div v-if="banner.imgMobile || banner.img" class="bg bg-mobile" :style="{ backgroundImage: 'url(' + (banner.imgMobile || banner.img) + ')' }"></div>
@@ -12,9 +12,10 @@
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
         <div class="ey">{{ $t('about.eyebrow') }}</div>
-        <h1>{{ $t('about.heroTitleLine1') }}<br />{{ $t('about.heroTitleLine2') }}</h1>
+        <h1>{{ $t('about.title') }}</h1>
         <p>{{ $t('about.heroDesc') }}</p>
       </div>
+    </div>
     </div>
 
     <section>

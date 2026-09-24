@@ -172,8 +172,8 @@ usePageSeo({
 .speclist { list-style: none; margin: 16px 0; padding: 0; }
 .speclist li { font-size: 14px; color: var(--text); padding: 7px 0; border-bottom: 1px solid var(--line); display: flex; gap: 8px; }
 .speclist li::before { content: '■'; color: var(--navy); font-size: 10px; margin-top: 4px; }
-.price-tag { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 10px; }
-.price-tag .pt-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+.price-tag { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 14px 0 10px; }
+.price-tag .pt-label { font-size: 13px; color: var(--muted); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
 .price-tag .pt-value { font-size: 24px; font-weight: 900; color: var(--navy); }
 .warranty { display: inline-flex; align-items: center; gap: 8px; background: var(--bg2); border: 1px solid var(--line); border-radius: 20px; padding: 7px 14px; font-size: 12px; color: var(--navy); font-weight: 500; margin: 10px 0; }
 .price { margin: 14px 0; font-size: 14px; color: var(--muted); }
