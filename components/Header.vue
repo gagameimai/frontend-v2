@@ -11,10 +11,12 @@
 
         <nav class="menu" :class="{ open: menuOpen }" @click="onMenuClick">
           <div class="has-drop" :class="{ open: openKey === 'clarion' }">
-            <NuxtLink to="/clarion/overview" @click="onDropTriggerClick('clarion', $event)">
+            <!-- 用一般 <a> 而不是 NuxtLink：NuxtLink 自己的換頁動作會比我們的攔截先跑，
+                 手機選單裡點了就直接跳走、攔不住（之前的 bug）。換頁一律由 onDropTriggerClick 決定。 -->
+            <a href="/clarion/overview" class="drop-trigger" :aria-expanded="openKey === 'clarion' ? 'true' : 'false'" @click="onDropTriggerClick('clarion', '/clarion/overview', $event)">
               <span class="cn">{{ $t('header.clarion') }} <span class="caret">▼</span></span>
               <span class="sub">{{ $t('header.clarionSub') }}</span>
-            </NuxtLink>
+            </a>
             <div class="drop">
               <small>{{ $t('header.clarionMenuTitle') }}</small>
               <div class="drop-grid">
@@ -32,11 +34,11 @@
           </div>
 
           <div class="has-drop" :class="{ open: openKey === 'mm' }">
-            <NuxtLink to="/mm/overview" @click="onDropTriggerClick('mm', $event)">
+            <a href="/mm/overview" class="drop-trigger" :aria-expanded="openKey === 'mm' ? 'true' : 'false'" @click="onDropTriggerClick('mm', '/mm/overview', $event)">
               <span class="cn">{{ $t('header.mm') }} <span class="caret">▼</span></span>
               <span class="sub">{{ $t('header.mmSub') }}</span>
-            </NuxtLink>
-            <div class="drop" style="min-width: 250px">
+            </a>
+            <div class="drop drop-mm">
               <small>{{ $t('header.mmMenuTitle') }}</small>
               <div class="drop-grid">
                 <NuxtLink to="/mm/me">{{ $t('header.mmItems.android') }}</NuxtLink>
@@ -113,14 +115,21 @@ const toggleMenu = () => {
   openKey.value = null
 }
 
-// 手機模式（漢堡選單開著）點「Clarion 歌樂／MM 美邁」這種有子選單的主標題：
-// 只負責展開/收合該子選單，不導頁、也不把整個漢堡選單關起來。
-// 桌機（漢堡選單本來就沒開）維持原本點擊直接導頁、hover 顯示子選單的行為，不受影響。
-const onDropTriggerClick = (key, e) => {
-  if (!menuOpen.value) return
+// 「Clarion 歌樂／MM 美邁」這種有子選單的主標題：
+// ・手機（≤640px）：不能點（CSS 關掉點擊），底下的子分類直接全部列出來，不會再有浮在上面的半透明下拉。
+// ・平板漢堡選單（641～1024px）：點了只展開／收合子選單，不換頁、也不關掉整個選單。
+// ・電腦（漢堡選單沒開）：維持原本點了換到總覽頁、滑過顯示子選單。
+const router = useRouter()
+const onDropTriggerClick = (key, path, e) => {
+  // 電腦上按著 Ctrl／⌘ 點、或按滑鼠中鍵＝想開新分頁，交給瀏覽器自己處理
+  if (!menuOpen.value && (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0)) return
   e.preventDefault()
-  e.stopPropagation()
-  openKey.value = openKey.value === key ? null : key
+  if (menuOpen.value) {
+    e.stopPropagation()
+    openKey.value = openKey.value === key ? null : key
+    return
+  }
+  router.push(path)
 }
 
 // RWD 漢堡選單展開時，點下拉選單裡的子分類連結或其他連結，才把整個選單收起來
@@ -369,6 +378,9 @@ header {
   opacity: 0;
   visibility: hidden;
 }
+.drop.drop-mm {
+  min-width: 250px;
+}
 .drop small {
   display: block;
   color: var(--dim);
@@ -451,6 +463,65 @@ header {
   .lang {
     margin-left: 0;
     padding: 13px 4px;
+  }
+  /* 漢堡選單裡的子選單：不再浮在上面（原本會蓋住「導入事例」「經銷據點」、還會超出畫面左邊），
+     改成點了在標題底下展開、把下面的項目往下推；沒點開就完全不顯示（手機沒有 hover，避免殘影） */
+  .drop,
+  .drop.drop-mm {
+    display: none;
+    position: static;
+    min-width: 0;
+    width: 100%;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+    box-shadow: none;
+    border: 0;
+    border-radius: 0;
+    padding: 4px 0 10px 8px;
+  }
+  .has-drop.open .drop {
+    display: block;
+    transform: none;
+  }
+  .has-drop::after {
+    display: none;
+  }
+  /* 桌機那條「滑到別的下拉就把這個藏起來」的規則，在觸控上會因為點過留下的 hover 狀態，把另一組子分類整個藏掉 */
+  .menu:has(.has-drop:hover) .has-drop:not(:hover) .drop {
+    opacity: 1;
+    visibility: visible;
+  }
+  .has-drop.open .caret {
+    display: inline-block;
+    transform: rotate(180deg);
+  }
+}
+/* 手機（≤640px）：「Clarion 歌樂」「MM 美邁」只是分組標題，不能點；子分類直接全部列出來 */
+@media (max-width: 640px) {
+  .menu .has-drop > a.drop-trigger {
+    pointer-events: none;
+    cursor: default;
+    color: var(--ink);
+    font-weight: 700;
+    border-bottom: 0;
+    padding-bottom: 4px;
+  }
+  .menu .has-drop > a.drop-trigger .caret {
+    display: none;
+  }
+  .drop,
+  .drop.drop-mm {
+    display: block;
+    padding: 0 0 10px;
+    border-bottom: 1px solid #f0f3f6;
+  }
+  .drop small {
+    display: none;
+  }
+  .drop-grid a {
+    padding: 10px 12px;
   }
 }
 

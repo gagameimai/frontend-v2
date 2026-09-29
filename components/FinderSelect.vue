@@ -1,61 +1,38 @@
 <template>
-  <div
+  <button
     ref="fieldEl"
+    type="button"
     class="fld"
-    tabindex="0"
-    role="combobox"
-    aria-haspopup="listbox"
-    :aria-label="cap"
-    :aria-controls="listboxId"
+    aria-haspopup="dialog"
+    :aria-label="cap + '：' + (displayLabel || '')"
     :aria-expanded="open ? 'true' : 'false'"
-    :aria-disabled="disabled ? 'true' : 'false'"
-    :class="{ open, chosen, dis: disabled, up: isUp }"
-    @click="onFieldClick"
-    @keydown="onKeydown"
+    :class="{ open, chosen, dis: disabled }"
+    @click="emit('toggle')"
   >
     <i class="led"></i>
     <span class="cap">{{ cap }}</span>
     <span class="val">{{ displayLabel }}</span>
     <i class="cv"></i>
-    <div :id="listboxId" ref="optsEl" class="opts" role="listbox" :aria-label="cap">
-      <div
-        v-for="(opt, i) in options"
-        :key="i"
-        class="opt"
-        :class="{ on: i === selectedIndex, dis: opt.disabled }"
-        role="option"
-        :aria-selected="i === selectedIndex ? 'true' : 'false'"
-        @click.stop="selectOption(opt)"
-      >{{ opt.label }}</div>
-    </div>
-  </div>
+  </button>
 </template>
 
 <script setup>
-// 深色自訂下拉選單：比照草稿「首頁_混搭版.html」的 .finder .fld / .opts。
-// 外面看起來是一個欄位，實際上不是瀏覽器原生 <select>（原生清單一定白底、位置由瀏覽器決定），
-// 這裡自己畫一份深色清單，並依畫面剩餘空間決定往上或往下展開。
-// options 格式：[{ value, label, disabled? }]，第一筆通常是「請選擇...」的預留選項。
+// 首頁「選車型」抽屜裡的一格欄位（深色，比照草稿「首頁_混搭版.html」的 .finder .fld）。
+// 2026-09 改版：原本點下去會在欄位旁邊彈出一個窄窄的小清單，42 個車廠一次只看得到 7 個、手機很難點，
+// 現在這個元件只負責「顯示目前選了什麼」，點下去由首頁打開大面板（components/FinderPanel.vue）來選。
+// options 格式：[{ value, label }]，第一筆通常是「請選擇...」的預留選項，用來顯示還沒選時的文字。
+// 欄位還不能用時（例如還沒選車廠就點車款）仍然可以點，由首頁決定要帶客人回到哪一步。
 const props = defineProps({
   cap: { type: String, default: '' },
-  modelValue: { default: '' },
+  // 不給預設值：年份欄「還沒選」是 undefined，若預設成 ''，會被當成「所有年份」而不是顯示「選擇年份」
+  modelValue: { default: undefined },
   options: { type: Array, default: () => [] },
   disabled: { type: Boolean, default: false },
   open: { type: Boolean, default: false },
 })
-const emit = defineEmits(['update:modelValue', 'change', 'toggle', 'close'])
-
-// 無障礙／AI 代理可存取性：
-// role="combobox" 不是「名稱取自內容」的角色，裡面的 <span class="cap">汽車品牌</span>
-// 只會被當成內容、不會變成這個欄位的名稱，所以稽核會報
-// 「ARIA input fields must have an accessible name」。用 aria-label 把可見標籤綁上去。
-// aria-controls 需要一個 id，用 Nuxt 的 useId() 產生，伺服器端與瀏覽器端才會一致、不會 hydration 不符。
-const listboxId = `finder-listbox-${useId()}`
+const emit = defineEmits(['toggle'])
 
 const fieldEl = ref(null)
-const optsEl = ref(null)
-const isUp = ref(false)
-
 const selectedIndex = computed(() => props.options.findIndex((o) => o.value === props.modelValue))
 const displayLabel = computed(() => {
   const i = selectedIndex.value
@@ -64,104 +41,19 @@ const displayLabel = computed(() => {
 // 目前選到的不是第一筆佔位選項，才算「已選擇」（用來決定文字要不要變白色）
 const chosen = computed(() => selectedIndex.value > 0)
 
-// 依欄位目前位置，計算清單要往上或往下展開、該放在哪個座標。
-// 用 position:fixed，才不會被上層 .hero 的排版或 overflow 影響，該往上就往上、該往下就往下。
-function place() {
-  const fld = fieldEl.value
-  const box = optsEl.value
-  if (!fld || !box) return
-  const r = fld.getBoundingClientRect()
-  const gap = 9
-  box.style.left = Math.round(r.left) + 'px'
-  box.style.width = Math.round(r.width) + 'px'
-  box.style.maxHeight = 'none'
-  const want = box.scrollHeight + 14
-  const below = window.innerHeight - r.bottom - 14
-  const above = r.top - 14
-  const up = below < want && above > below
-  isUp.value = up
-  box.style.maxHeight = Math.min(330, Math.max(120, up ? above : below)) + 'px'
-  const hgt = box.offsetHeight
-  let top = up ? r.top - gap - hgt : r.bottom + gap
-  const header = document.querySelector('header')
-  const minTop = (header ? Math.round(header.getBoundingClientRect().height) : 0) + 8
-  top = Math.min(top, window.innerHeight - hgt - 8)
-  top = Math.max(minTop, top)
-  box.style.bottom = 'auto'
-  box.style.top = Math.round(top) + 'px'
-}
-
-watch(
-  () => props.open,
-  (val) => {
-    if (val) nextTick(() => place())
-  }
-)
-
-function onFieldClick(ev) {
-  if (props.disabled) return
-  // 點到清單本身不切換開關，交給下面選項自己的 click 處理
-  if (ev.target.closest && ev.target.closest('.opts')) return
-  emit('toggle')
-}
-
-function selectOption(opt) {
-  if (opt.disabled) return
-  emit('update:modelValue', opt.value)
-  emit('change', opt.value)
-  emit('close')
-  nextTick(() => fieldEl.value && fieldEl.value.focus())
-}
-
-function onKeydown(ev) {
-  if (props.disabled) return
-  if (ev.key === 'Enter' || ev.key === ' ') {
-    ev.preventDefault()
-    emit('toggle')
-  } else if (ev.key === 'Escape') {
-    if (props.open) emit('close')
-  } else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
-    ev.preventDefault()
-    const dir = ev.key === 'ArrowDown' ? 1 : -1
-    let n = selectedIndex.value + dir
-    while (n >= 0 && n < props.options.length && props.options[n].disabled) {
-      n += dir
-    }
-    if (n >= 0 && n < props.options.length) {
-      const opt = props.options[n]
-      emit('update:modelValue', opt.value)
-      emit('change', opt.value)
-    }
-  }
-}
-
-function handleResize() {
-  if (props.open) place()
-}
-function handleScroll() {
-  if (!props.open || !fieldEl.value) return
-  const r = fieldEl.value.getBoundingClientRect()
-  if (r.bottom < 0 || r.top > window.innerHeight) {
-    emit('close')
-  } else {
-    place()
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  window.addEventListener('scroll', handleScroll, { passive: true })
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-  window.removeEventListener('scroll', handleScroll)
-})
+// 讓首頁在面板關掉後把焦點還給這一格（鍵盤操作的人才知道自己在哪）
+defineExpose({ focus: () => fieldEl.value && fieldEl.value.focus() })
 </script>
 
 <style scoped>
 .fld {
   flex: 1;
   position: relative;
+  display: block;
+  text-align: left;
+  font-family: inherit;
+  border: 0;
+  background: transparent;
   outline: 0;
   padding: 9px 16px 9px 20px;
   border-radius: 9px;
@@ -190,11 +82,11 @@ onBeforeUnmount(() => {
 .fld:hover {
   background: rgba(255, 255, 255, 0.04);
 }
-.fld:focus,
+.fld:focus-visible,
 .fld.open {
   background: rgba(0, 122, 190, 0.1);
 }
-.fld:focus .led,
+.fld:focus-visible .led,
 .fld.open .led {
   background: #4fb6ea;
   box-shadow: 0 0 9px rgba(79, 182, 234, 0.95);
@@ -208,7 +100,7 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.4);
   margin-bottom: 2px;
 }
-.fld:focus .cap,
+.fld:focus-visible .cap,
 .fld.open .cap {
   color: #4fb6ea;
 }
@@ -244,89 +136,14 @@ onBeforeUnmount(() => {
 }
 .fld.dis {
   opacity: 0.45;
-  cursor: not-allowed;
-}
-/* 用 position:fixed，才不會被 .hero 的排版或面板的 overflow 切掉；
-   left／width／top／bottom 由 JS 依當下位置算，所以「該往上就往上、該往下就往下」。 */
-.opts {
-  position: fixed;
-  z-index: 60;
-  padding: 6px;
-  border: 1px solid #33404f;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #1c242f, #12181f);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  overflow: auto;
-  overscroll-behavior: contain;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
-}
-.fld.up .opts {
-  transform: translateY(6px);
-}
-.fld.open .opts {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-.opt {
-  position: relative;
-  padding: 9px 30px 9px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.78);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.opt:hover {
-  background: rgba(0, 122, 190, 0.24);
-  color: #fff;
-}
-.opt.on {
-  background: rgba(0, 122, 190, 0.34);
-  color: #fff;
-}
-.opt.on::after {
-  content: '';
-  position: absolute;
-  right: 13px;
-  top: 50%;
-  margin-top: -7px;
-  width: 6px;
-  height: 10px;
-  border-right: 2px solid #4fb6ea;
-  border-bottom: 2px solid #4fb6ea;
-  transform: rotate(45deg);
-}
-.opt.dis {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.opts::-webkit-scrollbar {
-  width: 9px;
-}
-.opts::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 5px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-.opts::-webkit-scrollbar-track {
-  background: transparent;
 }
 @media (prefers-reduced-motion: reduce) {
-  .opts,
   .fld .cv {
     transition: none;
   }
 }
-@media (max-width: 760px) {
+/* 跟 pages/index.vue 的抽屜斷點一致：直立手機才直排，手機橫拿用橫排 */
+@media (max-width: 760px) and (orientation: portrait), (max-width: 560px) {
   .fld {
     flex: 1 1 100%;
     padding: 9px 14px 9px 18px;

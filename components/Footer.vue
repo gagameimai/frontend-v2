@@ -66,8 +66,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import logoCobrandWhite from '~/assets/img/Header/logo-cobrand-white.svg'
-import logoClarionWhite from '~/assets/img/Header/logo-clarion-white.svg'
-import logoMMWhite from '~/assets/img/Header/logo-mm-white.svg'
 
 // 頁尾的電話／Email／地址／社群連結（NAP：名稱、地址、電話）。
 // 這個站是靜態產生的，原本只在 onMounted 用 axios 抓，所以產出的 HTML 裡這幾欄是空的——
@@ -79,24 +77,11 @@ const { data: websiteData, refresh: refreshWebsite } = useAsyncData('website-inf
   $fetch(`${config.public.apiBase}/website`).catch(() => ({ result: null }))
 )
 const websiteInfo = computed(() => websiteData.value?.result || {})
-const route = useRoute()
 
-// 依目前路徑切換頁尾 logo：Clarion 專區 / MM 專區 / 共用頁（雙品牌合併版）
-const brandZone = computed(() => {
-  if (route.path.startsWith('/clarion')) return 'clarion'
-  if (route.path.startsWith('/mm')) return 'mm'
-  return 'cobrand'
-})
-const logoSrc = computed(() => {
-  if (brandZone.value === 'clarion') return logoClarionWhite
-  if (brandZone.value === 'mm') return logoMMWhite
-  return logoCobrandWhite
-})
-const logoAlt = computed(() => {
-  if (brandZone.value === 'clarion') return 'Clarion 歌樂'
-  if (brandZone.value === 'mm') return 'MM 美邁'
-  return 'Clarion × MM 美邁'
-})
+// 頁尾 logo 全站固定用聯名版（Clarion × MM）：頁尾代表公司（美邁車用電子／日本 Clarion 歌樂 台灣總經銷），
+// 不隨 /clarion、/mm 專區切換，避免換頁時 logo 跳來跳去（2026-09-28 老闆指示）
+const logoSrc = logoCobrandWhite
+const logoAlt = 'Clarion × MM 美邁'
 
 // 靜態 HTML 先給畫面，掛載後立刻更新到最新（後台改了公司資料不用重新 generate 也會生效）
 onMounted(() => {

@@ -63,40 +63,72 @@
       <div class="finder-panel" id="finderPanel"><div>
         <div class="finder" ref="finderEl">
           <span class="lab">{{ $t('search.finderLabel') }}</span>
+          <!-- 三格欄位只負責顯示「選了什麼」；點下去打開下面的大面板來選（FinderPanel） -->
           <FinderSelect
+            ref="fldBrand"
             :cap="$t('search.brandCap')"
-            v-model="brandInputValue"
+            :model-value="brandInputValue"
             :options="brandOptions"
             :open="activeField === 'brand'"
-            @toggle="toggleField('brand')"
-            @close="closeField"
-            @change="brandChange"
+            @toggle="openField('brand')"
           />
           <FinderSelect
+            ref="fldModel"
             :cap="$t('search.modelCap')"
-            v-model="modelInputValue"
+            :model-value="modelInputValue"
             :options="modelOptions"
             :disabled="typeSelect"
             :open="activeField === 'model'"
-            @toggle="toggleField('model')"
-            @close="closeField"
-            @change="modelChange"
+            @toggle="openField('model')"
           />
           <FinderSelect
+            ref="fldYear"
             :cap="$t('search.yearCap')"
-            v-model="yearInputValue"
+            :model-value="yearInputValue"
             :options="yearOptions"
             :disabled="yearSelect"
             :open="activeField === 'year'"
-            @toggle="toggleField('year')"
-            @close="closeField"
+            @toggle="openField('year')"
           />
-          <a href="#" class="btn o" @click.prevent="searchData">
+          <!-- 查詢：車廠、車款、年份都選了（年份可選「所有年份」）才能按；按了直接到安卓車框頁那台車的結果 -->
+          <button
+            ref="searchBtn"
+            type="button"
+            class="btn o"
+            :class="{ ready: searchReady }"
+            :disabled="!canSearch"
+            :title="canSearch ? '' : $t('search.searchNeedPick')"
+            @click="searchData"
+          >
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
             {{ $t('home.search') }}
-          </a>
+          </button>
+        </div>
+        <!-- 2026-09 照草稿新增：不知道年份的人，直接到安卓車框頁看完工照比對。
+             上面三格有選的話，把同一組車廠／車款／年份帶過去（/carFrame?brand=&model=&year=），車框頁會直接開到那一步。 -->
+        <div class="finder-alt">
+          <span class="q">{{ $t('search.finderAltQ') }}</span>
+          <NuxtLink class="cf" :to="carFrameLink"><span class="new">{{ $t('search.finderAltNew') }}</span>{{ $t('search.finderAltBtn') }}</NuxtLink>
         </div>
       </div></div>
+      <!-- 選車大面板：電腦在畫面中間、手機從底部滑上來；選完品牌自動跳車款、再自動跳年份 -->
+      <FinderPanel
+        :open="!!activeField"
+        :step="panelStep"
+        :steps="panelSteps"
+        :title="panelTitle"
+        :items="panelItems"
+        :kind="panelKind"
+        :empty-text="panelQuery.trim() ? $t('search.panelNoHit', { q: panelQuery.trim() }) : $t('search.panelEmpty')"
+        :close-label="$t('search.panelClose')"
+        :clear-label="$t('search.panelClear')"
+        :search-placeholder="panelSearchPh"
+        v-model:query="panelQuery"
+        :fold-group="activeField === 'brand' && !panelQuery.trim() ? $t('search.groupAllBrands') : ''"
+        @pick="onPanelPick"
+        @step="onPanelStep"
+        @close="closeField"
+      />
       </div>
     </section>
 
@@ -421,39 +453,224 @@ function toggleFinder() {
   finderOpen.value = !finderOpen.value
 }
 
-// 三個自訂下拉同時間只能開一個：開其中一個，另外兩個會自動關閉
-const activeField = ref(null)
-function toggleField(name) {
+// ── 選車大面板（2026-09）：點任一格打開面板；選完品牌自動跳車款、選完車款自動跳年份、選完年份關面板並提示按「查詢」 ──
+const activeField = ref(null) // 'brand' / 'model' / 'year' / null
+const finderEl = ref(null)
+const fldBrand = ref(null)
+const fldModel = ref(null)
+const fldYear = ref(null)
+const searchBtn = ref(null)
+const searchReady = ref(false) // 選完年份時「查詢」鍵閃一下，提醒下一步按它
+
+function openField(name) {
+  // 還沒選車廠就點車款／年份：直接帶到「選車廠」那一步；選了車廠還沒選車款就點年份：帶到「選車款」
+  if (name !== 'brand' && !brandInputValue.value) name = 'brand'
+  else if (name === 'year' && !modelInputValue.value) name = 'model'
   activeField.value = activeField.value === name ? null : name
 }
 function closeField() {
+  const was = activeField.value
   activeField.value = null
-}
-// 點擊三個欄位以外的地方，自動收起目前展開的下拉清單
-const finderEl = ref(null)
-function onFinderDocClick(ev) {
-  if (finderEl.value && !finderEl.value.contains(ev.target)) {
-    activeField.value = null
-  }
-}
-onMounted(() => {
-  document.addEventListener('click', onFinderDocClick)
-})
-onUnmounted(() => {
-  document.removeEventListener('click', onFinderDocClick)
-})
-
-const router = useRouter()
-function searchData() {
-  router.push({
-    path: '/searchPage',
-    query: {
-      brand: brandInputValue.value,
-      model: modelInputValue.value,
-      year: yearInputValue.value,
-    },
+  // 把焦點還給剛剛那一格（用鍵盤的人才不會迷路）
+  const map = { brand: fldBrand, model: fldModel, year: fldYear }
+  nextTick(() => {
+    const f = was && map[was] && map[was].value
+    if (f && f.focus) f.focus()
   })
 }
+
+// 年份的佔位值是 undefined、「所有年份」是 ''，比對時要分清楚
+const yearChosen = computed(() => yearInputValue.value !== undefined)
+
+const panelStep = computed(() => ({ brand: 1, model: 2, year: 3 })[activeField.value] || 1)
+const brandNameOf = (id) => (brandList.value.find((b) => b.id == id) || {}).name || ''
+const modelNameOf = (id) => (modelList.value.find((m) => m.id == id) || {}).name || ''
+const panelSteps = computed(() => [
+  { k: 1, label: t('search.brandCap'), value: brandNameOf(brandInputValue.value), enabled: true },
+  { k: 2, label: t('search.modelCap'), value: modelNameOf(modelInputValue.value), enabled: !!brandInputValue.value },
+  {
+    k: 3,
+    label: t('search.yearCap'),
+    value: yearChosen.value ? (yearInputValue.value === '' ? t('search.allYears') : String(yearInputValue.value)) : '',
+    enabled: !!modelInputValue.value
+  }
+])
+const panelTitle = computed(() => {
+  if (activeField.value === 'model') return t('search.panelModel', { brand: brandNameOf(brandInputValue.value) })
+  if (activeField.value === 'year') return t('search.panelYear', { model: modelNameOf(modelInputValue.value) })
+  return t('search.panelBrand')
+})
+// 「TOYOTA 豐田」拆成大字英文＋小字中文，格子比較好掃
+function splitBrand(name) {
+  const s = String(name || '').trim()
+  const m = s.match(/^(.*?)\s*([㐀-鿿].*)?$/)
+  return { en: (m && m[1] ? m[1].trim() : s) || s, zh: m && m[2] ? m[2].trim() : '' }
+}
+
+// ── 面板瘦身（使用者 2026-09 選定）：可打字搜尋、常見車廠排前面、其他車廠收合、年份依年代分組 ──
+const panelQuery = ref('')
+// 台灣車框／安卓機最常見的 10 個車廠（依後台車框資料量與市場），其餘收在「全部車廠（A–Z）」
+const POPULAR_BRANDS = ['TOYOTA', 'HONDA', 'NISSAN', 'MITSUBISHI', 'MAZDA', 'FORD', 'LEXUS', 'HYUNDAI', 'KIA', 'VOLKSWAGEN']
+// 比對時忽略大小寫、空白、連字號、斜線：打「crv」找得到「CR-V」、「altis」找得到「Corolla Altis」
+const norm = (s) => String(s || '').toLowerCase().replace(/[\s\-_/.·]+/g, '')
+const yearRange = (m) => (m && m.year_start && m.year_end ? `${m.year_start}–${m.year_end}` : '')
+
+const panelKind = computed(() => {
+  if (activeField.value === 'brand' && panelQuery.value.trim()) return 'hit'
+  return activeField.value || 'brand'
+})
+const panelSearchPh = computed(() => {
+  if (activeField.value === 'brand') return t('search.panelSearchBrand')
+  if (activeField.value === 'model') return t('search.panelSearchModel')
+  return '' // 年份不需要搜尋
+})
+// 換步驟、打開／關掉面板時，搜尋字清空
+watch(activeField, () => {
+  panelQuery.value = ''
+})
+
+const panelItems = computed(() => {
+  const q = norm(panelQuery.value)
+  if (activeField.value === 'brand') {
+    // 有打字：同時找「車廠」和「所有車廠的車款」，點車款就一次選好車廠＋車款
+    if (q) {
+      const brandHits = brandList.value
+        .filter((b) => norm(b.name).includes(q))
+        .map((b) => {
+          const n = splitBrand(b.name)
+          return { value: b.id, label: n.en, sub: n.zh, row: true, group: t('search.groupBrandHits'), groupKind: 'hit' }
+        })
+      const brandById = new Map(brandList.value.map((b) => [String(b.id), b]))
+      const modelHits = carList.value
+        .filter((c) => brandById.has(String(c.car_brand_id)) && norm(c.name).includes(q))
+        .slice(0, 40)
+        .map((c) => ({
+          value: 'm:' + c.id,
+          label: c.name,
+          sub: [brandById.get(String(c.car_brand_id)).name, yearRange(c)].filter(Boolean).join(' · '),
+          row: true,
+          group: t('search.groupModelHits'),
+          groupKind: 'hit'
+        }))
+      return [...brandHits, ...modelHits]
+    }
+    // 沒打字：常見車廠在前，其他收在「全部車廠（A–Z）」
+    const popular = []
+    const rest = []
+    for (const b of brandList.value) {
+      const n = splitBrand(b.name)
+      const item = { value: b.id, label: n.en, sub: n.zh, on: b.id == brandInputValue.value && brandInputValue.value !== '' }
+      const idx = POPULAR_BRANDS.indexOf(n.en.toUpperCase())
+      if (idx > -1) popular.push({ ...item, group: t('search.groupPopular'), groupKind: 'pop', _i: idx })
+      else rest.push({ ...item, group: t('search.groupAllBrands') })
+    }
+    popular.sort((a, b) => a._i - b._i)
+    return [...popular, ...rest]
+  }
+  if (activeField.value === 'model') {
+    return modelList.value
+      .filter((m) => !q || norm(m.name).includes(q))
+      .map((m) => ({
+        value: m.id,
+        label: m.name,
+        sub: yearRange(m),
+        on: m.id == modelInputValue.value && modelInputValue.value !== ''
+      }))
+  }
+  if (activeField.value === 'year') {
+    // 不確定年份的人最多：「所有年份」放最上面；年份依年代分組、新的在前，眼睛一次只要看一排
+    const byDecade = new Map()
+    for (const y of yearList.value) {
+      const d = Math.floor(Number(y) / 10) * 10
+      if (!byDecade.has(d)) byDecade.set(d, [])
+      byDecade.get(d).push(y)
+    }
+    const decades = [...byDecade.keys()].sort((a, b) => b - a)
+    const out = [{ value: '', label: t('search.allYears'), sub: t('search.allYearsSub'), wide: true, on: yearInputValue.value === '' }]
+    for (const d of decades) {
+      for (const y of byDecade.get(d).sort((a, b) => a - b)) {
+        out.push({ value: y, label: String(y), group: t('search.decade', { d }), on: yearInputValue.value == y && yearInputValue.value !== '' })
+      }
+    }
+    return out
+  }
+  return []
+})
+
+function onPanelPick(v) {
+  // 搜尋結果點的是「車款」（值是 m:車款id）：一次把車廠＋車款都選好，直接跳到年份
+  if (activeField.value === 'brand' && typeof v === 'string' && v.startsWith('m:')) {
+    const car = carList.value.find((c) => String(c.id) === v.slice(2))
+    if (car) {
+      const brand = brandList.value.find((b) => String(b.id) === String(car.car_brand_id))
+      brandInputValue.value = brand ? brand.id : car.car_brand_id
+      brandChange()
+      modelInputValue.value = car.id
+      yearInputValue.value = undefined
+      modelChange()
+      searchReady.value = false
+      activeField.value = 'year'
+    }
+    return
+  }
+  if (activeField.value === 'brand') {
+    brandInputValue.value = v
+    brandChange()
+    searchReady.value = false
+    activeField.value = modelList.value.length ? 'model' : null
+  } else if (activeField.value === 'model') {
+    modelInputValue.value = v
+    yearInputValue.value = undefined
+    modelChange()
+    searchReady.value = false
+    activeField.value = 'year'
+  } else if (activeField.value === 'year') {
+    yearInputValue.value = v
+    activeField.value = null
+    // 三格都選好了：把焦點放到「查詢」鍵並閃一下
+    searchReady.value = false
+    nextTick(() => {
+      searchReady.value = true
+      if (searchBtn.value) searchBtn.value.focus({ preventScroll: true })
+    })
+  }
+}
+function onPanelStep(k) {
+  activeField.value = ({ 1: 'brand', 2: 'model', 3: 'year' })[k] || 'brand'
+}
+
+const router = useRouter()
+// 三格都選了才能查詢（年份選「所有年份」也算選了）
+const canSearch = computed(() => !!brandInputValue.value && !!modelInputValue.value && yearChosen.value)
+// 查詢（2026-09 使用者指示）：不再到 /searchPage，直接到安卓車框頁、開到這台車的結果。
+// 參數兩條路一起帶：① 網址 /carFrame?brand=&model=&year=（重新整理、分享都還在，伺服器端一開始就能畫出對的那一步）
+// ② localStorage 備份一份（萬一網址參數被瀏覽器或外掛拿掉，車框頁還是讀得到；車框頁讀完就刪、10 分鐘後失效，不會影響之後從選單進車框頁）
+function searchData() {
+  if (!canSearch.value) return
+  const to = carFrameLink.value
+  try {
+    localStorage.setItem(
+      'mmFinderCar',
+      JSON.stringify({ brand: to.query.brand || '', model: to.query.model || '', year: to.query.year || '', t: Date.now() })
+    )
+  } catch (e) {
+    // 無痕模式等存不了就算了，網址參數本來就有帶
+  }
+  router.push(to)
+}
+
+// 「直接找完工照」：帶著抽屜裡已選的車廠／車款／年份（後台編號）到安卓車框頁，車框頁會直接開到那一步。
+// 沒選就只到 /carFrame；年份只有「選了車廠＋車款」而且是實際年份（不是「所有年份」）才帶。
+const carFrameLink = computed(() => {
+  const query = {}
+  const b = String(brandInputValue.value ?? '')
+  const m = String(modelInputValue.value ?? '')
+  const y = String(yearInputValue.value ?? '')
+  if (b) query.brand = b
+  if (b && m && m !== 'all') query.model = m
+  if (query.model && /^\d{4}$/.test(y)) query.year = y
+  return { path: '/carFrame', query }
+})
 
 // ---- 首頁「精選商品」（後台 recommend_products 管理）----
 const recommendProducts = ref([])
@@ -966,13 +1183,89 @@ onUnmounted(() => {
 .finder .btn:hover {
   background: linear-gradient(180deg, #12a0ec, #0073b4);
 }
+.finder .btn {
+  font-family: inherit;
+  cursor: pointer;
+}
+/* 還沒選好車廠／車款／年份：查詢鍵變灰、不能按 */
+.finder .btn:disabled {
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.38);
+  box-shadow: none;
+}
+.finder .btn:disabled:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+/* 三格都選好時，「查詢」鍵發光兩下，提醒下一步按它 */
+.finder .btn.ready {
+  animation: goReady 0.9s ease 2;
+}
+@keyframes goReady {
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 18px rgba(0, 122, 190, 0.4); }
+  50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 6px rgba(79, 182, 234, 0.35), 0 6px 26px rgba(0, 122, 190, 0.7); }
+}
+.finder .btn:focus-visible {
+  outline: 2px solid #4fb6ea;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .finder .btn.ready { animation: none; }
+}
+/* 抽屜查詢列下面一行「不知道年份？直接找完工照」（照草稿 2026-09 新增） */
+.finder-alt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 13px;
+  border: 1px solid #2f3a48;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #10161d;
+}
+.finder-alt .q {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.55);
+}
+.finder-alt .cf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1.5px solid #4fb6ea;
+  background: rgba(79, 182, 234, 0.1);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.finder-alt .cf:hover { background: rgba(79, 182, 234, 0.22); }
+.finder-alt .cf:focus-visible { outline: 2px solid #4fb6ea; outline-offset: 2px; }
+.finder-alt .cf .new {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.5;
+  background: #4fb6ea;
+  color: #0b1422;
+  border-radius: 5px;
+  padding: 0 6px;
+}
 @media (prefers-reduced-motion: reduce) {
   .finder-panel,
   .finder-tab .ar {
     transition: none;
   }
 }
-@media (max-width: 760px) {
+/* 直排（三格上下疊）只給「直立的手機／窄螢幕」。手機橫拿（例如 667×375）畫面很矮，
+   直排抽屜會比整個 Hero 還高、上半截被表頭蓋住點不到，所以橫拿時改用跟電腦一樣的橫排。
+   components/FinderSelect.vue 裡的同一組斷點要跟這裡一致。 */
+@media (max-width: 760px) and (orientation: portrait), (max-width: 560px) {
   .finderwrap { padding: 0; }
   .finder-tab {
     height: auto;
@@ -992,6 +1285,9 @@ onUnmounted(() => {
   .finder-tab .ar { order: 2; margin-left: auto; }
   .finder { flex-wrap: wrap; padding: 6px; }
   .finder .btn { flex: 1 1 100%; justify-content: center; margin: 6px 0 0; }
+  .finder-alt { flex-wrap: wrap; gap: 8px; padding: 8px 6px 10px; border-left: 0; border-right: 0; }
+  .finder-alt .q { flex: 1 1 100%; padding-left: 10px; }
+  .finder-alt .cf { flex: 1 1 100%; height: 46px; }
 }
 .c-page section {
   padding: 80px 0;
