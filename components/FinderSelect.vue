@@ -84,12 +84,12 @@ defineExpose({ focus: () => fieldEl.value && fieldEl.value.focus() })
 }
 .fld:focus-visible,
 .fld.open {
-  background: rgba(0, 122, 190, 0.1);
+  background: color-mix(in srgb, var(--site-accent, #007abe) 10.0%, transparent);
 }
 .fld:focus-visible .led,
 .fld.open .led {
-  background: #4fb6ea;
-  box-shadow: 0 0 9px rgba(79, 182, 234, 0.95);
+  background: var(--site-accent-lt, #4fb6ea);
+  box-shadow: 0 0 9px color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 95.0%, transparent);
 }
 .fld .cap {
   display: block;
@@ -102,7 +102,7 @@ defineExpose({ focus: () => fieldEl.value && fieldEl.value.focus() })
 }
 .fld:focus-visible .cap,
 .fld.open .cap {
-  color: #4fb6ea;
+  color: var(--site-accent-lt, #4fb6ea);
 }
 .fld .val {
   display: block;
@@ -132,7 +132,7 @@ defineExpose({ focus: () => fieldEl.value && fieldEl.value.focus() })
 }
 .fld.open .cv {
   transform: rotate(-135deg);
-  border-color: #4fb6ea;
+  border-color: var(--site-accent-lt, #4fb6ea);
 }
 .fld.dis {
   opacity: 0.45;

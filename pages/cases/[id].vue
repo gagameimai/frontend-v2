@@ -38,14 +38,6 @@
       </div>
     </section>
 
-    <section class="help">
-      <div class="wrap-sm">
-        <h2>{{ $t('cases.helpTitle') }}</h2>
-        <p>{{ $t('cases.helpDesc') }}</p>
-        <NuxtLink to="/partner" class="btn">{{ $t('cases.toDealers') }}</NuxtLink>
-        <NuxtLink to="/cases" class="back">← {{ $t('cases.back') }}</NuxtLink>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -79,7 +71,7 @@ usePageSeo({
 <style scoped>
 .cd-page {
   --ink: #0d1b2e; --text: #1b2431; --muted: #5b6675; --dim: #93a0b0;
-  --bg: #fff; --bg2: #f5f7fa; --line: #e6ebf1; --navy: #007abe;
+  --bg: #fff; --bg2: var(--site-bg2, #f5f7fa); --line: #e6ebf1; --navy: var(--site-accent, #007abe);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.75; letter-spacing: 0.02em;
 }

@@ -14,9 +14,9 @@
         <div class="crumb">
           <NuxtLink to="/">{{ $t('search.home') }}</NuxtLink> ／ {{ breadcrumb }}
         </div>
-        <div class="ey">{{ $t('search.eyebrow') }}</div>
-        <h1>{{ $t('search.title') }}</h1>
-        <p class="lead">{{ $t('search.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('search.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('search.title') }}</h1>
+        <p class="lead" :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('search.intro') }}</p>
       </div>
     </section>
 
@@ -343,11 +343,11 @@ useHead({ meta: [{ name: 'robots', content: 'noindex, follow' }] })
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue: #3d7bff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;

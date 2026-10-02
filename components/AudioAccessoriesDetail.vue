@@ -119,11 +119,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue-soft: #6fa0ff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;

@@ -1,5 +1,5 @@
 <template>
-  <div class="dcd-page">
+  <div class="dcd-page" :class="{ 'is-mm': brand !== 'clarion' }">
     <!-- 麵包屑（白底，DVR 草稿樣式） -->
     <div class="wrap">
       <div class="crumb">
@@ -163,11 +163,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue-soft: #6fa0ff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -227,4 +227,6 @@ usePageSeo({
 
 @media (max-width: 820px) { .fitgrid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .fitgrid { grid-template-columns: 1fr; } }
+/* 美邁專區用 VIS 美邁藍 #023059＋橘 #F28729（歌樂專區維持 Clarion 藍 var(--site-accent, #007abe)） */
+.dcd-page.is-mm { --navy: #023059; --orange: #F28729; --blue-soft: #F28729; }
 </style>

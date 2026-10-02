@@ -16,9 +16,9 @@
           <NuxtLink to="/">{{ $t('mmOverview.home') }}</NuxtLink> ／
           <span>{{ $t('header.mm') }}</span> ／ {{ $t('mmOverview.navTitle') }}
         </div>
-        <div class="ey">{{ eyebrow }}</div>
-        <h1>{{ $t('mmOverview.title') }}</h1>
-        <p>{{ $t('mmOverview.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || eyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('mmOverview.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('mmOverview.intro') }}</p>
       </div>
     </div>
 
@@ -32,7 +32,7 @@
           :class="{ on: activeKey === sec.key }"
           @click="scrollToSection(sec.key, $event)"
         >
-          {{ $t(sec.nav) }}
+          {{ secTitle(sec.key, $t(sec.nav)) }}
         </a>
       </div>
     </nav>
@@ -47,13 +47,14 @@
       </div>
     </section>
 
+    <div class="cat-stack">
     <!-- 多媒體安卓機 -->
-    <section id="android" class="catsec" data-sec="android">
+    <section v-if="secOn('android')" id="android" class="catsec" :class="{ first: firstSec === 'android' }" :style="{ order: secOrder('android') }" data-sec="android">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.androidKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.androidTitle') }}</div>
+            <div class="cn">{{ secTitle('android', $t('mmOverview.androidTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.androidDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -85,12 +86,12 @@
     </section>
 
     <!-- 車型專用機 -->
-    <section id="oem" class="catsec" data-sec="oem">
+    <section v-if="secOn('oem')" id="oem" class="catsec" :class="{ first: firstSec === 'oem' }" :style="{ order: secOrder('oem') }" data-sec="oem">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.oemKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.oemTitle') }}</div>
+            <div class="cn">{{ secTitle('oem', $t('mmOverview.oemTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.oemDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -122,12 +123,12 @@
     </section>
 
     <!-- 安卓車框（隨機預覽 ＋ 選車型 CTA） -->
-    <section id="frame" class="catsec" data-sec="frame">
+    <section v-if="secOn('frame')" id="frame" class="catsec" :class="{ first: firstSec === 'frame' }" :style="{ order: secOrder('frame') }" data-sec="frame">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.frameKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.frameTitle') }}</div>
+            <div class="cn">{{ secTitle('frame', $t('mmOverview.frameTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.frameDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -160,12 +161,12 @@
     </section>
 
     <!-- 影像・安全 -->
-    <section id="safety" class="catsec" data-sec="safety">
+    <section v-if="secOn('safety')" id="safety" class="catsec" :class="{ first: firstSec === 'safety' }" :style="{ order: secOrder('safety') }" data-sec="safety">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.safetyKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.safetyTitle') }}</div>
+            <div class="cn">{{ secTitle('safety', $t('mmOverview.safetyTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.safetyDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -197,12 +198,12 @@
     </section>
 
     <!-- 行車記錄器 -->
-    <section id="dvr" class="catsec" data-sec="dvr">
+    <section v-if="secOn('dvr')" id="dvr" class="catsec" :class="{ first: firstSec === 'dvr' }" :style="{ order: secOrder('dvr') }" data-sec="dvr">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.dvrKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.dvrTitle') }}</div>
+            <div class="cn">{{ secTitle('dvr', $t('mmOverview.dvrTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.dvrDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -234,12 +235,12 @@
     </section>
 
     <!-- 鏡頭 -->
-    <section id="camera" class="catsec" data-sec="camera">
+    <section v-if="secOn('camera')" id="camera" class="catsec" :class="{ first: firstSec === 'camera' }" :style="{ order: secOrder('camera') }" data-sec="camera">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.cameraKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.cameraTitle') }}</div>
+            <div class="cn">{{ secTitle('camera', $t('mmOverview.cameraTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.cameraDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -271,12 +272,12 @@
     </section>
 
     <!-- 車用配件 -->
-    <section id="fitting" class="catsec" data-sec="fitting">
+    <section v-if="secOn('fitting')" id="fitting" class="catsec" :class="{ first: firstSec === 'fitting' }" :style="{ order: secOrder('fitting') }" data-sec="fitting">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('mmOverview.fittingKicker') }}</div>
-            <div class="cn">{{ $t('mmOverview.fittingTitle') }}</div>
+            <div class="cn">{{ secTitle('fitting', $t('mmOverview.fittingTitle')) }}</div>
             <div class="desc">{{ $t('mmOverview.fittingDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('mmOverview.findInstaller') }}</NuxtLink>
@@ -307,17 +308,7 @@
       </div>
     </section>
 
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('mmOverview.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('mmOverview.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -335,15 +326,22 @@ const eyebrow = computed(() => `${t('header.mm')} ｜ ${t('mmOverview.eyebrowSuf
 const banner = useListBanner('mmOverview')
 
 // 7 大分類，順序依 Header.vue 目前的 MM 下拉選單
-const sectionMeta = [
-  { key: 'android', nav: 'mmOverview.navAndroid' },
-  { key: 'oem', nav: 'mmOverview.navOem' },
-  { key: 'frame', nav: 'mmOverview.navFrame' },
-  { key: 'safety', nav: 'mmOverview.navSafety' },
-  { key: 'dvr', nav: 'mmOverview.navDvr' },
-  { key: 'camera', nav: 'mmOverview.navCamera' },
-  { key: 'fitting', nav: 'mmOverview.navFitting' }
-]
+// 後台「產品管理 ▸ 產品類別開關」：顯示／順序／名稱
+const cats = useCategories('mm')
+const SEC2CAT = { android: 'android', oem: 'oem', frame: 'frame', safety: 'safety', dvr: 'dvr', camera: 'camera', fitting: 'fitting' }
+const SEC_NAV = { android: 'mmOverview.navAndroid', oem: 'mmOverview.navOem', frame: 'mmOverview.navFrame', safety: 'mmOverview.navSafety', dvr: 'mmOverview.navDvr', camera: 'mmOverview.navCamera', fitting: 'mmOverview.navFitting' }
+const sectionMeta = computed(() =>
+  cats.list.value
+    .filter((r) => r.on && Object.values(SEC2CAT).includes(r.key))
+    .map((r) => {
+      const sec = Object.keys(SEC2CAT).find((k) => SEC2CAT[k] === r.key)
+      return { key: sec, nav: SEC_NAV[sec] }
+    })
+)
+const secOn = (sec) => cats.isOn(SEC2CAT[sec])
+const secOrder = (sec) => cats.order(SEC2CAT[sec])
+const secTitle = (sec, fb) => cats.label(SEC2CAT[sec], fb)
+const firstSec = computed(() => sectionMeta.value[0]?.key)
 
 const fetchList = (endpoint, params) =>
   $fetch(`${config.public.apiBase}${endpoint}`, params ? { params } : undefined).catch(() => ({ result: [] }))
@@ -411,7 +409,7 @@ const scrollToSection = (key, e) => {
 }
 
 onMounted(() => {
-  const sections = sectionMeta.map((s) => document.getElementById(s.key)).filter(Boolean)
+  const sections = sectionMeta.value.map((s) => document.getElementById(s.key)).filter(Boolean)
   if (!sections.length || typeof IntersectionObserver === 'undefined') return
   observer = new IntersectionObserver(
     (entries) => {
@@ -445,11 +443,12 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: #023059; /* 美邁 VIS 深藍（歌樂頁才用 var(--site-accent, #007abe)） */
+  --orange: #F28729; /* 美邁 VIS 橘 */
   --purple: #af47d2;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -461,7 +460,9 @@ usePageSeo({
 .ov-page h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 900; color: var(--ink); }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 26px; }
 .ov-page section { padding: 48px 0; }
-.catsec + .catsec { padding-top: 0; }
+.cat-stack { display: flex; flex-direction: column; }
+.cat-stack .catsec { padding-top: 0; }
+.cat-stack .catsec.first { padding-top: 48px; }
 #android { scroll-margin-top: 84px; }
 #oem, #frame, #safety, #dvr, #camera, #fitting { scroll-margin-top: 138px; }
 
@@ -490,7 +491,7 @@ usePageSeo({
 .hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 40px 8px 46px; }
 .hero .crumb { font-size: 12px; color: var(--dim); margin-bottom: 14px; }
 .hero .crumb a:hover { color: var(--navy); }
-.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
+.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--orange); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
 .hero p { width: 100%; color: #41506b; max-width: 640px; font-weight: 300; }
 .subnav { position: sticky; top: 64px; z-index: 30; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }

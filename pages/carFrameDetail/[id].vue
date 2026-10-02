@@ -188,10 +188,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: #023059; /* 美邁 VIS 深藍 */
+  --orange: #F28729; /* 美邁 VIS 橘 */
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg);
   color: var(--text);

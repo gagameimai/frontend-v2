@@ -16,9 +16,9 @@
           <NuxtLink to="/">{{ $t('clarionOverview.home') }}</NuxtLink> ／
           <span>{{ $t('header.clarion') }}</span> ／ {{ $t('clarionOverview.navTitle') }}
         </div>
-        <div class="ey">{{ eyebrow }}</div>
-        <h1>{{ $t('clarionOverview.title') }}</h1>
-        <p>{{ $t('clarionOverview.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || eyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('clarionOverview.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('clarionOverview.intro') }}</p>
       </div>
     </div>
 
@@ -32,7 +32,7 @@
           :class="{ on: activeKey === sec.key }"
           @click="scrollToSection(sec.key, $event)"
         >
-          {{ $t(sec.nav) }}
+          {{ secTitle(sec.key, $t(sec.nav)) }}
         </a>
       </div>
     </nav>
@@ -47,13 +47,14 @@
       </div>
     </section>
 
+    <div class="cat-stack">
     <!-- 多媒體安卓機 GL -->
-    <section id="tablet" class="catsec" data-sec="tablet">
+    <section v-if="secOn('tablet')" id="tablet" class="catsec" :class="{ first: firstSec === 'tablet' }" :style="{ order: secOrder('tablet') }" data-sec="tablet">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.tabletKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.tabletTitle') }}</div>
+            <div class="cn">{{ secTitle('tablet', $t('clarionOverview.tabletTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.tabletDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -85,12 +86,12 @@
     </section>
 
     <!-- 汽車音響 -->
-    <section id="sound" class="catsec" data-sec="sound">
+    <section v-if="secOn('sound')" id="sound" class="catsec" :class="{ first: firstSec === 'sound' }" :style="{ order: secOrder('sound') }" data-sec="sound">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.soundKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.soundTitle') }}</div>
+            <div class="cn">{{ secTitle('sound', $t('clarionOverview.soundTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.soundDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -122,12 +123,12 @@
     </section>
 
     <!-- 鏡頭 -->
-    <section id="camera" class="catsec" data-sec="camera">
+    <section v-if="secOn('camera')" id="camera" class="catsec" :class="{ first: firstSec === 'camera' }" :style="{ order: secOrder('camera') }" data-sec="camera">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.cameraKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.cameraTitle') }}</div>
+            <div class="cn">{{ secTitle('camera', $t('clarionOverview.cameraTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.cameraDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -159,12 +160,12 @@
     </section>
 
     <!-- 車用主機 1/2DIN -->
-    <section id="din" class="catsec" data-sec="din">
+    <section v-if="secOn('din')" id="din" class="catsec" :class="{ first: firstSec === 'din' }" :style="{ order: secOrder('din') }" data-sec="din">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.dinKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.dinTitle') }}</div>
+            <div class="cn">{{ secTitle('din', $t('clarionOverview.dinTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.dinDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -196,12 +197,12 @@
     </section>
 
     <!-- 行車記錄器 -->
-    <section id="dvr" class="catsec" data-sec="dvr">
+    <section v-if="secOn('dvr')" id="dvr" class="catsec" :class="{ first: firstSec === 'dvr' }" :style="{ order: secOrder('dvr') }" data-sec="dvr">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.dvrKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.dvrTitle') }}</div>
+            <div class="cn">{{ secTitle('dvr', $t('clarionOverview.dvrTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.dvrDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -233,12 +234,12 @@
     </section>
 
     <!-- 頭枕螢幕 -->
-    <!-- <section id="headrest" class="catsec" data-sec="headrest">
+    <section v-if="secOn('headrest')" id="headrest" class="catsec" :class="{ first: firstSec === 'headrest' }" :style="{ order: secOrder('headrest') }" data-sec="headrest">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.headrestKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.headrestTitle') }}</div>
+            <div class="cn">{{ secTitle('headrest', $t('clarionOverview.headrestTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.headrestDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -267,15 +268,15 @@
         </div>
         <p v-if="headrestList.length === 0" class="empty">{{ $t('clarionOverview.empty') }}</p>
       </div>
-    </section> -->
+    </section>
 
     <!-- 可攜式 -->
-    <!-- <section id="portable" class="catsec" data-sec="portable">
+    <section v-if="secOn('portable')" id="portable" class="catsec" :class="{ first: firstSec === 'portable' }" :style="{ order: secOrder('portable') }" data-sec="portable">
       <div class="wrap">
         <div class="shead">
           <div>
             <div class="sub">{{ $t('clarionOverview.portableKicker') }}</div>
-            <div class="cn">{{ $t('clarionOverview.portableTitle') }}</div>
+            <div class="cn">{{ secTitle('portable', $t('clarionOverview.portableTitle')) }}</div>
             <div class="desc">{{ $t('clarionOverview.portableDesc') }}</div>
           </div>
           <NuxtLink to="/partner" class="btn ghost">{{ $t('clarionOverview.findInstaller') }}</NuxtLink>
@@ -304,19 +305,9 @@
         </div>
         <p v-if="portableList.length === 0" class="empty">{{ $t('clarionOverview.empty') }}</p>
       </div>
-    </section> -->
-
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('clarionOverview.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('clarionOverview.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
     </section>
+
+    </div>
   </div>
 </template>
 
@@ -334,15 +325,22 @@ const eyebrow = computed(() => `${t('header.clarion')} ｜ ${t('clarionOverview.
 const banner = useListBanner('clarionOverview')
 
 // 7 大分類
-const sectionMeta = [
-  { key: 'tablet', nav: 'clarionOverview.navTablet' },
-  { key: 'sound', nav: 'clarionOverview.navSound' },
-  { key: 'camera', nav: 'clarionOverview.navCamera' },
-  { key: 'din', nav: 'clarionOverview.navDin' },
-  { key: 'dvr', nav: 'clarionOverview.navDvr' },
-  // { key: 'headrest', nav: 'clarionOverview.navHeadrest' },
-  // { key: 'portable', nav: 'clarionOverview.navPortable' }
-]
+// 後台「產品管理 ▸ 產品類別開關」：顯示／順序／名稱
+const cats = useCategories('clarion')
+const SEC2CAT = { tablet: 'gl', sound: 'audio', camera: 'camera', din: 'din', dvr: 'dvr', headrest: 'headrest', portable: 'portable' }
+const SEC_NAV = { tablet: 'clarionOverview.navTablet', sound: 'clarionOverview.navSound', camera: 'clarionOverview.navCamera', din: 'clarionOverview.navDin', dvr: 'clarionOverview.navDvr', headrest: 'clarionOverview.navHeadrest', portable: 'clarionOverview.navPortable' }
+const sectionMeta = computed(() =>
+  cats.list.value
+    .filter((r) => r.on && Object.values(SEC2CAT).includes(r.key))
+    .map((r) => {
+      const sec = Object.keys(SEC2CAT).find((k) => SEC2CAT[k] === r.key)
+      return { key: sec, nav: SEC_NAV[sec] }
+    })
+)
+const secOn = (sec) => cats.isOn(SEC2CAT[sec])
+const secOrder = (sec) => cats.order(SEC2CAT[sec])
+const secTitle = (sec, fb) => cats.label(SEC2CAT[sec], fb)
+const firstSec = computed(() => sectionMeta.value[0]?.key)
 
 const fetchList = (endpoint, params) =>
   $fetch(`${config.public.apiBase}${endpoint}`, params ? { params } : undefined).catch(() => ({ result: [] }))
@@ -353,9 +351,9 @@ const tabletList = computed(() =>
   (tabletData.value?.result ?? []).map((p) => ({ id: p.id, name: p.name, memo: p.memo, img: p.img }))
 )
 
-// 汽車音響：/audio_accessories（type 0喇叭／1高音／2重低音／3擴大機）
+// 汽車音響：/audio_accessories（type 0喇叭／1高音／2重低音／3擴大機／4DSP）
 const { data: soundData } = await useAsyncData('ov-sound', () => fetchList('/audio_accessories'))
-const SOUND_BADGE = { 0: 'SPEAKER', 1: 'TWEETER', 2: 'SUB', 3: 'AMP' }
+const SOUND_BADGE = { 0: 'SPEAKER', 1: 'TWEETER', 2: 'SUB', 3: 'AMP', 4: 'DSP' }
 const soundList = computed(() =>
   (soundData.value?.result ?? []).map((p) => ({
     id: p.id,
@@ -391,16 +389,16 @@ const dvrList = computed(() =>
 )
 
 // 頭枕螢幕：/headrest
-// const { data: headrestData } = await useAsyncData('ov-headrest', () => fetchList('/headrest'))
-// const headrestList = computed(() =>
-//   (headrestData.value?.result ?? []).map((p) => ({ id: p.id, name: p.name, memo: p.memo, img: p.img }))
-// )
+const { data: headrestData } = await useAsyncData('ov-headrest', () => fetchList('/headrest'))
+const headrestList = computed(() =>
+  (headrestData.value?.result ?? []).map((p) => ({ id: p.id, name: p.name, memo: p.memo, img: p.img }))
+)
 
 // 可攜式：/portable
-// const { data: portableData } = await useAsyncData('ov-portable', () => fetchList('/portable'))
-// const portableList = computed(() =>
-//   (portableData.value?.result ?? []).map((p) => ({ id: p.id, name: p.name, memo: p.memo, img: p.img }))
-// )
+const { data: portableData } = await useAsyncData('ov-portable', () => fetchList('/portable'))
+const portableList = computed(() =>
+  (portableData.value?.result ?? []).map((p) => ({ id: p.id, name: p.name, memo: p.memo, img: p.img }))
+)
 
 const onImgError = (e) => {
   e.target.style.display = 'none'
@@ -417,7 +415,7 @@ const scrollToSection = (key, e) => {
 }
 
 onMounted(() => {
-  const sections = sectionMeta.map((s) => document.getElementById(s.key)).filter(Boolean)
+  const sections = sectionMeta.value.map((s) => document.getElementById(s.key)).filter(Boolean)
   if (!sections.length || typeof IntersectionObserver === 'undefined') return
   observer = new IntersectionObserver(
     (entries) => {
@@ -450,11 +448,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --purple: #af47d2;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -466,7 +464,9 @@ usePageSeo({
 .ov-page h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 900; color: var(--ink); }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 26px; }
 .ov-page section { padding: 48px 0; }
-.catsec + .catsec { padding-top: 0; }
+.cat-stack { display: flex; flex-direction: column; }
+.cat-stack .catsec { padding-top: 0; }
+.cat-stack .catsec.first { padding-top: 48px; }
 #tablet { scroll-margin-top: 84px; }
 #sound, #camera, #din, #dvr, #headrest, #portable { scroll-margin-top: 138px; }
 

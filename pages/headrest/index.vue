@@ -12,9 +12,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ $t('headrest.eyebrow') }}</div>
-        <h1>{{ $t('headrest.title') }}</h1>
-        <p>{{ $t('headrest.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('headrest.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('headrest.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('headrest.intro') }}</p>
       </div>
     </div>
 
@@ -59,17 +59,6 @@
       </div>
     </section>
 
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('headrest.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('headrest.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -115,10 +104,10 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: var(--site-accent, #007abe);
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;

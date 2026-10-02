@@ -16,9 +16,9 @@
           <NuxtLink to="/">{{ $t('audio.home') }}</NuxtLink> ／
           <span>{{ $t('header.clarion') }}</span> ／ {{ $t('audio.navTitle') }}
         </div>
-        <div class="ey">{{ eyebrow }}</div>
-        <h1>{{ $t('audio.title') }}</h1>
-        <p>{{ $t('audio.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || eyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('audio.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('audio.intro') }}</p>
       </div>
     </div>
 
@@ -91,17 +91,6 @@
       </div>
     </section>
 
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('audio.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('audio.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -134,12 +123,13 @@ const { data } = await useAsyncData('clarion-audio', () =>
 )
 const apiList = computed(() => data.value?.result ?? [])
 
-// typeVal 對應後台 car_audio_accessories 的 type：一般喇叭0／高音喇叭1／重低音2／擴大機3
+// typeVal 對應後台 car_audio_accessories 的 type：一般喇叭0／高音喇叭1／重低音2／擴大機3／DSP4
 const SECTION_META = [
   { key: 'speakers', typeVal: 0, nav: 'audio.navSpeakers', kicker: 'audio.speakersKicker', title: 'audio.speakersTitle', desc: 'audio.speakersDesc' },
   { key: 'tweeters', typeVal: 1, nav: 'audio.navTweeters', kicker: 'audio.tweetersKicker', title: 'audio.tweetersTitle', desc: 'audio.tweetersDesc' },
   { key: 'sub', typeVal: 2, nav: 'audio.navSub', kicker: 'audio.subKicker', title: 'audio.subTitle', desc: 'audio.subDesc' },
-  { key: 'amp', typeVal: 3, nav: 'audio.navAmp', kicker: 'audio.ampKicker', title: 'audio.ampTitle', desc: 'audio.ampDesc' }
+  { key: 'amp', typeVal: 3, nav: 'audio.navAmp', kicker: 'audio.ampKicker', title: 'audio.ampTitle', desc: 'audio.ampDesc' },
+  { key: 'dsp', typeVal: 4, nav: 'audio.navDsp', kicker: 'audio.dspKicker', title: 'audio.dspTitle', desc: 'audio.dspDesc' }
 ]
 
 // 依 type 分組顯示 API 資料；某分類 API 沒回傳資料就顯示空清單（不再用固定內容頂著）
@@ -210,10 +200,10 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: var(--site-accent, #007abe);
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;

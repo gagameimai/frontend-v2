@@ -20,14 +20,7 @@
             <div class="drop">
               <small>{{ $t('header.clarionMenuTitle') }}</small>
               <div class="drop-grid">
-                <NuxtLink to="/clarion/gl">{{ $t('header.clarionItems.gl') }}</NuxtLink>
-                <NuxtLink to="/clarion/oem">{{ $t('header.clarionItems.oem') }}</NuxtLink>
-                <NuxtLink to="/audioAccessories">{{ $t('header.clarionItems.audio') }}</NuxtLink>
-                <NuxtLink to="/clarion/camera">{{ $t('header.clarionItems.camera') }}</NuxtLink>
-                <NuxtLink to="/headUnit">{{ $t('header.clarionItems.din') }}</NuxtLink>
-                <NuxtLink to="/clarion/dashcam">{{ $t('header.clarionItems.dvr') }}</NuxtLink>
-                <!-- <NuxtLink to="/headrest">{{ $t('header.clarionItems.headrest') }}</NuxtLink> 頭枕隱藏-->
-                <!-- <NuxtLink to="/portable">{{ $t('header.clarionItems.portable') }}</NuxtLink> 可攜式隱藏 -->
+                <NuxtLink v-for="c in clarionMenu" :key="c.key" :to="c.to">{{ c.text }}</NuxtLink>
               </div>
               <NuxtLink to="/clarion/overview" class="view-all">{{ $t('header.clarionViewAll') }}</NuxtLink>
             </div>
@@ -41,13 +34,7 @@
             <div class="drop drop-mm">
               <small>{{ $t('header.mmMenuTitle') }}</small>
               <div class="drop-grid">
-                <NuxtLink to="/mm/me">{{ $t('header.mmItems.android') }}</NuxtLink>
-                <NuxtLink to="/mm/oem">{{ $t('header.mmItems.oem') }}</NuxtLink>
-                <NuxtLink to="/carFrame">{{ $t('header.mmItems.frame') }}</NuxtLink>
-                <NuxtLink to="/safety">{{ $t('header.mmItems.safety') }}</NuxtLink>
-                <NuxtLink to="/mm/dashcam">{{ $t('header.mmItems.dvr') }}</NuxtLink>
-                <NuxtLink to="/mm/camera">{{ $t('header.mmItems.camera') }}</NuxtLink>
-                <NuxtLink to="/fitting">{{ $t('header.mmItems.fitting') }}</NuxtLink>
+                <NuxtLink v-for="c in mmMenu" :key="c.key" :to="c.to">{{ c.text }}</NuxtLink>
               </div>
               <NuxtLink to="/mm/overview" class="view-all">{{ $t('header.mmViewAll') }}</NuxtLink>
             </div>
@@ -84,7 +71,17 @@
           </span>
         </nav>
 
-        <button class="burger" @click="toggleMenu">☰</button>
+        <!-- 2026-10：選單按鈕改成「等化器直條」：滑過直條跳動並轉 Clarion 藍，點開旋鈕轉 90°、直條合成 ✕ -->
+        <button
+          type="button"
+          class="burger"
+          :class="{ on: menuOpen }"
+          :aria-label="menuOpen ? '關閉選單' : '開啟選單'"
+          :aria-expanded="menuOpen ? 'true' : 'false'"
+          @click="toggleMenu"
+        >
+          <span class="knob" aria-hidden="true"><span class="eq"><u></u><u></u><u></u></span></span>
+        </button>
       </div>
     </header>
   </div>
@@ -99,6 +96,7 @@ import logoCobrandWhite from '~/assets/img/Header/logo-cobrand-white.svg'
 import logoClarionWhite from '~/assets/img/Header/logo-clarion-white.svg'
 import logoMMWhite from '~/assets/img/Header/logo-mm-white.svg'
 import { useBrandZone } from '~/composables/useBrandZone'
+import { useWebsiteInfo } from '~/composables/useWebsiteInfo'
 
 // floating＝true 時表頭一開始透明浮在頁面最上面的 Banner 上，捲動/選單展開/下拉展開後才轉白底
 // （目前只有首頁在用，見 layouts/default.vue）
@@ -141,30 +139,47 @@ const onMenuClick = (e) => {
 }
 const { locale, setLocale } = useI18n()
 
-// 依目前路徑判斷是 Clarion 專區、MM 專區，還是共用頁（首頁/經銷據點/常見問題等），切換對應 logo
+// 依目前路徑判斷：Clarion 專區用 Clarion 單標；MM 專區與共用頁（首頁/經銷據點/常見問題等）一律用聯名款（Clarion × MM）。
+// 不再單獨顯示 MM 單標（老闆 2026-09-29 決定，與草稿 V2 一致：V2 表頭只有 Clarion 單標與聯名款兩種）。
 // （與全站 favicon 共用同一份判斷邏輯，見 composables/useBrandZone.js）
 const brandZone = useBrandZone()
+// 後台「產品管理 ▸ 產品類別開關」：選單項目的顯示、順序、名稱
+const { t: tr } = useI18n()
+const clarionCats = useCategories('clarion')
+const mmCats = useCategories('mm')
+const CLARION_LINKS = { gl: '/clarion/gl', oem: '/clarion/oem', audio: '/audioAccessories', camera: '/clarion/camera', din: '/headUnit', dvr: '/clarion/dashcam', headrest: '/headrest', portable: '/portable' }
+const MM_LINKS = { android: '/mm/me', oem: '/mm/oem', frame: '/carFrame', safety: '/safety', dvr: '/mm/dashcam', camera: '/mm/camera', fitting: '/fitting' }
+const clarionMenu = computed(() =>
+  clarionCats.list.value.filter((r) => r.on).map((r) => ({
+    key: r.key, to: CLARION_LINKS[r.key], text: clarionCats.label(r.key, tr('header.clarionItems.' + r.key))
+  }))
+)
+const mmMenu = computed(() =>
+  mmCats.list.value.filter((r) => r.on).map((r) => ({
+    key: r.key, to: MM_LINKS[r.key], text: mmCats.label(r.key, tr('header.mmItems.' + r.key))
+  }))
+)
+
+// 後台「網站基本設定 ▸ 全站標誌圖片」有上傳就用上傳的，沒上傳用內建預設
+const { data: siteData } = useWebsiteInfo()
+const siteLogo = (k) => siteData.value?.result?.[k] || ''
 const logoSrc = computed(() => {
-  if (brandZone.value === 'clarion') return logoClarion
-  if (brandZone.value === 'mm') return logoMM
-  return logoCobrand
+  if (brandZone.value === 'clarion') return siteLogo('logo_clarion_dark') || logoClarion
+  return siteLogo('logo_cobrand_dark') || logoCobrand
 })
 const logoAlt = computed(() => {
   if (brandZone.value === 'clarion') return 'Clarion 歌樂'
-  if (brandZone.value === 'mm') return 'MM 美邁'
   return 'Clarion × MM 美邁'
 })
-// 三種 logo 長寬比不同，比照草稿的高度設定，讓視覺重量一致
+// 兩種 logo 長寬比不同，比照草稿的高度設定，讓視覺重量一致（聯名版 V4 含 meimai@ 與副標，比舊版高，故 30px 才與 Clarion 單標視覺等寬）
 const logoHeight = computed(() => {
   if (brandZone.value === 'clarion') return '24px'
-  if (brandZone.value === 'mm') return '30px'
-  return '26px'
+  return '30px'
 })
 // floating 表頭透明時用白色版 logo（深色版先淡出），轉白底後換回深色版
 const logoSrcWhite = computed(() => {
-  if (brandZone.value === 'clarion') return logoClarionWhite
-  if (brandZone.value === 'mm') return logoMMWhite
-  return logoCobrandWhite
+  if (brandZone.value === 'clarion') return siteLogo('logo_clarion_white') || logoClarionWhite
+  return siteLogo('logo_cobrand_white') || logoCobrandWhite
 })
 
 // floating 表頭：捲動超過一定距離就轉白底（手機選單展開也算，見 isSolid）
@@ -192,9 +207,9 @@ const isSolid = computed(() => scrolled.value || menuOpen.value)
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -279,7 +294,7 @@ header {
   align-items: center;
   line-height: 1.16;
   text-align: center;
-  gap: 1px;
+  gap: 4px; /* 大字（歌樂／美邁）與下面小字（クラリオン／MEIMAI）拉開一點，不要貼在一起 */
 }
 .menu .cn,
 .menu .sub {
@@ -319,6 +334,73 @@ header {
   border: 0;
   cursor: pointer;
   padding: 0;
+}
+/* 選單按鈕：三根高低不同的等化器直條（顏色用 currentColor，跟著表頭變色：
+   首頁頂端透明時是白色、往下滾變白底後是深色、其他頁白底也是深色）。
+   滑過／鍵盤聚焦：直條轉 Clarion 藍 var(--site-accent, #007abe) 並跳動；展開：直條合成 ✕、整個轉 90°。 */
+.burger {
+  color: var(--ink);
+}
+.burger .knob {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  transition: transform 0.4s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.burger:active .knob {
+  transform: scale(0.92);
+}
+.burger.on .knob {
+  transform: rotate(90deg);
+}
+.burger .eq {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 18px;
+}
+.burger .eq u {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: currentColor;
+  text-decoration: none;
+  transition: height 0.3s, left 0.3s, bottom 0.3s, width 0.3s, transform 0.3s, opacity 0.2s, background 0.25s;
+}
+.burger .eq u:nth-child(1) { left: 0; height: 9px; }
+.burger .eq u:nth-child(2) { left: 8px; height: 18px; }
+.burger .eq u:nth-child(3) { left: 16px; height: 13px; }
+.burger:hover .eq u,
+.burger:focus-visible .eq u {
+  background: var(--site-accent, #007abe);
+}
+.burger:hover .eq u:nth-child(1) { animation: eqA 0.8s infinite ease-in-out; }
+.burger:hover .eq u:nth-child(2) { animation: eqB 0.62s infinite ease-in-out; }
+.burger:hover .eq u:nth-child(3) { animation: eqC 0.95s infinite ease-in-out; }
+@keyframes eqA { 50% { height: 17px; } }
+@keyframes eqB { 50% { height: 6px; } }
+@keyframes eqC { 50% { height: 18px; } }
+.burger.on .eq u {
+  animation: none !important;
+  background: currentColor;
+  height: 22px !important;
+  width: 2.4px;
+  left: 8.8px !important;
+  bottom: -2px;
+}
+.burger.on .eq u:nth-child(1) { transform: rotate(45deg); }
+.burger.on .eq u:nth-child(2) { opacity: 0; }
+.burger.on .eq u:nth-child(3) { transform: rotate(-45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .burger .knob,
+  .burger .eq u { transition: none; animation: none !important; }
+}
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
 }
 .logo {
   position: relative;
@@ -435,6 +517,7 @@ header {
   }
   .menu.open {
     display: flex;
+    animation: menuIn 0.28s ease both;
   }
   .burger {
     display: grid;
@@ -453,6 +536,10 @@ header {
     flex-direction: row;
     justify-content: center;
     margin-top: 10px;
+  }
+  /* 手機選單裡「經銷據點」旁的小字 DEALERS 淡藍疊在藍底上看不清楚、又擠在一起，手機上不顯示 */
+  .menu .cta .sub {
+    display: none;
   }
   .has-drop {
     width: 100%;
@@ -483,7 +570,18 @@ header {
   }
   .has-drop.open .drop {
     display: block;
+  }
+  /* 2026-09-30 修正：電腦版那條「滑過就顯示下拉」的規則會把子選單往左移一半（為了在電腦上置中），
+     在手機／平板上一點到或滑過子選單，整排就被往左推、左邊一半跑出畫面。這裡把位移歸零，
+     而且寫成跟那條規則一樣的寫法，才蓋得過它。 */
+  .has-drop:hover .drop,
+  .has-drop.open .drop {
     transform: none;
+    transition-delay: 0s;
+  }
+  /* 滑過子選單項目時，電腦版會把字往右推一點；手機上點下去會晃一下，這裡取消 */
+  .drop-grid a:hover {
+    padding-left: 12px;
   }
   .has-drop::after {
     display: none;

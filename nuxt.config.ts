@@ -1,8 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  build: { transpile: ['@fortawesome/vue-fontawesome', '@fortawesome/fontawesome-svg-core', '@fortawesome/free-solid-svg-icons', '@fortawesome/free-brands-svg-icons'] },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   ssr: true,
+
+  // 後台「產品類別開關」關閉的項目（ex:頭枕螢幕、可攜式）會回 404，不要因為這些頁面 404 就讓整個 npm run generate 失敗，關閉的類別就不輸出頁面即可。
+  nitro: {
+    prerender: {
+      failOnError: false
+    }
+  },
   app:{
     head: {
       title: "美邁車用電子｜Clarion 歌樂 台灣官方授權總經銷",
@@ -28,8 +36,8 @@ export default defineNuxtConfig({
       link: [
         // 這裡只是還沒 hydrate 前的初始值；實際 favicon 由 app.vue 依目前頁面（Clarion／MM／共用）
         // 透過 composables/useBrandZone.js 統一、即時切換，見 app.vue 的 useHead(faviconLinks)。
-        { key: 'fav-ico', rel: "icon", type: "image/x-icon", sizes: "any", href: "/favicon.ico" },
-        { key: 'fav-apple', rel: "apple-touch-icon", type: "image/png", sizes: "180x180", href: "/favicon_180.png" },
+        { key: 'fav-ico', rel: "icon", type: "image/x-icon", sizes: "any", href: "/favicon-clarion.ico" },
+        { key: 'fav-apple', rel: "apple-touch-icon", type: "image/png", sizes: "180x180", href: "/favicon-clarion-180.png" },
         // 全站字型：只用 Noto Sans TC，只在這裡載入一次。
         // 舊code在 app.vue 用 @import 載 Noto Sans JP、首頁又再載一次 JP+TC，會擋首屏且日文字型顯示繁中會有日式字形。
         { key: 'font-pre1', rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -88,10 +96,9 @@ export default defineNuxtConfig({
   },
 
   gtag: {
-    // 兩組 GA4 一起送：G-6Q9W9ZX3FC（現行）＋ G-1QLZNF29EP（原手動掛載、網址壞掉未生效）
     tags: [
-      { id: 'G-6Q9W9ZX3FC' },
-      { id: 'G-1QLZNF29EP' }
+      { id: 'G-H12E5QPJSK' },
+      { id: 'G-MT0W2LHDJE' }
     ]
   },
   devServer: {

@@ -1,18 +1,18 @@
 <template>
-  <!-- 2026-09：有些瀏覽器（例如 Brave、開了防追蹤／廣告過濾的 Edge、Opera、裝了擋廣告外掛的 Chrome）
+  <!-- LINE 圖示改用 Font Awesome 官方 LINE 品牌圖形（置中、四邊等距）。
+       2026-09：有些瀏覽器（例如 Brave、開了防追蹤／廣告過濾的 Edge、Opera、裝了擋廣告外掛的 Chrome）
        會把名字像「share-buttons」「fa-facebook」的東西當成社群追蹤元件自動藏起來，整塊變空白。
        所以：① class 改成中性名稱 ② 圖示改成直接畫在頁面裡的 SVG，不靠 Font Awesome 圖示元件。 -->
   <div class="pd-acts">
-    <button type="button" class="pd-act" :aria-label="$t('share.facebook')" @click="shareFacebook">
+    <button type="button" class="pd-act pd-fb" :aria-label="$t('share.facebook')" @click="shareFacebook">
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
         <path fill="currentColor" d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.25-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z" />
       </svg>
       <span class="tip">{{ $t('share.facebook') }}</span>
     </button>
-    <button type="button" class="pd-act" :aria-label="$t('share.line')" @click="shareLine">
-      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
-        <path fill="currentColor" d="M12 3.2c-5 0-9 3.3-9 7.4 0 3.6 3.2 6.7 7.6 7.3.3.1.7.2.8.5.1.2.1.6 0 .8l-.1.8c0 .2-.2.9.8.5s5.4-3.2 7.4-5.5c1.4-1.5 2-3 2-4.5 0-4-4-7.3-9-7.3z" />
-        <path fill="#fff" d="M7.1 12.8H5.4c-.2 0-.4-.2-.4-.4V9c0-.2.2-.4.4-.4s.4.2.4.4v3h1.3c.2 0 .4.2.4.4s-.2.4-.4.4zm1.8-.4c0 .2-.2.4-.4.4s-.4-.2-.4-.4V9c0-.2.2-.4.4-.4s.4.2.4.4v3.4zm4 0c0 .2-.1.3-.3.4h-.1c-.1 0-.2-.1-.3-.2l-1.7-2.3v2.1c0 .2-.2.4-.4.4s-.4-.2-.4-.4V9c0-.2.1-.3.3-.4h.1c.1 0 .2.1.3.2l1.7 2.3V9c0-.2.2-.4.4-.4s.4.2.4.4v3.4zm2.7-2.1c.2 0 .4.2.4.4s-.2.4-.4.4h-1.3v.8h1.3c.2 0 .4.2.4.4s-.2.4-.4.4h-1.7c-.2 0-.4-.2-.4-.4V9c0-.2.2-.4.4-.4h1.7c.2 0 .4.2.4.4s-.2.4-.4.4h-1.3v.8h1.3z" />
+    <button type="button" class="pd-act pd-ln" :aria-label="$t('share.line')" @click="shareLine">
+      <svg viewBox="0 0 512 512" width="20" height="20" aria-hidden="true" focusable="false">
+        <path fill="currentColor" fill-rule="evenodd" d="M311 196.8v81.3c0 2.1-1.6 3.7-3.7 3.7h-13c-1.3 0-2.4-.7-3-1.5l-37.3-50.3v48.2c0 2.1-1.6 3.7-3.7 3.7h-13c-2.1 0-3.7-1.6-3.7-3.7V196.9c0-2.1 1.6-3.7 3.7-3.7h12.9c1.1 0 2.4 .6 3 1.6l37.3 50.3V196.9c0-2.1 1.6-3.7 3.7-3.7h13c2.1-.1 3.8 1.6 3.8 3.5zm-93.7-3.7h-13c-2.1 0-3.7 1.6-3.7 3.7v81.3c0 2.1 1.6 3.7 3.7 3.7h13c2.1 0 3.7-1.6 3.7-3.7V196.8c0-1.9-1.6-3.7-3.7-3.7zm-31.4 68.1H150.3V196.8c0-2.1-1.6-3.7-3.7-3.7h-13c-2.1 0-3.7 1.6-3.7 3.7v81.3c0 1 .3 1.8 1 2.5c.7 .6 1.5 1 2.5 1h52.2c2.1 0 3.7-1.6 3.7-3.7v-13c0-1.9-1.6-3.7-3.5-3.7zm193.7-68.1H327.3c-1.9 0-3.7 1.6-3.7 3.7v81.3c0 1.9 1.6 3.7 3.7 3.7h52.2c2.1 0 3.7-1.6 3.7-3.7V265c0-2.1-1.6-3.7-3.7-3.7H344V247.7h35.5c2.1 0 3.7-1.6 3.7-3.7V230.9c0-2.1-1.6-3.7-3.7-3.7H344V213.5h35.5c2.1 0 3.7-1.6 3.7-3.7v-13c-.1-1.9-1.7-3.7-3.7-3.7zM512 93.4V419.4c-.1 51.2-42.1 92.7-93.4 92.6H92.6C41.4 511.9-.1 469.8 0 418.6V92.6C.1 41.4 42.2-.1 93.4 0H419.4c51.2 .1 92.7 42.1 92.6 93.4zM441.6 233.5c0-83.4-83.7-151.3-186.4-151.3s-186.4 67.9-186.4 151.3c0 74.7 66.3 137.4 155.9 149.3c21.8 4.7 19.3 12.7 14.4 42.1c-.8 4.7-3.8 18.4 16.1 10.1s107.3-63.2 146.5-108.2c27-29.7 39.9-59.8 39.9-93.1z" />
       </svg>
       <span class="tip">{{ $t('share.line') }}</span>
     </button>
@@ -130,13 +130,17 @@ onBeforeUnmount(() => {
   border-radius: 50%;
 }
 .pd-act:hover {
-  border-color: var(--navy, #007abe);
-  color: var(--navy, #007abe);
+  border-color: var(--navy, var(--site-accent, #007abe));
+  color: var(--navy, var(--site-accent, #007abe));
   transform: translateY(-2px);
 }
+.pd-act.pd-fb { color: #1877f2; }
+.pd-act.pd-ln { color: #06c755; }
+.pd-act.pd-fb:hover { border-color: #1877f2; color: #1877f2; background: #f2f7ff; }
+.pd-act.pd-ln:hover { border-color: #06c755; color: #06c755; background: #f1fbf5; }
 .pd-act.copied {
-  border-color: var(--navy, #007abe);
-  color: var(--navy, #007abe);
+  border-color: var(--navy, var(--site-accent, #007abe));
+  color: var(--navy, var(--site-accent, #007abe));
 }
 .pd-act .tip {
   position: absolute;

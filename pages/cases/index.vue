@@ -10,9 +10,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ $t('cases.eyebrow') }}</div>
-        <h1>{{ $t('cases.title') }}</h1>
-        <p>{{ $t('cases.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('cases.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('cases.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('cases.intro') }}</p>
       </div>
     </div>
 
@@ -69,13 +69,6 @@
       </div>
     </section>
 
-    <section class="help">
-      <div class="wrap-sm">
-        <h2>{{ $t('cases.helpTitle') }}</h2>
-        <p>{{ $t('cases.helpDesc') }}</p>
-        <NuxtLink to="/partner" class="btn">{{ $t('cases.toDealers') }}</NuxtLink>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -120,7 +113,7 @@ usePageSeo({
 <style scoped>
 .cs-page {
   --ink: #0d1b2e; --text: #1b2431; --muted: #5b6675; --dim: #93a0b0;
-  --bg: #fff; --bg2: #f5f7fa; --line: #e6ebf1; --navy: #007abe; --dark: #0d1016;
+  --bg: #fff; --bg2: var(--site-bg2, #f5f7fa); --line: #e6ebf1; --navy: var(--site-accent, #007abe); --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.75; letter-spacing: 0.02em;
 }

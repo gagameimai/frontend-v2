@@ -11,9 +11,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ $t('qa.eyebrow') }}</div>
-        <h1>{{ $t('qa.title') }}</h1>
-        <p>{{ $t('qa.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('qa.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('qa.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('qa.intro') }}</p>
         <div class="quick">
           <NuxtLink to="/download">{{ $t('qa.quickDownload') }}</NuxtLink>
           <NuxtLink to="/partner">{{ $t('qa.quickDealers') }}</NuxtLink>
@@ -69,10 +69,10 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: var(--site-accent, #007abe);
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg);
   color: var(--text);

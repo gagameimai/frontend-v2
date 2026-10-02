@@ -133,22 +133,44 @@
     </section>
 
     <!-- 產品分類 -->
-    <section id="products" style="padding-top: 20px">
+    <!-- 精選商品：深色底（接在 Hero／車型查詢之後、Clarion 主打滿版之前，不再有白色斷層）。
+         商品圖一律放在純白方形卡片裡（白底圖才不會看到方框）；數量 0 個顯示「商品準備中」、1 個改主打卡、2～3 個置中、最多 8 個。 -->
+    <section id="products" class="prod-sec">
       <div class="wrap">
         <div class="kicker"><span class="en">{{ $t('home.productsKicker') }}</span><span class="jp">{{ $t('home.productsLabel') }}</span></div>
-        <p style="max-width: 560px; margin: -8px 0 16px">
+        <p class="prod-intro">
           {{ $t('home.productsIntro') }}
         </p>
-        <div class="pgrid">
-          <div v-for="(item, index) in displayProducts" :key="index" class="pcard">
+        <div v-if="shownProducts.length === 1" class="psolo">
+          <component :is="cardTag(shownProducts[0])" v-bind="cardProps(shownProducts[0])" class="plink solo">
+            <div class="ph pd">
+              <em v-if="shownProducts[0].cat" class="pcat" :class="shownProducts[0].catCls">{{ shownProducts[0].cat }}</em>
+              <img
+                v-if="shownProducts[0].img"
+                :src="shownProducts[0].img"
+                :alt="shownProducts[0].name"
+                loading="lazy"
+                @error="(e) => (e.target.style.display = 'none')"
+              />
+            </div>
+            <div class="solo-info">
+              <div class="solo-kick">FEATURED<template v-if="shownProducts[0].cat"> ・ {{ shownProducts[0].cat }}</template></div>
+              <h3>{{ shownProducts[0].name }}</h3>
+              <p>{{ $t('home.soloDesc') }}</p>
+              <span class="solo-btn">{{ $t('home.soloBtn') }}</span>
+            </div>
+          </component>
+        </div>
+        <div v-else-if="shownProducts.length > 1" class="pgrid" :class="'n' + shownProducts.length">
+          <div v-for="(item, index) in shownProducts" :key="index" class="pcard">
             <component :is="cardTag(item)" v-bind="cardProps(item)" class="plink">
-              <div class="ph" :class="{ dk: item.dark }">
+              <div class="ph pd">
+                <em v-if="item.cat" class="pcat" :class="item.catCls">{{ item.cat }}</em>
                 <img
                   v-if="item.img"
                   :src="item.img"
                   :alt="item.name"
                   loading="lazy"
-                  style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 14px"
                   @error="(e) => (e.target.style.display = 'none')"
                 />
                 <span v-else>{{ $t('home.imgRatio') }}</span>
@@ -157,6 +179,10 @@
               <small v-if="item.sub">{{ item.sub }}</small>
             </component>
           </div>
+        </div>
+        <div v-else class="pempty">
+          <strong>{{ $t('home.emptyTitle') }}</strong>
+          <span>{{ $t('home.emptyDesc') }}</span>
         </div>
         <!-- 依需求選購：連到跨品牌著陸頁，形成內部連結 -->
         <div class="byneed">
@@ -170,7 +196,7 @@
 
     <!-- clarion 滿版背景圖：後台「首頁滿版區塊管理」有填內容(zone1)就整段換成後台排版，
          沒填就維持這裡寫死的預設版面；背景圖同理，後台有上傳圖才蓋掉 public/home/section-clarion.webp -->
-    <section class="feature fullbleed" id="feature">
+    <section class="feature fullbleed" id="feature" :style="zoneColor('zone1')">
       <div class="bg" :style="bgStyle(zoneBg('zone1', 'clarion'))"></div>
       <div class="wrap">
         <div v-if="homeSections.zone1 && homeSections.zone1.content" class="cms-content" v-html="homeSections.zone1.content"></div>
@@ -178,7 +204,7 @@
     </section>
 
     <!-- MM 美邁滿版背景圖：同上，後台 zone2 有填內容才整段換成後台排版 -->
-    <section class="mm fullbleed" id="mm">
+    <section class="mm fullbleed" id="mm" :style="zoneColor('zone2')">
       <div class="bg" :style="bgStyle(zoneBg('zone2', 'mm'))"></div>
       <div class="wrap">
         <div class="mmbox">
@@ -214,7 +240,7 @@
     </section>
 
     <!-- 尾端 CTA 滿版背景圖：同上，後台 zone3 有填內容才整段換成後台排版 -->
-    <section class="final fullbleed">
+    <section class="final fullbleed" :style="zoneColor('zone3')">
       <div class="bg" :style="bgStyle(zoneBg('zone3', 'cta'))"></div>
       <div class="wrap">
         <div v-if="homeSections.zone3 && homeSections.zone3.content" class="cms-content" v-html="homeSections.zone3.content"></div>
@@ -242,7 +268,7 @@ const BG = {
   cta:     { img: '/home/section-cta.webp',     imgM: '/home/section-cta-m.webp' },
 }
 // 用 CSS 變數把兩張圖都交給 .bg，桌機／手機由樣式表的 media query 決定吃哪一張
-const bgStyle = (s) => ({ '--bg': `url(${s.img})`, '--bg-m': `url(${s.imgM || s.img})` })
+const bgStyle = (s) => (s ? { '--bg': `url(${s.img})`, '--bg-m': `url(${s.imgM || s.img})` } : {})
 
 // ---- 首頁「滿版區塊管理」（後台 home_section 管理：zone1/zone2/zone3）----
 // 後台每個區塊可以填：內容（CKEditor，整段蓋掉下面寫死的預設排版）、背景圖（電腦版/手機版）。
@@ -258,14 +284,20 @@ function getHomeSections() {
       homeSections.value = {}
     })
 }
-// 背景圖：後台這個區塊有上傳電腦版圖才改用後台的圖（手機版留空就沿用後台電腦版圖），
-// 沒上傳就維持原本寫死在 BG 裡的預設圖
-function zoneBg(sectionKey, fallbackKey) {
+// 背景圖：只用後台上傳的圖（手機版留空就沿用後台電腦版圖）。
+// 不再使用 public/home 的預設圖：資料還沒載入或後台沒上傳時，一律只顯示深色底，
+// 避免重新整理時先閃一下預設圖再換成後台的圖。
+// 區塊底色：後台「首頁滿版區塊管理」選的 #RRGGBB（圖片底下、沒圖片時看到的顏色）；沒設定就用 CSS 預設的全站深色底
+function zoneColor(sectionKey) {
+  const c = homeSections.value[sectionKey]?.bg_color
+  return /^#[0-9a-fA-F]{6}$/.test(c || '') ? { background: c } : {}
+}
+function zoneBg(sectionKey) {
   const sec = homeSections.value[sectionKey]
   if (sec && sec.img) {
     return { img: sec.img, imgM: sec.img_mobile || sec.img }
   }
-  return BG[fallbackKey]
+  return null
 }
 
 // Hero 的向下指示：捲到下一段（車型查詢）
@@ -281,6 +313,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import carFrame from '~/static/carFrame.js'
 
+import { useSeoSettings } from '~/composables/useSeoSettings'
 const { t } = useI18n()
 
 // 結構化資料：讓搜尋引擎與 AI 正確認出「美邁＝Clarion 台灣官方授權總經銷」
@@ -288,20 +321,32 @@ useOrganizationJsonLd()
 useWebSiteJsonLd()
 
 // ---- meta / head（只套用在這個新首頁，不影響其他頁面）----
+// 後台「系統設定 ▸ SEO／GEO 設定」可覆蓋首頁（路徑 /）的標題與說明；沒填就用下面寫死的預設文字
+const { seo: seoSettings } = useSeoSettings()
+const homeOverride = () => {
+  const pages = seoSettings.value.pages
+  return (pages && !Array.isArray(pages) && pages['/']) || {}
+}
+const HOME_TITLE = 'Clarion 歌樂台灣總經銷｜安卓車機・車用多媒體主機｜美邁 MEIMAI'
+const HOME_DESC = '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、車用多媒體主機、汽車音響、行車記錄器等車用電子產品。原廠公司貨享原廠保固，全台經銷據點提供專業安裝與售後服務。'
+const homeTitle = () => homeOverride().title || HOME_TITLE
+const homeDesc = () => homeOverride().description || HOME_DESC
 useHead({
-  title: 'Clarion 歌樂台灣總經銷｜安卓車機・車用多媒體主機｜美邁 MEIMAI',
+  title: homeTitle,
   meta: [
-    { name: 'description', content: '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、車用多媒體主機、汽車音響、行車記錄器等車用電子產品。原廠公司貨享原廠保固，全台經銷據點提供專業安裝與售後服務。' },
+    { name: 'description', content: homeDesc },
     { name: 'keywords', content: 'Clarion, 歌樂, Clarion 台灣, Clarion 總經銷, 安卓車機, 安卓機, 車用多媒體主機, 車型專用機, 汽車音響, 行車記錄器, 倒車顯影, 盲點偵測, MM 美邁, 美邁車用電子, MEIMAI' },
     { name: 'robots', content: 'index,follow' },
     { name: 'author', content: '美邁車用電子有限公司' },
-    { name: 'theme-color', content: '#007ABE' },
+    { name: 'theme-color', content: '#007abe' },
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'Clarion 歌樂 × MM 美邁' },
-    { property: 'og:title', content: 'Clarion 歌樂台灣總經銷｜安卓車機・車用多媒體主機｜美邁 MEIMAI' },
-    { property: 'og:description', content: '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、汽車音響、行車記錄器等車用電子產品。原廠保固、全台經銷據點、專業安裝售後。' },
+    { property: 'og:title', content: homeTitle },
+    { property: 'og:description', content: () => homeOverride().description || '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、汽車音響、行車記錄器等車用電子產品。原廠保固、全台經銷據點、專業安裝售後。' },
     { property: 'og:url', content: 'https://clarion.meimai.com.tw/' },
     { name: 'twitter:card', content: 'summary_large_image' },
+    // 後台 SEO 設定的「分享圖」有填就用它（沒填維持 nuxt.config 的 og-share.png）
+    { property: 'og:image', content: () => seoSettings.value.og_image || 'https://clarion.meimai.com.tw/og-share.png' },
   ],
   link: [
     { rel: 'canonical', href: 'https://clarion.meimai.com.tw/' },
@@ -509,8 +554,24 @@ function splitBrand(name) {
 
 // ── 面板瘦身（使用者 2026-09 選定）：可打字搜尋、常見車廠排前面、其他車廠收合、年份依年代分組 ──
 const panelQuery = ref('')
-// 台灣車框／安卓機最常見的 10 個車廠（依後台車框資料量與市場），其餘收在「全部車廠（A–Z）」
-const POPULAR_BRANDS = ['TOYOTA', 'HONDA', 'NISSAN', 'MITSUBISHI', 'MAZDA', 'FORD', 'LEXUS', 'HYUNDAI', 'KIA', 'VOLKSWAGEN']
+// 老闆指定的常見車廠（2026-09-30）：豐田、三菱、本田、鈴木、裕隆(=NISSAN 日產)、現代、馬自達、福特、賓士、BMW、福斯，
+// 再補 AUDI 奧迪湊滿 12 格（電腦 6×2、手機 2×6），其餘收在「全部車廠（A–Z）」
+const POPULAR_BRANDS = ['TOYOTA', 'MITSUBISHI', 'HONDA', 'SUZUKI', 'NISSAN', 'HYUNDAI', 'MAZDA', 'FORD', 'BENZ', 'BMW', 'VOLKSWAGEN', 'AUDI']
+// 依「這位訪客」點選次數把常用車廠排前面（只存在他自己的瀏覽器 localStorage，不打後端；沒點過就照上面的順序）
+const BRAND_CLICK_KEY = 'mm_brand_clicks'
+const brandClicks = ref({})
+function loadBrandClicks() {
+  try { brandClicks.value = JSON.parse(localStorage.getItem(BRAND_CLICK_KEY) || '{}') || {} } catch (e) { brandClicks.value = {} }
+}
+function bumpBrandClick(brandId) {
+  const b = brandList.value.find((x) => String(x.id) === String(brandId))
+  if (!b) return
+  const key = splitBrand(b.name).en.toUpperCase()
+  if (!POPULAR_BRANDS.includes(key)) return
+  const next = { ...brandClicks.value, [key]: (brandClicks.value[key] || 0) + 1 }
+  brandClicks.value = next
+  try { localStorage.setItem(BRAND_CLICK_KEY, JSON.stringify(next)) } catch (e) { /* 無痕模式等：略過 */ }
+}
 // 比對時忽略大小寫、空白、連字號、斜線：打「crv」找得到「CR-V」、「altis」找得到「Corolla Altis」
 const norm = (s) => String(s || '').toLowerCase().replace(/[\s\-_/.·]+/g, '')
 const yearRange = (m) => (m && m.year_start && m.year_end ? `${m.year_start}–${m.year_end}` : '')
@@ -564,7 +625,12 @@ const panelItems = computed(() => {
       if (idx > -1) popular.push({ ...item, group: t('search.groupPopular'), groupKind: 'pop', _i: idx })
       else rest.push({ ...item, group: t('search.groupAllBrands') })
     }
-    popular.sort((a, b) => a._i - b._i)
+    const clicks = brandClicks.value
+    popular.sort((a, b) => {
+      const ca = clicks[POPULAR_BRANDS[a._i]] || 0
+      const cb = clicks[POPULAR_BRANDS[b._i]] || 0
+      return cb - ca || a._i - b._i
+    })
     return [...popular, ...rest]
   }
   if (activeField.value === 'model') {
@@ -604,6 +670,7 @@ function onPanelPick(v) {
     if (car) {
       const brand = brandList.value.find((b) => String(b.id) === String(car.car_brand_id))
       brandInputValue.value = brand ? brand.id : car.car_brand_id
+      bumpBrandClick(brandInputValue.value)
       brandChange()
       modelInputValue.value = car.id
       yearInputValue.value = undefined
@@ -615,6 +682,7 @@ function onPanelPick(v) {
   }
   if (activeField.value === 'brand') {
     brandInputValue.value = v
+    bumpBrandClick(v)
     brandChange()
     searchReady.value = false
     activeField.value = modelList.value.length ? 'model' : null
@@ -687,15 +755,35 @@ function getRecommendProducts() {
 }
 
 // 實際顯示用：直接對應後台 recommend_products 回傳的內容（name/img/link 後端已組好）
+// 類別標籤（卡片左上角）：後端回傳 product_type，這裡轉成短短的中文／英文，不用後台另外填。
+const CAT_KEY = {
+  car_media: ['headunit', ''],
+  car_head_unit: ['headunit', ''],
+  car_frame: ['frame', 'a'],
+  car_blind_spot: ['safety', 'a'],
+  car_dashcam: ['dashcam', 'd'],
+  car_camera: ['camera', 'd'],
+  car_audio_accessories: ['audio', 's'],
+  car_fitting: ['fitting', 'a'],
+  car_headrest: ['headrest', 'a'],
+  car_portable: ['portable', 'a']
+}
 const displayProducts = computed(() =>
-  recommendProducts.value.map((item) => ({
-    name: item.name,
-    sub: '',
-    img: item.img,
-    internal: true,
-    link: item.link,
-  }))
+  recommendProducts.value.map((item) => {
+    const k = CAT_KEY[item.product_type]
+    return {
+      name: item.name,
+      sub: '',
+      img: item.img,
+      internal: true,
+      link: item.link,
+      cat: k ? t('home.cat.' + k[0]) : '',
+      catCls: k ? k[1] : ''
+    }
+  })
 )
+// 最多顯示 8 個（排序由後台決定），避免首頁拉太長
+const shownProducts = computed(() => displayProducts.value.slice(0, 8))
 
 // 精選商品卡片的外層標籤。
 // 注意：<component :is> 一定要綁「元件本身」，不能綁字串 'NuxtLink' ——
@@ -737,6 +825,7 @@ function caseCategoryLabel(category) {
 }
 
 onMounted(() => {
+  loadBrandClicks()
   getBanner()
   getListData()
   getRecommendProducts()
@@ -760,12 +849,12 @@ onUnmounted(() => {
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue: #3d7bff;
   --blue-soft: #6fa0ff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -868,12 +957,7 @@ onUnmounted(() => {
   overflow: hidden;
   background: var(--dark);
 }
-@media (max-width: 1023px) {
-  .hero { min-height: 94svh; }
-}
-@media (max-width: 640px) {
-  .hero { min-height: 88svh; }
-}
+/* 手機／平板也一整屏，才不會露出下一層一小截（與下方深色區塊銜接） */
 .hero-link {
   position: absolute;
   inset: 0;
@@ -901,13 +985,13 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 190px;
+  height: 280px;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(0deg, rgba(13, 16, 22, 0.82) 0%, rgba(13, 16, 22, 0.64) 36%, rgba(13, 16, 22, 0.3) 64%, rgba(13, 16, 22, 0) 100%);
+  background: linear-gradient(0deg, var(--site-dark, #0d1016) 0%, color-mix(in srgb, var(--site-dark, #0d1016) 92%, transparent) 30%, color-mix(in srgb, var(--site-dark, #0d1016) 55%, transparent) 65%, transparent 100%);
 }
 @media (max-width: 640px) {
-  .hero::after { height: 150px; }
+  .hero::after { height: 220px; }
 }
 .hero-bg.active {
   opacity: 1;
@@ -1040,7 +1124,9 @@ onUnmounted(() => {
 .fullbleed .kicker .jp { color: #8d9aa8; }
 .fullbleed h2 { color: #fff; }
 @media (max-width: 820px) {
-  .fullbleed { min-height: auto; padding: 76px 0; }
+  /* 2026-10：手機／平板直立也撐成一個螢幕高（原本 auto，只剩 250～330px 的一條橫帶，沒有整頁感）。
+     內容比螢幕高時 min-height 會自然撐開，不會被截掉；內容垂直置中（上面 .fullbleed 已設 align-items: center）。 */
+  .fullbleed { min-height: 100vh; min-height: 100svh; padding: 76px 0; }
 }
 
 .scrolldown {
@@ -1093,14 +1179,15 @@ onUnmounted(() => {
   border-bottom: 0;
   border-radius: 14px 14px 0 0;
   cursor: pointer;
-  background: linear-gradient(180deg, #222b37, #181f29);
+  background: var(--site-dark, #0d1016);
   color: #fff;
   font-family: inherit;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 -14px 30px rgba(0, 0, 0, 0.32);
+  border-color: var(--site-dark-3, #1e2937);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 35.0%, transparent);
   transition: background 0.22s ease;
 }
 .finder-tab:hover {
-  background: linear-gradient(180deg, #28323f, #1c242f);
+  background: var(--site-dark-2, #131b25);
 }
 .finder-tab:focus-visible {
   outline: 2px solid var(--navy);
@@ -1108,7 +1195,7 @@ onUnmounted(() => {
 }
 .finder-tab .fr {
   flex: none;
-  color: #4fb6ea;
+  color: var(--site-accent-lt, #4fb6ea);
 }
 .finder-tab .t {
   font-size: 15.5px;
@@ -1178,7 +1265,7 @@ onUnmounted(() => {
   background: linear-gradient(180deg, #0b93dd, #0069a6);
   color: #fff;
   border: 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 122, 190, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.35), 0 6px 18px color-mix(in srgb, var(--site-accent, #007abe) 40.0%, transparent);
 }
 .finder .btn:hover {
   background: linear-gradient(180deg, #12a0ec, #0073b4);
@@ -1202,11 +1289,11 @@ onUnmounted(() => {
   animation: goReady 0.9s ease 2;
 }
 @keyframes goReady {
-  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 18px rgba(0, 122, 190, 0.4); }
-  50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 6px rgba(79, 182, 234, 0.35), 0 6px 26px rgba(0, 122, 190, 0.7); }
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 18px color-mix(in srgb, var(--site-accent, #007abe) 40.0%, transparent); }
+  50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 6px color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 35.0%, transparent), 0 6px 26px color-mix(in srgb, var(--site-accent, #007abe) 70.0%, transparent); }
 }
 .finder .btn:focus-visible {
-  outline: 2px solid #4fb6ea;
+  outline: 2px solid var(--site-accent-lt, #4fb6ea);
   outline-offset: 3px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1236,8 +1323,8 @@ onUnmounted(() => {
   height: 42px;
   padding: 0 18px;
   border-radius: 10px;
-  border: 1.5px solid #4fb6ea;
-  background: rgba(79, 182, 234, 0.1);
+  border: 1.5px solid var(--site-accent-lt, #4fb6ea);
+  background: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 10.0%, transparent);
   color: #fff;
   font-size: 14px;
   font-weight: 800;
@@ -1245,13 +1332,13 @@ onUnmounted(() => {
   text-decoration: none;
   transition: background 0.15s;
 }
-.finder-alt .cf:hover { background: rgba(79, 182, 234, 0.22); }
-.finder-alt .cf:focus-visible { outline: 2px solid #4fb6ea; outline-offset: 2px; }
+.finder-alt .cf:hover { background: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 22.0%, transparent); }
+.finder-alt .cf:focus-visible { outline: 2px solid var(--site-accent-lt, #4fb6ea); outline-offset: 2px; }
 .finder-alt .cf .new {
   font-size: 10px;
   font-weight: 900;
   line-height: 1.5;
-  background: #4fb6ea;
+  background: var(--site-accent-lt, #4fb6ea);
   color: #0b1422;
   border-radius: 5px;
   padding: 0 6px;
@@ -1392,6 +1479,16 @@ onUnmounted(() => {
 .cms-content :deep(a) {
   color: inherit;
 }
+/* 後台「首頁滿版區塊管理」簡單模式產生的版型（小標／大標／說明／按鈕＋靠左／置中／靠右）。
+   進階模式自己排版的內容不受影響。後台編輯頁的預覽樣式要跟這裡保持相近。 */
+.cms-content :deep(.cms-block) { max-width: 720px; }
+.cms-content :deep(.cms-align-center) { margin: 0 auto; text-align: center; }
+.cms-content :deep(.cms-align-right) { margin-left: auto; text-align: right; }
+.cms-content :deep(.cms-k) { font-size: 12px; letter-spacing: 4px; font-weight: 700; color: var(--site-accent-lt, #4fb6ea); margin: 0 0 14px; }
+.cms-content :deep(.cms-t) { font-size: clamp(32px, 5.4vw, 60px); font-weight: 900; line-height: 1.15; color: #fff; margin: 0 0 16px; text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45); }
+.cms-content :deep(.cms-d) { font-size: clamp(15px, 1.6vw, 18px); line-height: 1.8; color: rgba(255, 255, 255, 0.86); margin: 0 0 26px; white-space: pre-line; }
+.cms-content :deep(a.cms-b) { display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: 10px; background: var(--site-accent, #007abe); color: #fff; font-weight: 800; text-decoration: none; }
+.cms-content :deep(a.cms-b:hover) { background: var(--site-accent-hv, #0b8fd9); }
 
 .feature {
   background: var(--dark);
@@ -1507,7 +1604,7 @@ onUnmounted(() => {
 .kicker .allcases {
   margin-left: auto;
   font-size: 13px;
-  color: var(--navy, #007abe);
+  color: var(--navy, var(--site-accent, #007abe));
   white-space: nowrap;
 }
 .kicker .allcases:hover {
@@ -1525,7 +1622,7 @@ onUnmounted(() => {
   opacity: 0.86;
 }
 .case:hover h4 {
-  color: var(--navy, #007abe);
+  color: var(--navy, var(--site-accent, #007abe));
 }
 .case .ph {
   aspect-ratio: 16 / 10;
@@ -1552,5 +1649,103 @@ onUnmounted(() => {
   .dots {
     bottom: 10px;
   }
+}
+
+/* ── 首頁精選商品：深色底＋純白方形商品卡（2026-10） ───────────────
+   深色漸層從 Hero／車型查詢一路接到下面 Clarion 主打滿版，不再有白色斷層。
+   商品圖一律放在純白卡片（白底圖才不會露出方框）；卡片外的底色才跟著頁面走。 */
+.prod-sec {
+  background: linear-gradient(180deg, var(--site-dark, #0d1016) 0, var(--site-dark-4, #0f1c2a) 45%, var(--site-dark, #0d1016) 100%);
+  color: #fff;
+  padding: 72px 0 80px;
+}
+.prod-sec .kicker .en { color: #fff; font-size: 28px; }
+.prod-sec .kicker .jp { color: #8fa0b5; }
+.prod-sec .prod-intro { max-width: 560px; margin: 0 0 28px; color: #9fb0c6; font-size: 15px; line-height: 1.7; }
+.prod-sec .pgrid { gap: 18px; }
+.prod-sec .pgrid.n2 { grid-template-columns: repeat(2, minmax(0, 300px)); justify-content: center; }
+.prod-sec .pgrid.n3 { grid-template-columns: repeat(3, minmax(0, 300px)); justify-content: center; }
+.prod-sec .pcard .ph.pd,
+.prod-sec .solo .ph.pd {
+  aspect-ratio: 1 / 1;
+  background: #fff;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.28s, box-shadow 0.28s;
+}
+.prod-sec .pd img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px;
+  mix-blend-mode: multiply;
+}
+.prod-sec .pcard:hover .ph.pd,
+.prod-sec .solo:hover .ph.pd {
+  transform: translateY(-6px);
+  box-shadow: 0 0 0 1px var(--site-accent, #007abe), 0 22px 44px color-mix(in srgb, var(--site-accent, #007abe) 30.0%, transparent);
+}
+.prod-sec .pcat {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 1;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  background: var(--site-dark, #0d1016);
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.prod-sec .pcat.s { background: var(--site-accent, #007abe); }
+.prod-sec .pcat.a { background: #334155; }
+.prod-sec .pcat.d { background: #0f766e; }
+.prod-sec .pcard h4 { color: #fff; font-size: 15px; font-weight: 600; margin: 12px 2px 0; }
+.prod-sec .pcard:hover h4 { color: #4aa3d6; }
+.prod-sec .pcard small { color: #8fa0b5; }
+.prod-sec .pcard .ph.pd span { background: transparent; color: #8ea0b6; }
+.prod-sec .pempty { max-width: 760px; margin: 0 auto; padding: 44px 24px; text-align: center; border: 1px dashed rgba(255, 255, 255, 0.28); border-radius: 14px; display: grid; gap: 8px; }
+.prod-sec .pempty strong { font-size: 18px; color: #fff; }
+.prod-sec .pempty span { font-size: 14px; color: #9fb0c6; }
+/* 精選商品：電腦版整段落在一個螢幕內，讓上下滿版區塊剛好對齊每一屏 */
+.prod-sec { min-height: 100vh; min-height: 100svh; display: grid; align-items: center; box-sizing: border-box; }
+@media (min-width: 1024px) {
+  .prod-sec { padding: 64px 0; }
+  .prod-sec .pgrid.n5 .ph.pd, .prod-sec .pgrid.n6 .ph.pd, .prod-sec .pgrid.n7 .ph.pd, .prod-sec .pgrid.n8 .ph.pd { aspect-ratio: 4 / 3; }
+  .prod-sec .pgrid.n5 .pcard h4, .prod-sec .pgrid.n6 .pcard h4, .prod-sec .pgrid.n7 .pcard h4, .prod-sec .pgrid.n8 .pcard h4 { margin-top: 8px; }
+}
+/* 平板（641～820）：4 欄，8 個商品不要拉成兩個螢幕高 */
+@media (min-width: 641px) and (max-width: 820px) {
+  .prod-sec { min-height: 0; }
+  .prod-sec .pgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .prod-sec .pgrid.n2 { grid-template-columns: repeat(2, minmax(0, 300px)); }
+  .prod-sec .pgrid.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) { .prod-sec { min-height: 0; } }
+/* 只有 1 個精選：左圖右文主打卡（不放規格，因為商品可能是主機、喇叭或記錄器） */
+.prod-sec .psolo { max-width: 900px; margin: 0 auto; }
+.prod-sec .solo { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+.prod-sec .solo .ph.pd { aspect-ratio: 4 / 3; }
+.prod-sec .solo-kick { color: #4aa3d6; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; }
+.prod-sec .solo-info h3 { color: #fff; font-size: 30px; font-weight: 700; margin: 8px 0; line-height: 1.3; }
+.prod-sec .solo-info p { color: #9fb0c6; margin: 0 0 16px; font-size: 15px; }
+.prod-sec .solo-btn { display: inline-block; background: var(--site-accent, #007abe); color: #fff; font-weight: 700; font-size: 14px; padding: 12px 22px; border-radius: 8px; }
+.prod-sec .byneed { border-top-color: rgba(255, 255, 255, 0.12); }
+.prod-sec .byneed-lb { color: #8fa0b5; }
+.prod-sec .byneed a { color: #fff; border-bottom-color: rgba(255, 255, 255, 0.28); padding-bottom: 2px; }
+.prod-sec .byneed a:hover { border-bottom-color: #4aa3d6; }
+@media (max-width: 820px) {
+  .prod-sec { padding: 48px 0 52px; }
+  .prod-sec .pgrid.n2,
+  .prod-sec .pgrid.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .prod-sec .solo { grid-template-columns: 1fr; gap: 18px; }
+  .prod-sec .solo-info h3 { font-size: 24px; }
+  .prod-sec .kicker .en { font-size: 24px; }
 }
 </style>

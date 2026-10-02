@@ -12,9 +12,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ $t('carFrame.eyebrow') }}</div>
-        <h1>{{ $t('carFrame.title') }}</h1>
-        <p>{{ $t('carFrame.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('carFrame.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('carFrame.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('carFrame.intro') }}</p>
       </div>
     </div>
 
@@ -31,27 +31,6 @@
       </div>
     </section>
 
-    <!-- 為什麼要用專用車框 -->
-    <section class="feat">
-      <div class="wrap">
-        <div class="kick"><div class="lbl">{{ $t('carFrame.whyKicker') }}</div></div>
-        <h2>{{ $t('carFrame.whyTitle') }}</h2>
-        <div class="row">
-          <div class="fb">
-            <b>{{ $t('carFrame.why1Title') }}</b>
-            <p>{{ $t('carFrame.why1Desc') }}</p>
-          </div>
-          <div class="fb">
-            <b>{{ $t('carFrame.why2Title') }}</b>
-            <p>{{ $t('carFrame.why2Desc') }}</p>
-          </div>
-          <div class="fb">
-            <b>{{ $t('carFrame.why3Title') }}</b>
-            <p>{{ $t('carFrame.why3Desc') }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -79,11 +58,12 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: #023059; /* 美邁 VIS 深藍（歌樂頁才用 var(--site-accent, #007abe)） */
+  --orange: #F28729; /* 美邁 VIS 橘 */
   --blue: #3d7bff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -109,23 +89,26 @@ usePageSeo({
   .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
 }
 .hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 52px 8px 46px; }
-.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
+.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--orange); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
 .hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }
 .crumb { font-size: 12px; color: var(--dim); padding: 4px 0 6px; }
 .crumb a:hover { color: var(--navy); }
 
-/* feature */
-.feat { background: radial-gradient(110% 130% at 82% 18%, rgba(61, 123, 255, 0.22), rgba(61, 123, 255, 0.03) 46%, var(--dark) 74%), var(--dark); color: #fff; }
-.feat h2 { color: #fff; }
-.feat .kick { margin-bottom: 0; }
-.feat .lbl { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #8fb2ff; text-transform: uppercase; }
-.feat .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
-.fb { background: linear-gradient(150deg, #1b2740, #0d1016 82%); border: 1px solid #29344a; border-radius: 16px; padding: 22px; }
-.fb b { color: #fff; font-size: 16px; }
-.fb p { color: #aeb8c6; font-size: 13px; margin-top: 6px; }
-
-@media (max-width: 820px) {
-  .feat .row { grid-template-columns: 1fr; }
+/* 找不到你的車：深色滿版（照草稿 .help） */
+.help {
+  background: radial-gradient(110% 130% at 82% 18%, rgba(61, 123, 255, 0.22), rgba(61, 123, 255, 0.03) 46%, var(--dark) 74%), var(--dark);
+  color: #fff; text-align: center; padding: 56px 0;
 }
+.help .kick { display: flex; justify-content: center; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.help .kick .en { font-size: 12px; font-weight: 800; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
+.help .kick .jp { font-size: 12px; color: #8fb2ff; }
+.help h2 { color: #fff; font-size: clamp(22px, 3.2vw, 30px); font-weight: 900; }
+.help p { max-width: 520px; margin: 12px auto 0; color: #aeb8c6; font-size: 14px; line-height: 1.8; }
+.help-btns { margin-top: 22px; }
+.help-btns .btn {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 160px; height: 46px; padding: 0 22px;
+  border-radius: 10px; background: var(--orange); color: #1a1205; font-weight: 700; font-size: 14px; transition: transform 0.15s, filter 0.15s;
+}
+.help-btns .btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
 </style>

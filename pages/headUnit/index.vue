@@ -16,9 +16,9 @@
           <NuxtLink to="/">{{ $t('headUnit.home') }}</NuxtLink> ／
           <span>{{ $t('header.clarion') }}</span> ／ {{ $t('headUnit.navTitle') }}
         </div>
-        <div class="ey">{{ eyebrow }}</div>
-        <h1>{{ $t('headUnit.title') }}</h1>
-        <p>{{ $t('headUnit.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || eyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('headUnit.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('headUnit.intro') }}</p>
       </div>
     </div>
 
@@ -91,17 +91,6 @@
       </div>
     </section>
 
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('headUnit.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('headUnit.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -200,10 +189,10 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: var(--site-accent, #007abe);
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;

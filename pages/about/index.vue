@@ -11,9 +11,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ $t('about.eyebrow') }}</div>
-        <h1>{{ $t('about.title') }}</h1>
-        <p>{{ $t('about.heroDesc') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || $t('about.eyebrow') }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('about.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('about.heroDesc') }}</p>
       </div>
     </div>
     </div>
@@ -46,6 +46,7 @@ import { useListBanner } from '~/composables/useListBanner'
 
 const banner = useListBanner('about')
 import { useOrganizationJsonLd, useFaqJsonLd } from '~/composables/useJsonLd'
+import { useSeoSettings } from '~/composables/useSeoSettings'
 
 const { t } = useI18n()
 const config = useRuntimeConfig()
@@ -57,11 +58,18 @@ const { data } = await useAsyncData('about-content', () =>
 const aboutContent = computed(() => data.value?.result?.content ?? '')
 
 // 頁面上顯示的常見問題（同一份資料也拿去做 FAQPage 結構化資料，兩邊必須一致）
-const faqItems = computed(() => [
-  { q: t('about.faqQ1'), a: t('about.faqA1') },
-  { q: t('about.faqQ2'), a: t('about.faqA2') },
-  { q: t('about.faqQ3'), a: t('about.faqA3') }
-])
+// 後台「SEO／GEO 設定」有填問答就用後台的（只套用中文），沒填用內建的三則
+const { seo: seoSettings } = useSeoSettings()
+const { locale } = useI18n()
+const faqItems = computed(() => {
+  const custom = seoSettings.value.faq
+  if (locale.value === 'zh-tw' && Array.isArray(custom) && custom.length) return custom
+  return [
+    { q: t('about.faqQ1'), a: t('about.faqA1') },
+    { q: t('about.faqQ2'), a: t('about.faqA2') },
+    { q: t('about.faqQ3'), a: t('about.faqA3') }
+  ]
+})
 
 usePageSeo({
   title: () => t('about.seoTitle'),
@@ -79,10 +87,10 @@ useFaqJsonLd(() => faqItems.value)
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: var(--site-accent, #007abe);
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -149,7 +157,7 @@ useFaqJsonLd(() => faqItems.value)
 .faq .lbl {
   font-size: 12px;
   letter-spacing: 2px;
-  color: var(--navy, #007abe);
+  color: var(--navy, var(--site-accent, #007abe));
   margin-bottom: 8px;
 }
 .faq h2 {

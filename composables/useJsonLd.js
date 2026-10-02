@@ -9,40 +9,53 @@
  */
 import { useHead } from '#imports'
 import { SITE_INFO } from '~/composables/useSiteInfo'
+import { useSeoSettings } from '~/composables/useSeoSettings'
 
+// obj 可以是物件或「回傳物件的函式」（回傳 null＝這段不輸出）。用函式的話，後台設定載入後會自動更新。
 function ld(id, obj) {
-  useHead({
-    script: [
-      {
-        key: `ld-${id}`,
-        type: 'application/ld+json',
-        // 注意：unhead v2 的 SSR 是讀 textContent || innerHTML，
-        // 寫成 children 不會被輸出（HTML 裡會完全看不到這段），務必用 innerHTML。
-        innerHTML: JSON.stringify(obj)
-      }
-    ]
+  useHead(() => {
+    const data = typeof obj === 'function' ? obj() : obj
+    return {
+      script: data
+        ? [
+            {
+              key: `ld-${id}`,
+              type: 'application/ld+json',
+              // 注意：unhead v2 的 SSR 是讀 textContent || innerHTML，
+              // 寫成 children 不會被輸出（HTML 裡會完全看不到這段），務必用 innerHTML。
+              innerHTML: JSON.stringify(data)
+            }
+          ]
+        : []
+    }
   })
 }
 
 /** Organization：公司實體資料。首頁與關於我們頁都要有。 */
 export function useOrganizationJsonLd() {
-  ld('organization', {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: SITE_INFO.name,
-    alternateName: SITE_INFO.alternateName,
-    url: SITE_INFO.url,
-    logo: SITE_INFO.url + SITE_INFO.logoPath,
-    email: SITE_INFO.email,
-    telephone: SITE_INFO.telephone,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: SITE_INFO.address.streetAddress,
-      addressLocality: SITE_INFO.address.addressLocality,
-      addressRegion: SITE_INFO.address.addressRegion,
-      addressCountry: SITE_INFO.address.addressCountry
-    },
-    sameAs: SITE_INFO.sameAs
+  const { info, seo, flag } = useSeoSettings()
+  ld('organization', () => {
+    if (!flag('org')) return null
+    const o = seo.value
+    const sameAs = [info.value.facebook, info.value.instagram, info.value.youtube].filter(Boolean)
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: o.company_zh || SITE_INFO.name,
+      alternateName: o.company_en ? [o.company_en, ...SITE_INFO.alternateName.filter((n) => n !== o.company_en)] : SITE_INFO.alternateName,
+      url: SITE_INFO.url,
+      logo: SITE_INFO.url + SITE_INFO.logoPath,
+      email: info.value.email || SITE_INFO.email,
+      telephone: o.phone_intl || SITE_INFO.telephone,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: o.addr_street || SITE_INFO.address.streetAddress,
+        addressLocality: o.addr_locality || SITE_INFO.address.addressLocality,
+        addressRegion: o.addr_region || SITE_INFO.address.addressRegion,
+        addressCountry: SITE_INFO.address.addressCountry
+      },
+      sameAs: sameAs.length ? sameAs : SITE_INFO.sameAs
+    }
   })
 }
 
@@ -66,16 +79,18 @@ export function useWebSiteJsonLd() {
  * @param {Array<{q:string,a:string}>} items 必須與頁面上實際顯示的問答一致
  */
 export function useFaqJsonLd(items) {
-  const list = (typeof items === 'function' ? items() : items) || []
-  if (!list.length) return
-  ld('faq', {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: list.map((it) => ({
-      '@type': 'Question',
-      name: it.q,
-      acceptedAnswer: { '@type': 'Answer', text: it.a }
-    }))
+  ld('faq', () => {
+    const list = (typeof items === 'function' ? items() : items) || []
+    if (!list.length) return null
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: list.map((it) => ({
+        '@type': 'Question',
+        name: it.q,
+        acceptedAnswer: { '@type': 'Answer', text: it.a }
+      }))
+    }
   })
 }
 
@@ -111,5 +126,6 @@ export function useProductJsonLd(getter) {
       seller: { '@type': 'Organization', name: SITE_INFO.name }
     }
   }
-  ld('product', data)
+  const { flag } = useSeoSettings()
+  ld('product', () => (flag('product') ? data : null))
 }

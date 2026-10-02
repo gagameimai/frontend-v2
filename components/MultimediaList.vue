@@ -1,5 +1,5 @@
 <template>
-  <div class="mm-page">
+  <div class="mm-page" :class="{ 'is-mm': !isClarionType }">
     <!-- HERO（歌樂 OEM 頁樣式，品牌文字改 MEIMAI） -->
     <div class="hero">
       <!-- 後台「列表頁 Banner 管理」：桌機 1920×480（4:1）、手機 1080×608（16:9）。
@@ -12,9 +12,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ heroEyebrow }}</div>
-        <h1>{{ heroTitle }}</h1>
-        <p>{{ heroIntro }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || heroEyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || heroTitle }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || heroIntro }}</p>
       </div>
     </div>
 
@@ -135,17 +135,6 @@
       </div>
     </section>
 
-    <!-- 想升級車機 -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('multimedia.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('multimedia.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -264,11 +253,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue: #3d7bff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -352,7 +341,7 @@ usePageSeo({
 .feat .kick { margin-bottom: 0; }
 .feat .lbl { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #8fb2ff; text-transform: uppercase; }
 .feat .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
-.fb { background: linear-gradient(150deg, #1b2740, #0d1016 82%); border: 1px solid #29344a; border-radius: 16px; padding: 22px; }
+.fb { background: linear-gradient(150deg, var(--site-dark-5, #1b2740), var(--site-dark, #0d1016) 82%); border: 1px solid var(--site-dark-6, #29344a); border-radius: 16px; padding: 22px; }
 .fb b { color: #fff; font-size: 16px; }
 .fb p { color: #aeb8c6; font-size: 13px; margin-top: 6px; }
 
@@ -370,4 +359,8 @@ usePageSeo({
   .grid { grid-template-columns: 1fr; }
   .cgrid { grid-template-columns: 1fr; }
 }
+/* 美邁專區用 VIS 美邁藍 #023059＋橘 #F28729（歌樂專區維持 Clarion 藍 var(--site-accent, #007abe)） */
+.mm-page.is-mm { --navy: #023059; --orange: #F28729; --blue: #F28729; }
+.mm-page.is-mm .hero .ey { color: var(--orange); }
+.mm-page.is-mm .feat .lbl { color: var(--orange); }
 </style>

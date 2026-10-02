@@ -287,11 +287,11 @@ onBeforeUnmount(() => lockScroll(false))
 }
 .steps button .vv { color: #fff; font-weight: 800; max-width: 12em; overflow: hidden; text-overflow: ellipsis; }
 .steps button.done .lb { display: none; }
-.steps button.cur { border-color: #4fb6ea; color: #fff; background: rgba(79, 182, 234, 0.12); }
-.steps button.cur i { background: #4fb6ea; color: #0b1422; }
-.steps button.done i { background: rgba(79, 182, 234, 0.25); color: #9fdcff; }
+.steps button.cur { border-color: var(--site-accent-lt, #4fb6ea); color: #fff; background: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 12.0%, transparent); }
+.steps button.cur i { background: var(--site-accent-lt, #4fb6ea); color: #0b1422; }
+.steps button.done i { background: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 25.0%, transparent); color: #9fdcff; }
 .steps button:disabled { opacity: 0.4; cursor: default; }
-.steps button:not(:disabled):hover { border-color: rgba(79, 182, 234, 0.6); }
+.steps button:not(:disabled):hover { border-color: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 60.0%, transparent); }
 .x {
   flex: none;
   width: 38px;
@@ -325,7 +325,7 @@ onBeforeUnmount(() => lockScroll(false))
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.55);
 }
-.fp-search:focus-within { border-color: #4fb6ea; background: rgba(79, 182, 234, 0.08); color: #9fdcff; }
+.fp-search:focus-within { border-color: var(--site-accent-lt, #4fb6ea); background: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 8.0%, transparent); color: #9fdcff; }
 .fp-search input {
   flex: 1;
   min-width: 0;
@@ -369,10 +369,13 @@ onBeforeUnmount(() => lockScroll(false))
 }
 .grid { display: grid; gap: 8px; }
 .grid.k-brand { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
-/* 常見車廠 10 個：電腦 5×2、手機 2×5，排得整整齊齊不會剩一格 */
-.grid.k-pop { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+/* 常見車廠 12 個：電腦 6×2、手機 2×6，排得整整齊齊不會剩一格 */
+.grid.k-pop { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+/* 6 欄時 MITSUBISHI／VOLKSWAGEN 字較長：縮小一點、不准從字中間斷行 */
+.grid.k-pop .opt { padding: 8px 4px; }
+.grid.k-pop .opt b { font-size: 12.5px; letter-spacing: -0.01em; overflow-wrap: normal; word-break: keep-all; white-space: nowrap; }
 @media (min-width: 641px) and (max-width: 720px) {
-  .grid.k-pop { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+  .grid.k-pop { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .grid.k-model { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 /* 年份：一個年代剛好 10 格一排（手機 5 格兩排），不會出現尾巴孤零零一格 */
@@ -397,9 +400,9 @@ onBeforeUnmount(() => lockScroll(false))
 }
 .opt b { font-size: 14px; font-weight: 700; line-height: 1.25; word-break: keep-all; overflow-wrap: anywhere; }
 .opt small { font-size: 11px; color: rgba(255, 255, 255, 0.5); line-height: 1.3; }
-.opt:hover { background: rgba(0, 122, 190, 0.22); border-color: rgba(79, 182, 234, 0.5); }
-.opt:focus-visible { outline: 2px solid #4fb6ea; outline-offset: 2px; }
-.opt.on { background: rgba(0, 122, 190, 0.45); border-color: #4fb6ea; }
+.opt:hover { background: color-mix(in srgb, var(--site-accent, #007abe) 22.0%, transparent); border-color: color-mix(in srgb, var(--site-accent-lt, #4fb6ea) 50.0%, transparent); }
+.opt:focus-visible { outline: 2px solid var(--site-accent-lt, #4fb6ea); outline-offset: 2px; }
+.opt.on { background: color-mix(in srgb, var(--site-accent, #007abe) 45.0%, transparent); border-color: var(--site-accent-lt, #4fb6ea); }
 .opt.on small { color: rgba(255, 255, 255, 0.75); }
 /* 年份那顆「所有年份」：整列橫跨 */
 .opt.wide { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; gap: 10px; text-align: left; min-height: 48px; padding: 8px 14px; }
@@ -437,7 +440,7 @@ onBeforeUnmount(() => lockScroll(false))
   transform: rotate(45deg);
   margin-top: -4px;
 }
-.fold:hover { border-color: #4fb6ea; color: #fff; }
+.fold:hover { border-color: var(--site-accent-lt, #4fb6ea); color: #fff; }
 
 .fp-body::-webkit-scrollbar { width: 9px; }
 .fp-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 5px; border: 2px solid transparent; background-clip: padding-box; }
@@ -469,6 +472,7 @@ onBeforeUnmount(() => lockScroll(false))
   .grid.k-brand { grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); }
   .grid.k-pop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid.k-pop .opt { min-height: 50px; flex-direction: row; gap: 8px; }
+  .grid.k-pop .opt b { font-size: 13.5px; padding: 0; }
   .grid.k-model { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .grid.k-year { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .opt b { font-size: 13.5px; }

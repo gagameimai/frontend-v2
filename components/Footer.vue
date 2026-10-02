@@ -13,14 +13,14 @@
         </div>
         <!-- 後台沒填的社群就整個不要輸出；沒有 href 的 <a> 不算連結，爬蟲與 AI 代理會讀到空連結 -->
         <div class="social">
-          <a v-if="websiteInfo.facebook" :href="websiteInfo.facebook" target="_blank" rel="noopener" aria-label="Facebook">
-            <font-awesome-icon :icon="['fab', 'square-facebook']" />
+          <a v-if="websiteInfo.facebook" :href="websiteInfo.facebook" target="_blank" rel="noopener" aria-label="Facebook" class="soc-fb">
+            <font-awesome-icon :icon="['fab', 'facebook-f']" />
           </a>
-          <a v-if="websiteInfo.instagram" :href="websiteInfo.instagram" target="_blank" rel="noopener" aria-label="Instagram">
+          <a v-if="websiteInfo.instagram" :href="websiteInfo.instagram" target="_blank" rel="noopener" aria-label="Instagram" class="soc-ig">
             <font-awesome-icon :icon="['fab', 'instagram']" />
           </a>
-          <a v-if="websiteInfo.youtube" :href="websiteInfo.youtube" target="_blank" rel="noopener" aria-label="YouTube">
-            <font-awesome-icon :icon="['fab', 'square-youtube']" />
+          <a v-if="websiteInfo.youtube" :href="websiteInfo.youtube" target="_blank" rel="noopener" aria-label="YouTube" class="soc-yt">
+            <font-awesome-icon :icon="['fab', 'youtube']" />
           </a>
         </div>
       </div>
@@ -39,6 +39,7 @@
       <div>
         <div class="hd">{{ $t('footer.about') }}</div>
         <div><NuxtLink to="/about">{{ $t('footer.brandStory') }}</NuxtLink></div>
+        <div><NuxtLink to="/contentPolicy">{{ $t('footer.contentPolicy') }}</NuxtLink></div>
         <div>clarion.meimai.com.tw</div>
       </div>
     </div>
@@ -65,6 +66,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useWebsiteInfo } from '~/composables/useWebsiteInfo'
 import logoCobrandWhite from '~/assets/img/Header/logo-cobrand-white.svg'
 
 // 頁尾的電話／Email／地址／社群連結（NAP：名稱、地址、電話）。
@@ -72,15 +74,12 @@ import logoCobrandWhite from '~/assets/img/Header/logo-cobrand-white.svg'
 // 真人等 JS 載完會看到，但搜尋引擎爬蟲與 AI 代理讀到的是空的，三個社群連結連 href 都沒有。
 // 改成：build 當下先抓一次烘進 HTML（爬蟲讀得到）＋ 掛載後再抓一次最新的（後台改了馬上生效）。
 // 寫法比照 composables/useListBanner.js，不用 await，避免這個元件變成 async component。
-const config = useRuntimeConfig()
-const { data: websiteData, refresh: refreshWebsite } = useAsyncData('website-info', () =>
-  $fetch(`${config.public.apiBase}/website`).catch(() => ({ result: null }))
-)
+const { data: websiteData, refresh: refreshWebsite } = useWebsiteInfo()
 const websiteInfo = computed(() => websiteData.value?.result || {})
 
 // 頁尾 logo 全站固定用聯名版（Clarion × MM）：頁尾代表公司（美邁車用電子／日本 Clarion 歌樂 台灣總經銷），
 // 不隨 /clarion、/mm 專區切換，避免換頁時 logo 跳來跳去（2026-09-28 老闆指示）
-const logoSrc = logoCobrandWhite
+const logoSrc = computed(() => websiteInfo.value.logo_footer || logoCobrandWhite)
 const logoAlt = 'Clarion × MM 美邁'
 
 // 靜態 HTML 先給畫面，掛載後立刻更新到最新（後台改了公司資料不用重新 generate 也會生效）
@@ -106,7 +105,7 @@ function backToTop() {
 
 <style scoped>
 .foot1 {
-  background: #0d1016;
+  background: var(--site-foot, var(--site-dark, #0d1016));
   color: #8f9bab;
   padding: 44px 0 24px;
   font-size: 13px;
@@ -186,11 +185,11 @@ function backToTop() {
   height: 44px;
   border-radius: 50%;
 }
-.social a:hover {
-  background: #007abe;
-  color: #fff;
-  border-color: #007abe;
-}
+/* 社群圖示用各平台原廠樣式（2026-09-30，不套公司色）：實心原廠色圓鈕＋白色標誌，滑過去稍微變亮 */
+.social a.soc-fb { background: #1877f2; color: #fff; border-color: #1877f2; }
+.social a.soc-ig { background: linear-gradient(45deg, #f09433, #dc2743 55%, #bc1888); color: #fff; border-color: #dc2743; }
+.social a.soc-yt { background: #ff0000; color: #fff; border-color: #ff0000; }
+.social a.soc-fb:hover, .social a.soc-ig:hover, .social a.soc-yt:hover { filter: brightness(1.12); }
 .copy {
   max-width: 1080px;
   margin: 26px auto 0;
@@ -247,13 +246,13 @@ function backToTop() {
   box-shadow: 0 10px 24px rgba(8, 12, 18, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 .to-top:hover .ring {
-  border-color: #007abe;
-  box-shadow: 0 0 0 3px rgba(0, 122, 190, 0.18), 0 0 16px rgba(0, 122, 190, 0.45);
+  border-color: var(--site-accent, #007abe);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--site-accent, #007abe) 18.0%, transparent), 0 0 16px color-mix(in srgb, var(--site-accent, #007abe) 45.0%, transparent);
 }
 .to-top:hover .arw { transform: translateY(-2px); }
-.to-top:focus-visible .ring { border-color: #007abe; box-shadow: 0 0 0 3px rgba(0, 122, 190, 0.28); }
+.to-top:focus-visible .ring { border-color: var(--site-accent, #007abe); box-shadow: 0 0 0 3px color-mix(in srgb, var(--site-accent, #007abe) 28.0%, transparent); }
 .to-top:active .knob { transform: scale(0.94); }
-.to-top:active .ring { box-shadow: 0 0 0 6px rgba(0, 122, 190, 0.14), 0 0 22px rgba(0, 122, 190, 0.55); }
+.to-top:active .ring { box-shadow: 0 0 0 6px color-mix(in srgb, var(--site-accent, #007abe) 14.0%, transparent), 0 0 22px color-mix(in srgb, var(--site-accent, #007abe) 55.0%, transparent); }
 @media (max-width: 640px) {
   .to-top { right: 14px; bottom: 14px; width: 44px; height: 44px; }
   .to-top .arw { width: 18px; height: 18px; }

@@ -1,5 +1,5 @@
 <template>
-  <div class="mmd-page">
+  <div class="mmd-page" :class="{ 'is-mm': !isClarion }">
     <!-- 麵包屑 -->
     <div class="wrap">
       <div class="crumb">
@@ -131,11 +131,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
+  --navy: var(--site-accent, #007abe);
   --blue-soft: #6fa0ff;
-  --dark: #0d1016;
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -191,4 +191,6 @@ usePageSeo({
 .lb-modal.open { display: flex; }
 .lb-modal img { max-width: min(94vw, 1180px); max-height: 88vh; object-fit: contain; border-radius: 14px; background: #fff; box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4); }
 .lb-close { position: absolute; top: 20px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+/* 美邁專區用 VIS 美邁藍 #023059＋橘 #F28729（歌樂專區維持 Clarion 藍 var(--site-accent, #007abe)） */
+.mmd-page.is-mm { --navy: #023059; --orange: #F28729; --blue-soft: #F28729; }
 </style>

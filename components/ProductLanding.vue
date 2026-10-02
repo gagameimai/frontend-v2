@@ -10,9 +10,9 @@
       <div v-if="banner.imgMobile || banner.img" class="bn-ov bn-ov-mobile"></div>
       <div class="ov"></div>
       <div class="wrap in">
-        <div class="ey">{{ t(`${ns}.eyebrow`) }}</div>
-        <h1>{{ t(`${ns}.title`) }}</h1>
-        <p>{{ t(`${ns}.intro`) }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || t(`${ns}.eyebrow`) }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || t(`${ns}.title`) }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || t(`${ns}.intro`) }}</p>
       </div>
     </div>
 
@@ -117,7 +117,7 @@ usePageSeo({
 <style scoped>
 .lp-page {
   --ink: #0d1b2e; --text: #1b2431; --muted: #5b6675; --dim: #93a0b0;
-  --bg: #fff; --bg2: #f5f7fa; --line: #e6ebf1; --navy: #007abe; --dark: #0d1016;
+  --bg: #fff; --bg2: var(--site-bg2, #f5f7fa); --line: #e6ebf1; --navy: var(--site-accent, #007abe); --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   background: var(--bg); color: var(--text); line-height: 1.85; letter-spacing: 0.02em;
 }
@@ -127,7 +127,7 @@ usePageSeo({
 .lp-page section { padding: 60px 0; }
 
 .hero { position: relative; background: var(--dark); color: #fff; padding: 100px 0 68px; }
-.hero .ov { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,122,190,.2), transparent 62%); }
+.hero .ov { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--site-accent, #007abe) 20.0%, transparent), transparent 62%); }
 .hero .in { position: relative; z-index: 2; }
 .hero .ey { font-size: 12px; letter-spacing: 2px; color: #7fc4ea; margin-bottom: 10px; }
 .hero h1 { font-size: 36px; font-weight: 900; margin: 0 0 14px; letter-spacing: .02em; }

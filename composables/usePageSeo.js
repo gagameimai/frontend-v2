@@ -14,6 +14,7 @@
  */
 // 明確 import Nuxt 內建的 composable，不依賴自動載入（這個專案的 composables/ 自動載入沒被驗證過）
 import { useRoute, useRuntimeConfig, useHead } from '#imports'
+import { useSeoSettings } from '~/composables/useSeoSettings'
 
 export function usePageSeo(options = {}) {
   const route = useRoute()
@@ -22,16 +23,24 @@ export function usePageSeo(options = {}) {
 
   const val = (v) => (typeof v === 'function' ? v() : v)
 
+  // 後台「SEO／GEO 設定」可以逐頁覆蓋標題、說明，以及設定全站預設分享圖；沒填就用各頁原本的文字
+  const { seo } = useSeoSettings()
+  const override = () => {
+    const key = route.path === '/' ? '/' : route.path.replace(/\/$/, '')
+    const pages = seo.value.pages
+    return (pages && !Array.isArray(pages) && pages[key]) || {}
+  }
+
   const suffix = options.suffix ?? '｜Clarion 歌樂 台灣官方授權總經銷｜美邁車用電子'
   const fullTitle = () => {
-    const t = val(options.title)
+    const t = override().title || val(options.title)
     if (!t) return `美邁車用電子${suffix}`
     return options.noSuffix ? t : `${t}${suffix}`
   }
-  const desc = () => val(options.description) || ''
+  const desc = () => override().description || val(options.description) || ''
   const image = () => {
-    const img = val(options.image)
-    if (!img) return `${site}/new_panel.png`
+    const img = val(options.image) || seo.value.og_image
+    if (!img) return `${site}/og-share.png`
     return /^https?:\/\//.test(img) ? img : `${site}${img}`
   }
   // canonical 不帶 query string（例如 /multimedia?type=2 也指向 /multimedia）

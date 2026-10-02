@@ -12,9 +12,9 @@
       <div v-if="banner.img" class="ov ov-desktop"></div>
       <div v-if="banner.imgMobile || banner.img" class="ov ov-mobile"></div>
       <div class="wrap in">
-        <div class="ey">{{ eyebrow }}</div>
-        <h1>{{ $t('safety.title') }}</h1>
-        <p>{{ $t('safety.intro') }}</p>
+        <div class="ey" :style="banner.kickerColor ? { color: banner.kickerColor } : null">{{ banner.kicker || eyebrow }}</div>
+        <h1 :style="banner.titleColor ? { color: banner.titleColor } : null">{{ banner.title || $t('safety.title') }}</h1>
+        <p :style="banner.descColor ? { color: banner.descColor } : null">{{ banner.desc || $t('safety.intro') }}</p>
       </div>
     </div>
 
@@ -59,17 +59,6 @@
       </div>
     </section>
 
-    <!-- help -->
-    <section class="help">
-      <div class="wrap">
-        <h2>{{ $t('safety.helpTitle') }}</h2>
-        <p class="help-p">{{ $t('safety.helpDesc') }}</p>
-        <div class="help-btns">
-          <NuxtLink to="/partner" class="btn o">{{ $t('home.findDealers') }}</NuxtLink>
-          <NuxtLink to="/qa" class="btn ghost-light">{{ $t('home.faq') }}</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -111,10 +100,11 @@ usePageSeo({
   --muted: #5b6675;
   --dim: #93a0b0;
   --bg: #fff;
-  --bg2: #f5f7fa;
+  --bg2: var(--site-bg2, #f5f7fa);
   --line: #e6ebf1;
-  --navy: #007ABE;
-  --dark: #0d1016;
+  --navy: #023059; /* 美邁 VIS 深藍（歌樂頁才用 var(--site-accent, #007abe)） */
+  --orange: #F28729; /* 美邁 VIS 橘 */
+  --dark: var(--site-dark, #0d1016);
   font-family: 'Noto Sans TC', system-ui, 'Microsoft JhengHei', sans-serif;
   color: var(--text);
   line-height: 1.75;
@@ -150,7 +140,7 @@ usePageSeo({
   .hero .ov-mobile { background: linear-gradient(90deg, rgba(243, 246, 250, 0.94) 0%, rgba(243, 246, 250, 0.92) 55%, rgba(243, 246, 250, 0.74) 82%, rgba(243, 246, 250, 0.3) 100%); }
 }
 .hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 52px 8px 46px; }
-.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
+.hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--orange); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; }
 .hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; }
 .crumb { font-size: 12px; color: var(--dim); padding: 4px 0 18px; }

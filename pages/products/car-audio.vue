@@ -1,5 +1,5 @@
 <template>
-  <!-- 跨品牌著陸頁：承接「汽車音響主機推薦」這類一般需求詞 -->
+  <!-- 跨品牌著陸頁：承接「汽車音響推薦」這類一般需求詞 -->
   <ProductLanding ns="landingAudio" :groups="groups" />
 </template>
 
@@ -13,15 +13,6 @@ const groups = [
     params: {},
     detailBase: '/clarion/audioAccessoriesDetail',
     moreTo: '/audioAccessories'
-  },
-  {
-    key: 'headunit',
-    kicker: 'CLARION 1/2DIN',
-    badge: 'Clarion 車用主機',
-    endpoint: '/head_unit',
-    params: {},
-    detailBase: '/headUnitDetail',
-    moreTo: '/headUnit'
   }
 ]
 </script>
