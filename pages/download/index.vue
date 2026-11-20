@@ -48,13 +48,9 @@
           </div>
         </div>
 
-        <!-- Clarion：資源尚未提供 -->
-        <div v-if="brand === 'clarion'" class="blist">
-          <div class="empty">{{ $t('download.clarionSoon') }}</div>
-        </div>
-
-        <!-- MM：分類手風琴（資料來自 /resource） -->
-        <div v-else class="blist">
+        <!-- 分類手風琴（資料來自 /resource）：後台「資源下載 → 分類管理」每個分類有「品牌」欄位，
+             brand=1 的分類放 Clarion 分頁、其餘（0 或舊資料沒有這個欄位）放 MM 分頁 -->
+        <div class="blist">
           <details
             v-for="row in filteredVersions"
             :key="row.i"
@@ -83,7 +79,8 @@
             </ul>
           </details>
 
-          <p v-if="versionList.length === 0" class="empty">{{ $t('download.empty') }}</p>
+          <!-- 這個品牌還沒有任何分類：Clarion 顯示「即將提供」，MM 顯示一般的空白提示 -->
+          <p v-if="brandList.length === 0" class="empty">{{ brand === 'clarion' ? $t('download.clarionSoon') : $t('download.empty') }}</p>
           <p v-else-if="filteredVersions.length === 0" class="noresult">
             {{ $t('download.noResult', { q: keyword }) }}
           </p>
@@ -122,8 +119,14 @@ const onToggleGroup = (i, event) => {
 const isOpen = (i) => (keyword.value.trim() ? true : openSet.value.has(i))
 
 // 依關鍵字過濾分類（保留原始索引，讓展開狀態不會跑掉）
+// 目前分頁（品牌）底下的分類
+const brandList = computed(() =>
+  versionList.value
+    .map((v, i) => ({ v, i }))
+    .filter(({ v }) => (Number(v.brand) === 1 ? 'clarion' : 'mm') === brand.value)
+)
 const filteredVersions = computed(() => {
-  const list = versionList.value.map((v, i) => ({ v, i }))
+  const list = brandList.value
   const q = keyword.value.trim().toLowerCase()
   if (!q) return list
   return list.filter(({ v }) =>
@@ -166,7 +169,7 @@ usePageSeo({
 .wrap { max-width: 920px; margin: 0 auto; padding: 0 26px; }
 .dl-page section { padding: 44px 0 70px; }
 
-.hero { position: relative; width: 100%; overflow-x: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+.hero { position: relative; width: 100%; overflow: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; } /* overflow 要兩軸一起鎖：只寫 overflow-x 會讓 overflow-y 自動變 auto，光暈超出時手機版會多一條內部捲軸（2026-10-03） */
 .hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
 .hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
 .hero .ov { position: absolute; inset: 0; }

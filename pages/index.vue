@@ -327,8 +327,8 @@ const homeOverride = () => {
   const pages = seoSettings.value.pages
   return (pages && !Array.isArray(pages) && pages['/']) || {}
 }
-const HOME_TITLE = 'Clarion 歌樂台灣總經銷｜安卓車機・車用多媒體主機｜美邁 MEIMAI'
-const HOME_DESC = '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、車用多媒體主機、汽車音響、行車記錄器等車用電子產品。原廠公司貨享原廠保固，全台經銷據點提供專業安裝與售後服務。'
+const HOME_TITLE = 'Clarion 歌樂台灣總經銷｜安卓車機・車用多媒體主機｜MM 美邁'
+const HOME_DESC = 'MM 美邁為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、車用多媒體主機、汽車音響、行車記錄器等車用電子產品。原廠公司貨享原廠保固，全台經銷據點提供專業安裝與售後服務。'
 const homeTitle = () => homeOverride().title || HOME_TITLE
 const homeDesc = () => homeOverride().description || HOME_DESC
 useHead({
@@ -342,7 +342,7 @@ useHead({
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'Clarion 歌樂 × MM 美邁' },
     { property: 'og:title', content: homeTitle },
-    { property: 'og:description', content: () => homeOverride().description || '美邁 MEIMAI 為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、汽車音響、行車記錄器等車用電子產品。原廠保固、全台經銷據點、專業安裝售後。' },
+    { property: 'og:description', content: () => homeOverride().description || 'MM 美邁為 Clarion 歌樂台灣官方授權總經銷（2026 年起），主打安卓車機、車型專用機、汽車音響、行車記錄器等車用電子產品。原廠保固、全台經銷據點、專業安裝售後。' },
     { property: 'og:url', content: 'https://clarion.meimai.com.tw/' },
     { name: 'twitter:card', content: 'summary_large_image' },
     // 後台 SEO 設定的「分享圖」有填就用它（沒填維持 nuxt.config 的 og-share.png）

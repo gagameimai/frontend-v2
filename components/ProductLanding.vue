@@ -36,7 +36,7 @@
       <div class="wrap">
         <div class="ghead">
           <div>
-            <div class="kick">{{ g.kicker }}</div>
+            <div class="kick">{{ g.key === 'mm' ? t('header.mm') : g.kicker }}</div>
             <h2>{{ t(`${ns}.${g.key}Title`) }}</h2>
             <p class="lead">{{ t(`${ns}.${g.key}Desc`) }}</p>
           </div>

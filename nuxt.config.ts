@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
+  // 產生前端 source map，PageSpeed「有效的來源對應」才會通過
+  sourcemap: { client: true, server: false },
+
   // 後台「產品類別開關」關閉的項目（ex:頭枕螢幕、可攜式）會回 404，不要因為這些頁面 404 就讓整個 npm run generate 失敗，關閉的類別就不輸出頁面即可。
   nitro: {
     prerender: {
@@ -97,8 +100,7 @@ export default defineNuxtConfig({
 
   gtag: {
     tags: [
-      { id: 'G-H12E5QPJSK' },
-      { id: 'G-MT0W2LHDJE' }
+      { id: 'G-B0WPZ978YJ' }
     ]
   },
   devServer: {

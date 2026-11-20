@@ -4,7 +4,7 @@
     <div class="wrap">
       <div class="crumb">
         <NuxtLink to="/">{{ $t('multimediaDetail.home') }}</NuxtLink> ／
-        <NuxtLink :to="isClarion ? (Number(info.type) === 3 ? '/clarion/oem' : '/clarion/gl') : (Number(info.type) === 1 ? '/mm/oem' : '/mm/me')">{{ isClarion ? 'CLARION' : 'MEIMAI' }}</NuxtLink> ／
+        <NuxtLink :to="isClarion ? (Number(info.type) === 3 ? '/clarion/oem' : '/clarion/gl') : (Number(info.type) === 1 ? '/mm/oem' : '/mm/me')">{{ isClarion ? 'CLARION' : $t('header.mm') }}</NuxtLink> ／
         <NuxtLink to="/multimedia">{{ $t('multimediaDetail.category') }}</NuxtLink> ／ {{ info.name }}
       </div>
     </div>
@@ -15,7 +15,7 @@
         <div class="gal">
           <div class="main">
             <img v-if="info.img" :src="info.img" :alt="info.name" @click="openLightbox(info.img, info.name)" />
-            <div v-else class="noph"><b>{{ isClarion ? 'clarion' : 'MEIMAI' }}</b><span>{{ $t('multimediaDetail.photoPlaceholder') }}</span></div>
+            <div v-else class="noph"><b>{{ isClarion ? 'clarion' : $t('header.mm') }}</b><span>{{ $t('multimediaDetail.photoPlaceholder') }}</span></div>
           </div>
         </div>
         <div class="pinfo">

@@ -54,7 +54,8 @@ export default {
     dealers: 'Dealers',
     download: 'Downloads (Installers/Dealers)',
     brandStory: 'Brand Story',
-    contentPolicy: 'Content & Correction Notice'
+    contentPolicy: 'Content & Correction Notice',
+    privacy: 'Privacy Policy',
   },
   home: {
     findDealers: 'Find a Dealer',

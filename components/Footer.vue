@@ -40,6 +40,7 @@
         <div class="hd">{{ $t('footer.about') }}</div>
         <div><NuxtLink to="/about">{{ $t('footer.brandStory') }}</NuxtLink></div>
         <div><NuxtLink to="/contentPolicy">{{ $t('footer.contentPolicy') }}</NuxtLink></div>
+        <div><NuxtLink to="/privacy">{{ $t('footer.privacy') }}</NuxtLink></div>
         <div>clarion.meimai.com.tw</div>
       </div>
     </div>

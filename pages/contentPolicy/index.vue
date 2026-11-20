@@ -153,14 +153,17 @@ usePageSeo({
 .btn.o { background: var(--navy); color: #ffffff; font-weight: 700; }
 .btn.ghost { background: transparent; border: 1px solid #33405a; color: #fff; }
 
-/* HERO：與品牌故事頁同一套尺寸與底色 */
-.hero { position: relative; width: 100%; overflow-x: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); aspect-ratio: 4 / 1; min-height: 260px; display: flex; align-items: center; }
+/* HERO：與品牌故事頁同一套尺寸與底色
+   · overflow 要寫 hidden，不能只寫 overflow-x:hidden：只鎖一個方向時，瀏覽器會把另一個方向自動變成 auto，
+     裝飾光暈 .glow 往下超出（到 360px）就會讓 hero 自己長出垂直捲軸，手機版就變成「雙重捲軸」。
+   · 高度不再用 aspect-ratio 鎖死：改成「至少 4:1（25vw）、至少 260px，文字多的時候自己長高」，
+     手機版與英文版文字比較長也不會被切掉。 */
+.hero { position: relative; width: 100%; overflow: hidden; background: linear-gradient(115deg, #f3f6fa, #e7eef6 55%, #dbe6f1); min-height: max(260px, 25vw); display: flex; align-items: center; }
 .hero .glow { position: absolute; right: -80px; top: -60px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(61, 123, 255, 0.16), transparent 62%); z-index: 1; }
-.hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 52px 8px 46px; }
+.hero .in { position: relative; z-index: 2; width: 100%; min-width: 0; padding: 24px 8px 22px; }
 .hero .ey { font-size: 12px; letter-spacing: 4px; color: var(--navy); font-weight: 700; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 900; color: var(--ink); line-height: 1.15; margin: 10px 0; max-width: 640px; }
 .hero p { width: 100%; color: #41506b; max-width: 560px; font-weight: 300; margin-top: 6px; }
-@media (max-width: 640px) { .hero { aspect-ratio: 16 / 9; } }
 
 /* 重點帶：與常見問題頁同一套 */
 .perf { background: var(--navy); }
